@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Get Involved — Lake Sentry</title>
+  <meta name="description" content="Take the Lake Sentry survey, see what Hyderabad residents told us, and find ways to help keep urban lakes clean." />
+
+  <!-- Fonts: Fraunces (headings) + Inter (body text) from Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS from its CDN (no install needed), then our shared settings -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="assets/js/tailwind-config.js"></script>
+  <link rel="stylesheet" href="assets/css/site.css" />
+</head>
+<body class="bg-sand-50 font-sans text-ink text-[1.0625rem] leading-relaxed">
+
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <!-- ============================ SITE HEADER ============================ -->
+  <header class="on-dark sticky top-0 z-50 border-b border-white/10 bg-lake-950/95 backdrop-blur">
+    <nav aria-label="Main" class="relative mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
+      <a href="index.html" class="flex items-center gap-2 rounded font-display text-xl font-semibold text-white">
+        <svg aria-hidden="true" class="h-8 w-8" viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="16" r="14.5" stroke="#76BFCB" stroke-width="2" />
+          <path d="M5 18c2.5-2.5 5-2.5 7.5 0s5 2.5 7.5 0 5-2.5 7.5 0" stroke="#86CF98" stroke-width="2" stroke-linecap="round" />
+          <path d="M5 12.5c2.5-2.5 5-2.5 7.5 0s5 2.5 7.5 0 5-2.5 7.5 0" stroke="#A9D8DF" stroke-width="2" stroke-linecap="round" />
+        </svg>
+        Lake Sentry
+      </a>
+      <button id="nav-toggle" type="button" class="inline-flex items-center gap-2 rounded-md border border-white/25 px-3 py-2 text-sm font-medium text-white md:hidden" aria-expanded="false" aria-controls="nav-menu">
+        <svg aria-hidden="true" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round" /></svg>
+        <span data-label>Open menu</span>
+      </button>
+      <ul id="nav-menu" class="absolute left-0 right-0 top-full hidden flex-col gap-1 border-b border-white/10 bg-lake-950 px-4 pb-4 md:static md:flex md:flex-row md:items-center md:gap-2 md:border-0 md:bg-transparent md:p-0">
+        <li><a href="index.html" class="block rounded-md px-3 py-2 text-lake-100 hover:bg-white/10 hover:text-white">Home</a></li>
+        <li><a href="about.html" class="block rounded-md px-3 py-2 text-lake-100 hover:bg-white/10 hover:text-white">About</a></li>
+        <li><a href="app.html" class="block rounded-md px-3 py-2 text-lake-100 hover:bg-white/10 hover:text-white">Lake Explorer App</a></li>
+        <li><a href="get-involved.html" aria-current="page" class="mt-2 block rounded-md bg-sand-300 px-4 py-2 font-semibold text-lake-950 underline decoration-lake-950 decoration-2 underline-offset-4 hover:bg-sand-100 md:ml-2 md:mt-0">Get involved</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main">
+
+    <!-- ============================ PAGE INTRO ============================ -->
+    <section class="on-dark bg-lake-900 text-white" aria-labelledby="page-title">
+      <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+        <p class="text-sm font-semibold uppercase tracking-[0.14em] text-lake-200">Get involved</p>
+        <h1 id="page-title" class="mt-2 max-w-3xl font-display text-4xl font-semibold leading-tight sm:text-5xl">“Lake pollution is a problem.” So what can we do about it?</h1>
+        <p class="mt-5 max-w-2xl text-lg text-lake-100">Most people already know lakes are polluted. Lake Sentry is about turning that awareness into action. Here's how you can help.</p>
+      </div>
+    </section>
+
+    <!-- ============================ SURVEY ============================ -->
+    <section id="survey" class="mx-auto max-w-6xl px-4 py-20 sm:px-6" aria-labelledby="survey-title">
+      <div class="grid items-center gap-10 md:grid-cols-[1fr_18rem]">
+        <div>
+          <p class="text-sm font-semibold uppercase tracking-[0.14em] text-lake-700">Step one</p>
+          <h2 id="survey-title" class="mt-2 font-display text-3xl font-semibold text-lake-950 sm:text-4xl">Take the Lake Sentry survey</h2>
+          <p class="mt-4 max-w-prose text-slate-700">
+            The survey asks what floating waste you've seen, what you think causes it, how serious it is and whether you'd support technology to clean it up. Every response makes the research stronger and shapes what we build next.
+          </p>
+          <p class="mt-4 text-slate-700">Scan the QR code with your phone's camera to open the survey.</p>
+          <!-- TODO: add a direct link to the survey for people who can't scan the QR code, e.g.
+               <a href="https://forms.gle/your-survey-id" class="...">Open the survey</a> -->
+          <p class="mt-2 text-sm text-slate-600">A direct link for desktop visitors will be added here soon.</p>
+        </div>
+        <figure class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-lake-100">
+          <img src="assets/images/survey-qr.png" width="621" height="913" class="mx-auto h-auto w-full max-w-[14rem]"
+               alt="QR code that opens the Lake Sentry public survey, with the caption “Scan to fill out my survey!”" />
+        </figure>
+      </div>
+    </section>
+
+    <!-- ============================ SURVEY RESULTS ============================ -->
+    <section id="results" class="bg-white py-20" aria-labelledby="results-title">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6">
+        <p class="text-sm font-semibold uppercase tracking-[0.14em] text-lake-700">What people told us</p>
+        <h2 id="results-title" class="mt-2 font-display text-3xl font-semibold text-lake-950 sm:text-4xl">Survey highlights (40 respondents)</h2>
+
+        <!-- Simple bar chart built with HTML. Each bar's width is the percentage;
+             the number is also written as text so it doesn't rely on the bar alone. -->
+        <ul class="mt-10 space-y-6" aria-label="Survey results">
+          <li>
+            <div class="flex items-baseline justify-between gap-4"><span class="font-medium text-lake-950">Point to littering and poor waste disposal as the main cause</span><span class="font-display text-2xl font-semibold text-lake-800">87.5%</span></div>
+            <div class="mt-2 h-3 rounded-full bg-lake-100" aria-hidden="true"><div class="h-full rounded-full bg-lake-600" style="width:87.5%"></div></div>
+          </li>
+          <li>
+            <div class="flex items-baseline justify-between gap-4"><span class="font-medium text-lake-950">Would support an innovative bot to clean lakes</span><span class="font-display text-2xl font-semibold text-reed-800">80%</span></div>
+            <div class="mt-2 h-3 rounded-full bg-lake-100" aria-hidden="true"><div class="h-full rounded-full bg-reed-500" style="width:80%"></div></div>
+          </li>
+          <li>
+            <div class="flex items-baseline justify-between gap-4"><span class="font-medium text-lake-950">Believe people are aware of the dangers but don't act on them</span><span class="font-display text-2xl font-semibold text-sand-800">63%</span></div>
+            <div class="mt-2 h-3 rounded-full bg-lake-100" aria-hidden="true"><div class="h-full rounded-full bg-sand-400" style="width:63%"></div></div>
+          </li>
+        </ul>
+
+        <figure class="mt-12 rounded-2xl border-l-4 border-lake-600 bg-lake-50 p-6">
+          <p class="font-display text-xl text-lake-950">The core issue isn't ignorance. Most people already understand the danger. What's missing is the will to act on it.</p>
+          <figcaption class="mt-3 text-sm text-slate-700">Takeaway from the expert interview with <span class="font-semibold">Vishal Raj</span>, Hyderabad environmental activist. It matches the survey results above.</figcaption>
+        </figure>
+
+        <h3 class="mt-14 font-display text-2xl font-semibold text-lake-950">Feedback we're taking seriously</h3>
+        <div class="mt-6 grid gap-5 sm:grid-cols-2">
+          <div class="rounded-2xl p-6 ring-1 ring-lake-100">
+            <h4 class="font-semibold text-lake-950">Scope &amp; feasibility</h4>
+            <p class="mt-2 text-slate-700">Could this extend to oceans? And a low-cost design matters: the benefits have to outweigh the cost for governments to adopt it.</p>
+          </div>
+          <div class="rounded-2xl p-6 ring-1 ring-lake-100">
+            <h4 class="font-semibold text-lake-950">Enforcement &amp; accountability</h4>
+            <p class="mt-2 text-slate-700">Several people felt the deeper issue is weak enforcement and indifference. Even official bodies sometimes dispose of waste improperly.</p>
+          </div>
+          <div class="rounded-2xl p-6 ring-1 ring-lake-100">
+            <h4 class="font-semibold text-lake-950">Test carefully first</h4>
+            <p class="mt-2 text-slate-700">People want rigorous testing, including making sure the robot can't harm fish or other wildlife.</p>
+          </div>
+          <div class="rounded-2xl p-6 ring-1 ring-lake-100">
+            <h4 class="font-semibold text-lake-950">Encouragement</h4>
+            <p class="mt-2 text-slate-700">Many respondents were simply glad someone is working on this, and shared tips for making the survey easier to read.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================ TAKE ACTION ============================ -->
+    <section id="act" class="mx-auto max-w-6xl px-4 py-20 sm:px-6" aria-labelledby="act-title">
+      <p class="text-sm font-semibold uppercase tracking-[0.14em] text-reed-700">Take action</p>
+      <h2 id="act-title" class="mt-2 font-display text-3xl font-semibold text-lake-950 sm:text-4xl">Six things you can do today</h2>
+      <ul class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <li class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-lake-100">
+          <p class="text-sm font-bold uppercase tracking-wider text-reed-700">Learn</p>
+          <p class="mt-2 text-slate-700">Read about the problem and explore each lake's page.</p>
+          <a href="app.html#map" class="mt-3 inline-flex font-semibold text-lake-700 underline underline-offset-4 hover:text-lake-900">Open the lake map</a>
+        </li>
+        <li class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-lake-100">
+          <p class="text-sm font-bold uppercase tracking-wider text-reed-700">Respond</p>
+          <p class="mt-2 text-slate-700">Complete the Lake Sentry survey. It takes a few minutes.</p>
+          <a href="#survey" class="mt-3 inline-flex font-semibold text-lake-700 underline underline-offset-4 hover:text-lake-900">Go to the survey</a>
+        </li>
+        <li class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-lake-100">
+          <p class="text-sm font-bold uppercase tracking-wider text-reed-700">Share</p>
+          <p class="mt-2 text-slate-700">Share Lake Sentry's awareness posts with friends and family.</p>
+          <p class="mt-3 text-sm text-slate-600">Social links coming soon.</p>
+        </li>
+        <li class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-lake-100">
+          <p class="text-sm font-bold uppercase tracking-wider text-reed-700">Discover</p>
+          <p class="mt-2 text-slate-700">Find lake clean-up and conservation initiatives near you.</p>
+          <a href="app.html#initiatives" class="mt-3 inline-flex font-semibold text-lake-700 underline underline-offset-4 hover:text-lake-900">See published initiatives</a>
+        </li>
+        <li class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-lake-100">
+          <p class="text-sm font-bold uppercase tracking-wider text-reed-700">Participate</p>
+          <p class="mt-2 text-slate-700">Join a local clean-up day. Lake Sentry is planning a joint clean-up with college eco-clubs.</p>
+        </li>
+        <li class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-lake-100">
+          <p class="text-sm font-bold uppercase tracking-wider text-reed-700">Submit</p>
+          <p class="mt-2 text-slate-700">Tell us about an initiative you know, so others can join in.</p>
+          <a href="app.html#initiatives" class="mt-3 inline-flex font-semibold text-lake-700 underline underline-offset-4 hover:text-lake-900">Submit an initiative</a>
+        </li>
+      </ul>
+    </section>
+
+    <!-- ============================ PARTNERS + CAMPAIGN ============================ -->
+    <section class="bg-white py-20" aria-labelledby="partner-title">
+      <div class="mx-auto grid max-w-6xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-2">
+        <div>
+          <p class="text-sm font-semibold uppercase tracking-[0.14em] text-lake-700">Working together</p>
+          <h2 id="partner-title" class="mt-2 font-display text-3xl font-semibold text-lake-950 sm:text-4xl">Are you an NGO, a lake authority or a CSR team?</h2>
+          <p class="mt-4 text-slate-700">
+            Lake Sentry wants to join existing lake-restoration efforts, not duplicate them. We are looking for partners to help with site access and permissions, supervised test runs, training volunteer operators and, once the model is proven, funding to build more robots.
+          </p>
+          <!-- TODO: add a contact email or form link, e.g. <a href="mailto:hello@lakesentry.in">hello@lakesentry.in</a> -->
+          <p class="mt-6 rounded-lg bg-sand-100 px-4 py-3 text-sand-800">Contact details coming soon.</p>
+        </div>
+        <!-- IMAGE PLACEHOLDER — swap in a campaign post or clean-up day photo -->
+        <figure class="overflow-hidden rounded-2xl ring-1 ring-lake-100">
+          <img src="assets/images/placeholder.svg" width="800" height="500" loading="lazy" class="img-placeholder h-auto w-full"
+               alt="Placeholder for a photo of volunteers at a Lake Sentry lake clean-up day." />
+          <figcaption class="bg-white px-5 py-3 text-sm text-slate-700">Clean-up day with eco-club volunteers (photo to be added).</figcaption>
+        </figure>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============================ SITE FOOTER ============================ -->
+  <footer class="on-dark bg-lake-950 text-lake-100">
+    <div class="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-3">
+      <div>
+        <p class="font-display text-xl font-semibold text-white">Lake Sentry</p>
+        <p class="mt-3 text-sm leading-relaxed">A student-led environmental project combining research, engineering and awareness to reduce floating waste in Hyderabad's urban lakes.</p>
+      </div>
+      <nav aria-label="Footer">
+        <h2 class="text-sm font-semibold uppercase tracking-wider text-lake-200">Pages</h2>
+        <ul class="mt-3 space-y-2 text-sm">
+          <li><a href="index.html" class="underline-offset-4 hover:text-white hover:underline">Home</a></li>
+          <li><a href="about.html" class="underline-offset-4 hover:text-white hover:underline">About</a></li>
+          <li><a href="app.html" class="underline-offset-4 hover:text-white hover:underline">Lake Explorer App</a></li>
+          <li><a href="get-involved.html" class="underline-offset-4 hover:text-white hover:underline">Get involved</a></li>
+        </ul>
+      </nav>
+      <div>
+        <h2 class="text-sm font-semibold uppercase tracking-wider text-lake-200">Follow the campaign</h2>
+        <!-- TODO: replace these with your real Instagram / LinkedIn links when ready -->
+        <ul class="mt-3 space-y-2 text-sm">
+          <li>Instagram — link coming soon</li>
+          <li>LinkedIn — link coming soon</li>
+        </ul>
+      </div>
+    </div>
+    <p class="border-t border-white/10 px-4 py-5 text-center text-sm">© <span data-year>2026</span> Lake Sentry · Hyderabad, India</p>
+  </footer>
+
+  <script src="assets/js/site.js"></script>
+</body>
+</html>

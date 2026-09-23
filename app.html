@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lake Explorer App — Lake Sentry</title>
+  <meta name="description" content="Explore Hyderabad's lakes on an interactive map, drive a simulated Lake Sentry V1 robot, and try the initiative submission and review workflow." />
+
+  <!-- Fonts: Fraunces (headings) + Inter (body text) from Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS from its CDN (no install needed), then our shared settings -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="assets/js/tailwind-config.js"></script>
+  <link rel="stylesheet" href="assets/css/site.css" />
+</head>
+<body class="bg-sand-50 font-sans text-ink text-[1.0625rem] leading-relaxed">
+
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <!-- ============================ SITE HEADER ============================ -->
+  <header class="on-dark sticky top-0 z-50 border-b border-white/10 bg-lake-950/95 backdrop-blur">
+    <nav aria-label="Main" class="relative mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
+      <a href="index.html" class="flex items-center gap-2 rounded font-display text-xl font-semibold text-white">
+        <svg aria-hidden="true" class="h-8 w-8" viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="16" r="14.5" stroke="#76BFCB" stroke-width="2" />
+          <path d="M5 18c2.5-2.5 5-2.5 7.5 0s5 2.5 7.5 0 5-2.5 7.5 0" stroke="#86CF98" stroke-width="2" stroke-linecap="round" />
+          <path d="M5 12.5c2.5-2.5 5-2.5 7.5 0s5 2.5 7.5 0 5-2.5 7.5 0" stroke="#A9D8DF" stroke-width="2" stroke-linecap="round" />
+        </svg>
+        Lake Sentry
+      </a>
+      <button id="nav-toggle" type="button" class="inline-flex items-center gap-2 rounded-md border border-white/25 px-3 py-2 text-sm font-medium text-white md:hidden" aria-expanded="false" aria-controls="nav-menu">
+        <svg aria-hidden="true" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round" /></svg>
+        <span data-label>Open menu</span>
+      </button>
+      <ul id="nav-menu" class="absolute left-0 right-0 top-full hidden flex-col gap-1 border-b border-white/10 bg-lake-950 px-4 pb-4 md:static md:flex md:flex-row md:items-center md:gap-2 md:border-0 md:bg-transparent md:p-0">
+        <li><a href="index.html" class="block rounded-md px-3 py-2 text-lake-100 hover:bg-white/10 hover:text-white">Home</a></li>
+        <li><a href="about.html" class="block rounded-md px-3 py-2 text-lake-100 hover:bg-white/10 hover:text-white">About</a></li>
+        <li><a href="app.html" aria-current="page" class="block rounded-md px-3 py-2 font-semibold text-white underline decoration-sand-300 decoration-2 underline-offset-8">Lake Explorer App</a></li>
+        <li><a href="get-involved.html" class="mt-2 block rounded-md bg-sand-300 px-4 py-2 font-semibold text-lake-950 hover:bg-sand-100 md:ml-2 md:mt-0">Get involved</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main">
+
+    <!-- ============================ PAGE INTRO ============================ -->
+    <section class="on-dark bg-lake-900 text-white" aria-labelledby="page-title">
+      <div class="mx-auto max-w-6xl px-4 py-14 sm:px-6">
+        <p class="text-sm font-semibold uppercase tracking-[0.14em] text-lake-200">Interactive demo</p>
+        <h1 id="page-title" class="mt-2 font-display text-4xl font-semibold sm:text-5xl">Lake Explorer</h1>
+        <p class="mt-4 max-w-2xl text-lg text-lake-100">A working preview of LakeSentry.in: explore Hyderabad's lakes, drive a simulated Lake Sentry V1, and try the reviewed initiative network.</p>
+        <nav aria-label="Tools on this page" class="mt-8">
+          <ul class="grid gap-3 sm:grid-cols-3">
+            <li><a href="#map" class="block rounded-xl bg-white/10 p-4 ring-1 ring-white/20 hover:bg-white/15"><span class="block font-semibold">1 · Lake map</span><span class="text-sm text-lake-100">Explore each lake's page</span></a></li>
+            <li><a href="#simulator" class="block rounded-xl bg-white/10 p-4 ring-1 ring-white/20 hover:bg-white/15"><span class="block font-semibold">2 · V1 simulator</span><span class="text-sm text-lake-100">Aim, scoop, return, record</span></a></li>
+            <li><a href="#initiatives" class="block rounded-xl bg-white/10 p-4 ring-1 ring-white/20 hover:bg-white/15"><span class="block font-semibold">3 · Initiative network</span><span class="text-sm text-lake-100">Submit, review, publish</span></a></li>
+          </ul>
+        </nav>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         TOOL 1 — INTERACTIVE LAKE MAP   (logic: assets/js/lake-map.js,
+                                          data:  assets/js/lakes-data.js)
+         ===================================================================== -->
+    <section id="map" class="mx-auto max-w-6xl px-4 py-16 sm:px-6" aria-labelledby="map-heading">
+      <p class="text-sm font-semibold uppercase tracking-[0.14em] text-lake-700">Tool 1</p>
+      <h2 id="map-heading" class="mt-1 font-display text-3xl font-semibold text-lake-950 sm:text-4xl">Explore Hyderabad's lakes</h2>
+      <p class="mt-3 max-w-prose text-slate-700">Hover over a lake to see its name. Select it, with a click or by pressing Enter, to open its lake page. You can also use the list.</p>
+
+      <div class="mt-8 grid gap-6 lg:grid-cols-[1.7fr_1fr]">
+        <figure class="rounded-2xl bg-white p-3 shadow-sm ring-1 ring-lake-100">
+          <h3 id="lake-map-title" class="sr-only">Schematic map of lakes in and around Hyderabad</h3>
+          <!-- The SVG map is inserted here by lake-map.js -->
+          <div id="lake-map" class="relative overflow-hidden rounded-xl">
+            <div id="lake-tooltip" hidden aria-hidden="true" class="pointer-events-none absolute z-10 max-w-[16rem] rounded-lg bg-lake-950 px-3 py-2 text-sm text-white shadow-lg">
+              <span data-name class="block font-semibold"></span>
+              <span data-area class="block text-lake-100"></span>
+            </div>
+          </div>
+          <figcaption class="flex flex-wrap items-center gap-x-5 gap-y-2 px-2 pt-3 text-sm text-slate-700">
+            <span class="flex items-center gap-2"><span aria-hidden="true" class="inline-block h-3 w-5 rounded-full bg-lake-400 ring-1 ring-lake-700"></span>Lake</span>
+            <span class="flex items-center gap-2"><span aria-hidden="true" class="inline-block h-3 w-5 rounded-full border border-dashed border-lake-700 bg-lake-200"></span>Location to be verified</span>
+            <span>Schematic map, not to scale. Positions are approximate.</span>
+          </figcaption>
+        </figure>
+
+        <div>
+          <h3 class="font-display text-xl font-semibold text-lake-950">All lakes</h3>
+          <ul id="lake-list" class="mt-3 space-y-2" aria-label="Lakes"></ul>
+        </div>
+      </div>
+
+      <!-- Screen-reader announcement when a lake is selected -->
+      <p id="lake-status" class="sr-only" role="status" aria-live="polite"></p>
+
+      <!-- The selected lake's page is inserted here -->
+      <div id="lake-detail" class="mt-10 rounded-3xl bg-white p-6 shadow-sm ring-1 ring-lake-100 sm:p-8"></div>
+    </section>
+
+    <!-- =====================================================================
+         TOOL 2 — LAKE SENTRY V1 SIMULATOR   (logic: assets/js/bot-sim.js)
+         ===================================================================== -->
+    <section id="simulator" class="bg-white py-16" aria-labelledby="sim-heading">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6">
+        <p class="text-sm font-semibold uppercase tracking-[0.14em] text-lake-700">Tool 2</p>
+        <h2 id="sim-heading" class="mt-1 font-display text-3xl font-semibold text-lake-950 sm:text-4xl">Drive Lake Sentry V1</h2>
+        <p class="mt-3 max-w-prose text-slate-700">
+          Pilot the remote-controlled robot around a lake. Drive <strong>forward into trash</strong> so the mesh conveyor lifts it aboard, then return to the yellow zone on the bank to unload and record your trip. Try the original smooth conveyor rod to see the slipping problem V1 had to solve.
+        </p>
+
+        <!-- The four steps of a clean-up run; the current one is highlighted -->
+        <ol id="sim-phases" class="mt-6 grid grid-cols-2 gap-2 text-sm sm:grid-cols-4" aria-label="Clean-up run steps">
+          <li data-phase="aim" class="rounded-lg bg-lake-50 px-3 py-2 text-lake-900 ring-1 ring-lake-200 aria-[current=step]:bg-lake-700 aria-[current=step]:text-white"><strong>1 · Aim</strong> <span class="block">Steer toward trash</span></li>
+          <li data-phase="scoop" class="rounded-lg bg-lake-50 px-3 py-2 text-lake-900 ring-1 ring-lake-200 aria-[current=step]:bg-lake-700 aria-[current=step]:text-white"><strong>2 · Scoop</strong> <span class="block">Conveyor lifts it</span></li>
+          <li data-phase="return" class="rounded-lg bg-lake-50 px-3 py-2 text-lake-900 ring-1 ring-lake-200 aria-[current=step]:bg-lake-700 aria-[current=step]:text-white"><strong>3 · Return</strong> <span class="block">Head to the bank</span></li>
+          <li data-phase="record" class="rounded-lg bg-lake-50 px-3 py-2 text-lake-900 ring-1 ring-lake-200 aria-[current=step]:bg-lake-700 aria-[current=step]:text-white"><strong>4 · Record</strong> <span class="block">Weigh &amp; log</span></li>
+        </ol>
+
+        <div class="mt-6 grid gap-6 lg:grid-cols-[1fr_19rem]">
+          <div>
+            <!-- Game area. role="application" lets screen-reader users use the arrow keys to drive. -->
+            <div id="sim-stage" tabindex="0" role="application" aria-label="Lake Sentry V1 simulator. Use the arrow keys or W, A, S, D to drive, and P to pause."
+                 aria-describedby="sim-help" class="relative overflow-hidden rounded-2xl ring-1 ring-lake-200">
+              <canvas id="sim-canvas" width="960" height="600" class="block h-auto w-full" aria-hidden="true"></canvas>
+              <div id="sim-overlay" class="on-dark absolute inset-0 flex flex-col items-center justify-center gap-4 bg-lake-950/70 p-6 text-center text-white">
+                <p class="max-w-md text-lg">Collect floating trash, then bring it back to the bank.</p>
+                <button type="button" class="rounded-lg bg-sand-300 px-6 py-3 text-lg font-semibold text-lake-950 hover:bg-sand-100">Start simulation</button>
+              </div>
+            </div>
+            <p id="sim-help" class="mt-3 text-sm text-slate-700">
+              <strong>Controls:</strong> click the lake or tab to it, then use <kbd class="rounded border border-slate-500 bg-slate-100 px-1.5 font-mono text-xs">↑</kbd> <kbd class="rounded border border-slate-500 bg-slate-100 px-1.5 font-mono text-xs">↓</kbd> <kbd class="rounded border border-slate-500 bg-slate-100 px-1.5 font-mono text-xs">←</kbd> <kbd class="rounded border border-slate-500 bg-slate-100 px-1.5 font-mono text-xs">→</kbd> or W A S D. Press P to pause. On a touchscreen, hold the buttons below.
+            </p>
+
+            <!-- Messages from the simulator (read aloud by screen readers) -->
+            <p id="sim-live" role="status" aria-live="polite" class="mt-3 min-h-[3.5rem] rounded-lg bg-lake-50 px-4 py-3 text-lake-900 ring-1 ring-lake-100">Press “Start simulation” to begin.</p>
+
+            <div class="mt-4 flex flex-wrap items-center justify-between gap-4">
+              <div class="flex flex-wrap gap-2">
+                <button id="sim-start" type="button" class="rounded-lg bg-lake-700 px-5 py-2.5 font-semibold text-white hover:bg-lake-800">Start simulation</button>
+                <button id="sim-reset" type="button" class="rounded-lg px-5 py-2.5 font-semibold text-lake-800 ring-1 ring-lake-300 hover:bg-lake-50">Reset</button>
+                <button id="sim-tow" type="button" class="rounded-lg px-5 py-2.5 font-semibold text-lake-800 ring-1 ring-lake-300 hover:bg-lake-50">Tow back to bank</button>
+              </div>
+              <!-- On-screen driving pad: hold a button to drive -->
+              <div class="grid grid-cols-3 gap-1.5 select-none" role="group" aria-label="Driving controls (hold to drive)">
+                <span></span>
+                <button type="button" data-drive="fwd" aria-label="Forward" class="flex h-12 w-12 touch-none items-center justify-center rounded-lg bg-lake-700 text-white hover:bg-lake-800"><svg aria-hidden="true" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path d="M10 4l6 8H4z" /></svg></button>
+                <span></span>
+                <button type="button" data-drive="left" aria-label="Turn left" class="flex h-12 w-12 touch-none items-center justify-center rounded-lg bg-lake-700 text-white hover:bg-lake-800"><svg aria-hidden="true" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path d="M4 10l8-6v12z" /></svg></button>
+                <button type="button" data-drive="back" aria-label="Reverse" class="flex h-12 w-12 touch-none items-center justify-center rounded-lg bg-lake-700 text-white hover:bg-lake-800"><svg aria-hidden="true" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path d="M10 16l6-8H4z" /></svg></button>
+                <button type="button" data-drive="right" aria-label="Turn right" class="flex h-12 w-12 touch-none items-center justify-center rounded-lg bg-lake-700 text-white hover:bg-lake-800"><svg aria-hidden="true" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path d="M16 10l-8-6v12z" /></svg></button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Status + settings panel -->
+          <aside class="space-y-5" aria-label="Robot status and settings">
+            <div class="rounded-2xl bg-sand-50 p-5 ring-1 ring-sand-300">
+              <h3 class="font-display text-lg font-semibold text-lake-950">Robot status</h3>
+              <dl class="mt-3 space-y-3 text-sm">
+                <!-- Each row: label (dt), value (dd), then a visual bar (hidden from screen readers) -->
+                <div class="grid grid-cols-[1fr_auto] gap-y-1">
+                  <dt class="font-medium">Storage used</dt><dd id="sim-storage-text" class="font-semibold">0%</dd>
+                  <dd class="col-span-2 h-2.5 rounded-full bg-lake-100" aria-hidden="true"><div id="sim-storage-bar" class="h-full rounded-full bg-lake-600" style="width:0%"></div></dd>
+                </div>
+                <div class="grid grid-cols-[1fr_auto] gap-y-1">
+                  <dt class="font-medium">Battery</dt><dd id="sim-battery-text" class="font-semibold">100%</dd>
+                  <dd class="col-span-2 h-2.5 rounded-full bg-lake-100" aria-hidden="true"><div id="sim-battery-bar" class="h-full rounded-full bg-reed-500" style="width:100%"></div></dd>
+                </div>
+                <div class="flex justify-between"><dt>Pieces on board</dt><dd id="sim-trip-pieces" class="font-semibold">0</dd></div>
+                <div class="flex justify-between"><dt>Total recorded</dt><dd id="sim-total-pieces" class="font-semibold">0</dd></div>
+                <div class="flex justify-between"><dt>Total weight</dt><dd id="sim-total-weight" class="font-semibold">0 g</dd></div>
+                <div class="flex justify-between"><dt>Slipped off conveyor</dt><dd id="sim-slips" class="font-semibold">0</dd></div>
+                <div id="sim-sensor-row" hidden><dt class="font-medium">Sensor: nearest waste</dt><dd id="sim-sensor" class="mt-0.5 font-semibold text-lake-800"></dd></div>
+              </dl>
+            </div>
+
+            <fieldset class="rounded-2xl p-5 ring-1 ring-lake-200">
+              <legend class="px-1 font-display text-lg font-semibold text-lake-950">Conveyor rod</legend>
+              <div class="mt-1 space-y-2 text-sm">
+                <label class="flex cursor-pointer items-start gap-3"><input id="sim-rod-original" type="radio" name="sim-rod" value="original" class="mt-1 h-4 w-4 accent-lake-700" /><span><strong>Original</strong> (smooth rod, so the mesh slips)</span></label>
+                <label class="flex cursor-pointer items-start gap-3"><input id="sim-rod-modified" type="radio" name="sim-rod" value="modified" checked class="mt-1 h-4 w-4 accent-lake-700" /><span><strong>Modified</strong> (friction points added)</span></label>
+              </div>
+            </fieldset>
+
+            <fieldset class="rounded-2xl p-5 ring-1 ring-sand-300">
+              <legend class="px-1 font-display text-lg font-semibold text-lake-950">Try V2 ideas</legend>
+              <div class="mt-1 space-y-2 text-sm">
+                <label class="flex cursor-pointer items-start gap-3"><input id="sim-solar" type="checkbox" class="mt-1 h-4 w-4 accent-lake-700" /><span><strong>Solar panel</strong>: slowly recharges the battery</span></label>
+                <label class="flex cursor-pointer items-start gap-3"><input id="sim-sensor-toggle" type="checkbox" class="mt-1 h-4 w-4 accent-lake-700" /><span><strong>Waste-detection sensor</strong>: points to the nearest trash</span></label>
+              </div>
+            </fieldset>
+          </aside>
+        </div>
+
+        <!-- Trip log: the "Record" step -->
+        <div class="mt-10 overflow-x-auto rounded-2xl ring-1 ring-lake-100">
+          <table class="w-full min-w-[36rem] text-left text-sm">
+            <caption class="bg-lake-50 px-4 py-3 text-left font-display text-lg font-semibold text-lake-950">Trip log: what each trip collected</caption>
+            <thead class="bg-white text-xs uppercase tracking-wider text-slate-600">
+              <tr><th scope="col" class="px-3 py-2">Trip</th><th scope="col" class="px-3 py-2">Pieces</th><th scope="col" class="px-3 py-2">Weight</th><th scope="col" class="px-3 py-2">Time</th><th scope="col" class="px-3 py-2">What was collected</th></tr>
+            </thead>
+            <tbody id="sim-log-body" class="bg-white"></tbody>
+          </table>
+          <p id="sim-log-empty" class="bg-white px-4 py-4 text-sm text-slate-600">No trips recorded yet. Unload at the bank to log your first trip.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         TOOL 3 — LAKE INITIATIVE NETWORK   (logic: assets/js/initiatives.js)
+         ===================================================================== -->
+    <section id="initiatives" class="mx-auto max-w-6xl px-4 py-16 sm:px-6" aria-labelledby="init-heading">
+      <p class="text-sm font-semibold uppercase tracking-[0.14em] text-lake-700">Tool 3</p>
+      <h2 id="init-heading" class="mt-1 font-display text-3xl font-semibold text-lake-950 sm:text-4xl">Lake Initiative Network</h2>
+      <p class="mt-3 max-w-prose text-slate-700">Know about a lake clean-up or conservation effort? Submit it here. Nothing is published automatically: every submission is reviewed first.</p>
+
+      <ol class="mt-6 flex flex-wrap items-center gap-2 text-sm font-semibold" aria-label="Review workflow">
+        <li class="rounded-full bg-lake-100 px-4 py-2 text-lake-900">1 · Submit</li>
+        <li aria-hidden="true" class="text-slate-500">→</li>
+        <li class="rounded-full bg-sand-100 px-4 py-2 text-sand-800">2 · Review</li>
+        <li aria-hidden="true" class="text-slate-500">→</li>
+        <li class="rounded-full bg-sand-100 px-4 py-2 text-sand-800">3 · Approve or reject</li>
+        <li aria-hidden="true" class="text-slate-500">→</li>
+        <li class="rounded-full bg-reed-100 px-4 py-2 text-reed-800">4 · Publish</li>
+      </ol>
+
+      <div class="mt-10 grid items-start gap-8 lg:grid-cols-2">
+        <!-- ---------- Submission form ---------- -->
+        <div class="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-lake-100 sm:p-8">
+          <h3 class="font-display text-2xl font-semibold text-lake-950">Submit an initiative</h3>
+          <p class="mt-1 text-sm text-slate-600">Fields marked “required” must be filled in.</p>
+
+          <!-- Error summary: shown (and focused) when the form has problems -->
+          <div id="init-errors" hidden tabindex="-1" aria-labelledby="init-errors-title" class="mt-5 rounded-xl border-2 border-red-700 bg-red-50 p-4 text-red-900">
+            <h4 id="init-errors-title" class="font-semibold">Please fix the following:</h4>
+            <ul class="mt-2 list-disc space-y-1 pl-5 text-sm"></ul>
+          </div>
+          <!-- Success message -->
+          <div id="init-success" hidden tabindex="-1" role="status" class="mt-5 rounded-xl border-2 border-reed-700 bg-reed-50 p-4 text-reed-800">
+            <p class="font-semibold">Thank you! Your initiative was submitted and is waiting for review.</p>
+            <p class="text-sm">You can see it in the review queue.</p>
+          </div>
+
+          <form id="initiative-form" class="mt-5 space-y-5" novalidate>
+            <div>
+              <label for="init-name" class="block font-semibold">Name of the initiative <span class="font-normal text-slate-600">(required)</span></label>
+              <input id="init-name" name="name" type="text" autocomplete="off" required aria-describedby="init-name-error"
+                     class="mt-1 w-full rounded-lg border border-slate-500 px-3 py-2.5 aria-[invalid=true]:border-2 aria-[invalid=true]:border-red-700" />
+              <p id="init-name-error" hidden class="mt-1 text-sm font-medium text-red-700"></p>
+            </div>
+
+            <div class="grid gap-5 sm:grid-cols-2">
+              <div>
+                <label for="init-lake" class="block font-semibold">Lake <span class="font-normal text-slate-600">(required)</span></label>
+                <select id="init-lake" name="lake" required aria-describedby="init-lake-error"
+                        class="mt-1 w-full rounded-lg border border-slate-500 bg-white px-3 py-2.5 aria-[invalid=true]:border-2 aria-[invalid=true]:border-red-700"></select>
+                <p id="init-lake-error" hidden class="mt-1 text-sm font-medium text-red-700"></p>
+              </div>
+              <div>
+                <label for="init-type" class="block font-semibold">Activity type <span class="font-normal text-slate-600">(required)</span></label>
+                <select id="init-type" name="type" required aria-describedby="init-type-error"
+                        class="mt-1 w-full rounded-lg border border-slate-500 bg-white px-3 py-2.5 aria-[invalid=true]:border-2 aria-[invalid=true]:border-red-700">
+                  <option value="">Choose a type…</option>
+                </select>
+                <p id="init-type-error" hidden class="mt-1 text-sm font-medium text-red-700"></p>
+              </div>
+            </div>
+
+            <div class="grid gap-5 sm:grid-cols-2">
+              <div>
+                <label for="init-org" class="block font-semibold">Organisation or group</label>
+                <input id="init-org" name="organization" type="text" autocomplete="organization" class="mt-1 w-full rounded-lg border border-slate-500 px-3 py-2.5" />
+              </div>
+              <div>
+                <label for="init-date" class="block font-semibold">Date</label>
+                <input id="init-date" name="date" type="date" class="mt-1 w-full rounded-lg border border-slate-500 px-3 py-2.5" />
+              </div>
+            </div>
+
+            <div>
+              <label for="init-description" class="block font-semibold">What does the initiative do? <span class="font-normal text-slate-600">(required)</span></label>
+              <p id="init-description-hint" class="text-sm text-slate-600">At least 20 characters.</p>
+              <textarea id="init-description" name="description" rows="4" required aria-describedby="init-description-hint init-description-error"
+                        class="mt-1 w-full rounded-lg border border-slate-500 px-3 py-2.5 aria-[invalid=true]:border-2 aria-[invalid=true]:border-red-700"></textarea>
+              <p id="init-description-error" hidden class="mt-1 text-sm font-medium text-red-700"></p>
+            </div>
+
+            <div>
+              <label for="init-participate" class="block font-semibold">How can people take part?</label>
+              <input id="init-participate" name="participate" type="text" class="mt-1 w-full rounded-lg border border-slate-500 px-3 py-2.5" />
+            </div>
+
+            <div>
+              <label for="init-link" class="block font-semibold">Website or social media link</label>
+              <p id="init-link-hint" class="text-sm text-slate-600">For example: https://instagram.com/yourgroup</p>
+              <input id="init-link" name="link" type="url" inputmode="url" aria-describedby="init-link-hint init-link-error"
+                     class="mt-1 w-full rounded-lg border border-slate-500 px-3 py-2.5 aria-[invalid=true]:border-2 aria-[invalid=true]:border-red-700" />
+              <p id="init-link-error" hidden class="mt-1 text-sm font-medium text-red-700"></p>
+            </div>
+
+            <!-- IMAGE UPLOAD PLACEHOLDER: photo uploads need a real server, so this is a note for now -->
+            <p class="rounded-lg bg-sand-100 px-4 py-3 text-sm text-sand-800">Photo uploads will be available on the live LakeSentry.in site.</p>
+
+            <button type="submit" class="rounded-lg bg-lake-700 px-6 py-3 font-semibold text-white hover:bg-lake-800">Submit for review</button>
+          </form>
+        </div>
+
+        <!-- ---------- Review queue (demo "admin" view) ---------- -->
+        <div class="rounded-3xl bg-sand-100/60 p-6 ring-1 ring-sand-300 sm:p-8">
+          <h3 id="review-title" tabindex="-1" class="flex items-center gap-3 font-display text-2xl font-semibold text-lake-950">
+            Review queue
+            <span class="rounded-full bg-sand-800 px-3 py-0.5 font-sans text-sm font-semibold text-white"><span id="review-count">0</span> <span class="sr-only">waiting</span></span>
+          </h3>
+          <p class="mt-2 text-sm text-slate-700">
+            <strong>Demo reviewer view.</strong> On the live site only the Lake Sentry team would see this. It's here so you can try the whole workflow. Your submissions are saved in this browser only.
+          </p>
+          <ul id="review-queue" class="mt-5 space-y-4" aria-label="Submissions waiting for review"></ul>
+          <p id="review-empty" hidden class="mt-5 rounded-xl bg-white px-4 py-3 text-slate-700">Nothing waiting for review. Submit an initiative to see it here.</p>
+        </div>
+      </div>
+
+      <!-- ---------- Published initiatives ---------- -->
+      <div class="mt-14">
+        <div class="flex flex-wrap items-end justify-between gap-4">
+          <h3 class="font-display text-2xl font-semibold text-lake-950">Published initiatives</h3>
+          <div>
+            <label for="published-filter" class="block text-sm font-semibold">Show initiatives at</label>
+            <select id="published-filter" class="mt-1 rounded-lg border border-slate-500 bg-white px-3 py-2"></select>
+          </div>
+        </div>
+        <ul id="published-list" class="mt-5 grid gap-4 md:grid-cols-2" aria-label="Published initiatives"></ul>
+        <p id="published-empty" hidden class="mt-5 rounded-xl bg-white px-4 py-3 text-slate-700 ring-1 ring-lake-100">No published initiatives for this selection yet.</p>
+
+        <details class="mt-8 rounded-2xl bg-white p-5 ring-1 ring-lake-100">
+          <summary class="cursor-pointer font-semibold text-lake-900">Rejected submissions (<span id="rejected-count">0</span>)</summary>
+          <p class="mt-2 text-sm text-slate-600">Rejected submissions are never published. They are listed here for transparency in this demo.</p>
+          <ul id="rejected-list" class="mt-4 space-y-4"></ul>
+        </details>
+
+        <button id="init-reset" type="button" class="mt-6 rounded-lg px-4 py-2 text-sm font-semibold text-lake-800 ring-1 ring-lake-300 hover:bg-lake-50">Reset demo data</button>
+      </div>
+
+      <!-- Screen-reader announcements for approve/reject -->
+      <p id="init-status" class="sr-only" role="status" aria-live="polite"></p>
+    </section>
+  </main>
+
+  <!-- ============================ SITE FOOTER ============================ -->
+  <footer class="on-dark bg-lake-950 text-lake-100">
+    <div class="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-3">
+      <div>
+        <p class="font-display text-xl font-semibold text-white">Lake Sentry</p>
+        <p class="mt-3 text-sm leading-relaxed">A student-led environmental project combining research, engineering and awareness to reduce floating waste in Hyderabad's urban lakes.</p>
+      </div>
+      <nav aria-label="Footer">
+        <h2 class="text-sm font-semibold uppercase tracking-wider text-lake-200">Pages</h2>
+        <ul class="mt-3 space-y-2 text-sm">
+          <li><a href="index.html" class="underline-offset-4 hover:text-white hover:underline">Home</a></li>
+          <li><a href="about.html" class="underline-offset-4 hover:text-white hover:underline">About</a></li>
+          <li><a href="app.html" class="underline-offset-4 hover:text-white hover:underline">Lake Explorer App</a></li>
+          <li><a href="get-involved.html" class="underline-offset-4 hover:text-white hover:underline">Get involved</a></li>
+        </ul>
+      </nav>
+      <div>
+        <h2 class="text-sm font-semibold uppercase tracking-wider text-lake-200">Follow the campaign</h2>
+        <!-- TODO: replace these with your real Instagram / LinkedIn links when ready -->
+        <ul class="mt-3 space-y-2 text-sm">
+          <li>Instagram — link coming soon</li>
+          <li>LinkedIn — link coming soon</li>
+        </ul>
+      </div>
+    </div>
+    <p class="border-t border-white/10 px-4 py-5 text-center text-sm">© <span data-year>2026</span> Lake Sentry · Hyderabad, India</p>
+  </footer>
+
+  <!-- Order matters: lake data first, then the initiative store (used by the map), then the tools -->
+  <script src="assets/js/site.js"></script>
+  <script src="assets/js/lakes-data.js"></script>
+  <script src="assets/js/initiatives.js"></script>
+  <script src="assets/js/lake-map.js"></script>
+  <script src="assets/js/bot-sim.js"></script>
+</body>
+</html>

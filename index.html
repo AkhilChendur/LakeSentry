@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lake Sentry — Cleaner Lakes for Hyderabad</title>
+  <meta name="description" content="Lake Sentry pairs a low-cost floating waste-collection robot with an awareness campaign to remove — and prevent — floating trash in Hyderabad's urban lakes." />
+
+  <!-- Fonts: Fraunces (headings) + Inter (body text) from Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS from its CDN (no install needed), then our shared settings -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="assets/js/tailwind-config.js"></script>
+  <link rel="stylesheet" href="assets/css/site.css" />
+</head>
+<body class="bg-sand-50 font-sans text-ink text-[1.0625rem] leading-relaxed">
+
+  <!-- Keyboard users can jump straight past the navigation -->
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <!-- ============================================================
+       SITE HEADER (the same block is copied onto every page —
+       only the aria-current="page" link changes)
+       ============================================================ -->
+  <header class="on-dark sticky top-0 z-50 border-b border-white/10 bg-lake-950/95 backdrop-blur">
+    <nav aria-label="Main" class="relative mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
+      <a href="index.html" class="flex items-center gap-2 rounded font-display text-xl font-semibold text-white">
+        <!-- Logo: a ring with two waves (decorative, so hidden from screen readers) -->
+        <svg aria-hidden="true" class="h-8 w-8" viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="16" r="14.5" stroke="#76BFCB" stroke-width="2" />
+          <path d="M5 18c2.5-2.5 5-2.5 7.5 0s5 2.5 7.5 0 5-2.5 7.5 0" stroke="#86CF98" stroke-width="2" stroke-linecap="round" />
+          <path d="M5 12.5c2.5-2.5 5-2.5 7.5 0s5 2.5 7.5 0 5-2.5 7.5 0" stroke="#A9D8DF" stroke-width="2" stroke-linecap="round" />
+        </svg>
+        Lake Sentry
+      </a>
+
+      <!-- Hamburger button — only visible on small screens -->
+      <button id="nav-toggle" type="button" class="inline-flex items-center gap-2 rounded-md border border-white/25 px-3 py-2 text-sm font-medium text-white md:hidden" aria-expanded="false" aria-controls="nav-menu">
+        <svg aria-hidden="true" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round" /></svg>
+        <span data-label>Open menu</span>
+      </button>
+
+      <ul id="nav-menu" class="absolute left-0 right-0 top-full hidden flex-col gap-1 border-b border-white/10 bg-lake-950 px-4 pb-4 md:static md:flex md:flex-row md:items-center md:gap-2 md:border-0 md:bg-transparent md:p-0">
+        <li><a href="index.html" aria-current="page" class="block rounded-md px-3 py-2 font-semibold text-white underline decoration-sand-300 decoration-2 underline-offset-8">Home</a></li>
+        <li><a href="about.html" class="block rounded-md px-3 py-2 text-lake-100 hover:bg-white/10 hover:text-white">About</a></li>
+        <li><a href="app.html" class="block rounded-md px-3 py-2 text-lake-100 hover:bg-white/10 hover:text-white">Lake Explorer App</a></li>
+        <li><a href="get-involved.html" class="mt-2 block rounded-md bg-sand-300 px-4 py-2 font-semibold text-lake-950 hover:bg-sand-100 md:ml-2 md:mt-0">Get involved</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main">
+
+    <!-- ============================================================
+         HERO — the interactive lake
+         The <canvas> is drawn by assets/js/lake-hero.js.
+         ============================================================ -->
+    <section id="hero" class="on-dark relative isolate flex min-h-[calc(100vh-4rem)] items-center overflow-hidden bg-lake-900" aria-labelledby="hero-title">
+      <!-- Decorative animation: hidden from screen readers -->
+      <canvas id="lake-canvas" class="absolute inset-0 -z-10 h-full w-full" aria-hidden="true"></canvas>
+
+      <div class="mx-auto w-full max-w-6xl px-4 pb-40 pt-12 sm:px-6 sm:pb-28 sm:pt-20">
+        <!-- Semi-transparent dark panel keeps text readable over the moving water -->
+        <div class="max-w-2xl rounded-2xl bg-lake-950/80 p-7 shadow-2xl ring-1 ring-white/15 backdrop-blur-sm sm:p-10">
+          <p class="text-sm font-semibold uppercase tracking-[0.14em] text-lake-200">Hyderabad, India · Research, engineering &amp; awareness</p>
+          <h1 id="hero-title" class="mt-3 font-display text-5xl font-semibold leading-none text-white sm:text-7xl">Lake Sentry</h1>
+          <!-- The one-line description of the project -->
+          <p class="mt-5 text-xl leading-snug text-lake-50 sm:text-2xl">
+            A low-cost floating robot and a public awareness campaign working together to clear&nbsp;— and prevent&nbsp;— floating trash in Hyderabad's urban lakes.
+          </p>
+          <div class="mt-8 flex flex-wrap gap-3">
+            <a href="app.html" class="inline-flex items-center gap-2 rounded-lg bg-sand-300 px-5 py-3 font-semibold text-lake-950 shadow hover:bg-sand-100">
+              Try the Lake Explorer
+              <svg aria-hidden="true" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M11.3 4.3a1 1 0 0 1 1.4 0l5 5a1 1 0 0 1 0 1.4l-5 5a1 1 0 0 1-1.4-1.4L14.6 11H3a1 1 0 1 1 0-2h11.6l-3.3-3.3a1 1 0 0 1 0-1.4Z" /></svg>
+            </a>
+            <a href="about.html" class="inline-flex items-center rounded-lg border border-white/40 px-5 py-3 font-semibold text-white hover:bg-white/10">About the project</a>
+          </div>
+          <p class="mt-7 flex items-center gap-2 text-sm text-lake-100">
+            <svg aria-hidden="true" class="h-4 w-4 flex-none" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16Zm0 3a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 3a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z" /></svg>
+            Move your cursor across the water to make ripples — click or tap for a splash.
+          </p>
+        </div>
+      </div>
+
+      <!-- Bottom bar: a fun counter + the pause button (required so moving content can be stopped) -->
+      <div class="absolute inset-x-0 bottom-0 flex flex-wrap items-center justify-between gap-3 px-4 pb-4 sm:px-6">
+        <p class="rounded-full bg-lake-950/85 px-4 py-2 text-sm text-lake-50 ring-1 ring-white/15">
+          Trash collected by the mini Lake Sentry: <strong id="lake-counter" class="font-semibold text-sand-300">0</strong>
+        </p>
+        <button id="lake-pause" type="button" class="inline-flex items-center gap-2 rounded-full bg-lake-950/85 px-4 py-2 text-sm font-medium text-white ring-1 ring-white/25 hover:bg-lake-900">
+          <svg data-icon-pause aria-hidden="true" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M6 4h3v12H6zM11 4h3v12h-3z" /></svg>
+          <svg data-icon-play aria-hidden="true" class="hidden h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M6 4l10 6-10 6z" /></svg>
+          <span data-label>Pause animation</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         THREE PILLARS: Prevent · Remove · Connect
+         ============================================================ -->
+    <section class="mx-auto max-w-6xl px-4 py-20 sm:px-6" aria-labelledby="pillars-title">
+      <p class="text-sm font-semibold uppercase tracking-[0.14em] text-lake-700">The dual-solution framework</p>
+      <h2 id="pillars-title" class="mt-2 max-w-3xl font-display text-3xl font-semibold text-lake-950 sm:text-4xl">
+        Cleaning the waste already in our lakes is necessary. Stopping new waste from getting there matters just as much.
+      </h2>
+
+      <ul class="mt-12 grid gap-6 md:grid-cols-3">
+        <li class="flex flex-col rounded-2xl border-t-4 border-reed-500 bg-white p-7 shadow-sm ring-1 ring-lake-100">
+          <p class="text-sm font-bold uppercase tracking-wider text-reed-700">01 · Prevent</p>
+          <h3 class="mt-2 font-display text-2xl font-semibold text-lake-950">Awareness campaign</h3>
+          <p class="mt-3 text-slate-700">Instagram, LinkedIn and offline installations such as “The Rollers” that encourage people to dispose of waste properly.</p>
+        </li>
+        <li class="flex flex-col rounded-2xl border-t-4 border-lake-500 bg-white p-7 shadow-sm ring-1 ring-lake-100">
+          <p class="text-sm font-bold uppercase tracking-wider text-lake-700">02 · Remove</p>
+          <h3 class="mt-2 font-display text-2xl font-semibold text-lake-950">Lake Sentry V1 robot</h3>
+          <p class="mt-3 text-slate-700">A remote-controlled floating machine built from CPVC pipe that scoops trash off the surface using a mesh conveyor belt.</p>
+        </li>
+        <li class="flex flex-col rounded-2xl border-t-4 border-sand-400 bg-white p-7 shadow-sm ring-1 ring-lake-100">
+          <p class="text-sm font-bold uppercase tracking-wider text-sand-700">03 · Connect</p>
+          <h3 class="mt-2 font-display text-2xl font-semibold text-lake-950">LakeSentry.in platform</h3>
+          <p class="mt-3 text-slate-700">A lake map, a research page for each lake, and a reviewed network of community clean-up initiatives.</p>
+        </li>
+      </ul>
+    </section>
+
+    <!-- ============================================================
+         QUICK FACTS + photo of the real prototype
+         ============================================================ -->
+    <section class="bg-white py-20" aria-labelledby="facts-title">
+      <div class="mx-auto grid max-w-6xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-2">
+        <div>
+          <p class="text-sm font-semibold uppercase tracking-[0.14em] text-lake-700">Close to home</p>
+          <h2 id="facts-title" class="mt-2 font-display text-3xl font-semibold text-lake-950 sm:text-4xl">The trash is visible, physical and ongoing.</h2>
+          <dl class="mt-8 grid grid-cols-2 gap-5">
+            <div class="flex flex-col rounded-xl bg-lake-50 p-5">
+              <dt class="text-sm text-slate-700">Plastic removed from Kotha Cheruvu in this year's clean-up drives</dt>
+              <dd class="order-first font-display text-4xl font-semibold text-lake-800">15 t</dd>
+            </div>
+            <div class="flex flex-col rounded-xl bg-lake-50 p-5">
+              <dt class="text-sm text-slate-700">Plastic removed from Barla Kunta lake alone</dt>
+              <dd class="order-first font-display text-4xl font-semibold text-lake-800">5 t</dd>
+            </div>
+            <div class="flex flex-col rounded-xl bg-reed-50 p-5">
+              <dt class="text-sm text-slate-700">of survey respondents would support a lake-cleaning robot</dt>
+              <dd class="order-first font-display text-4xl font-semibold text-reed-800">80%</dd>
+            </div>
+            <div class="flex flex-col rounded-xl bg-sand-100 p-5">
+              <dt class="text-sm text-slate-700">blame littering and poor waste disposal as the main cause</dt>
+              <dd class="order-first font-display text-4xl font-semibold text-sand-800">87.5%</dd>
+            </div>
+          </dl>
+          <p class="mt-4 text-sm text-slate-600">Sources: clean-up drive data courtesy of the Dhruvansh Foundation; Lake Sentry public survey (40 respondents).</p>
+          <a href="about.html" class="mt-6 inline-flex font-semibold text-lake-700 underline decoration-2 underline-offset-4 hover:text-lake-900">Read the full story on the About page</a>
+        </div>
+
+        <figure class="overflow-hidden rounded-2xl bg-white ring-1 ring-lake-100">
+          <img src="assets/images/v1-prototype.png" width="920" height="690" loading="lazy"
+               alt="The Lake Sentry V1 prototype: a white CPVC pipe frame on thermocol floats, with a slanted mesh conveyor ramp at the front and two paddle wheels at the back."
+               class="h-auto w-full" />
+          <figcaption class="border-t border-lake-100 px-5 py-3 text-sm text-slate-700">Lake Sentry V1 — remote-controlled, built from CPVC pipe and designed to be affordable and locally buildable.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         CALL TO ACTION
+         ============================================================ -->
+    <section class="mx-auto max-w-6xl px-4 py-20 sm:px-6" aria-labelledby="cta-title">
+      <div class="on-dark grid gap-8 rounded-3xl bg-lake-900 p-8 text-white sm:p-12 md:grid-cols-[1.4fr_1fr] md:items-center">
+        <div>
+          <h2 id="cta-title" class="font-display text-3xl font-semibold">Help us understand Hyderabad's lakes.</h2>
+          <p class="mt-3 text-lake-100">Take the Lake Sentry survey, explore the lake map, or tell us about a clean-up initiative near you.</p>
+        </div>
+        <div class="flex flex-wrap gap-3 md:justify-end">
+          <a href="get-involved.html#survey" class="rounded-lg bg-sand-300 px-5 py-3 font-semibold text-lake-950 hover:bg-sand-100">Take the survey</a>
+          <a href="app.html#initiatives" class="rounded-lg border border-white/40 px-5 py-3 font-semibold text-white hover:bg-white/10">Submit an initiative</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============================================================
+       SITE FOOTER (same on every page)
+       ============================================================ -->
+  <footer class="on-dark bg-lake-950 text-lake-100">
+    <div class="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-3">
+      <div>
+        <p class="font-display text-xl font-semibold text-white">Lake Sentry</p>
+        <p class="mt-3 text-sm leading-relaxed">A student-led environmental project combining research, engineering and awareness to reduce floating waste in Hyderabad's urban lakes.</p>
+      </div>
+      <nav aria-label="Footer">
+        <h2 class="text-sm font-semibold uppercase tracking-wider text-lake-200">Pages</h2>
+        <ul class="mt-3 space-y-2 text-sm">
+          <li><a href="index.html" class="underline-offset-4 hover:text-white hover:underline">Home</a></li>
+          <li><a href="about.html" class="underline-offset-4 hover:text-white hover:underline">About</a></li>
+          <li><a href="app.html" class="underline-offset-4 hover:text-white hover:underline">Lake Explorer App</a></li>
+          <li><a href="get-involved.html" class="underline-offset-4 hover:text-white hover:underline">Get involved</a></li>
+        </ul>
+      </nav>
+      <div>
+        <h2 class="text-sm font-semibold uppercase tracking-wider text-lake-200">Follow the campaign</h2>
+        <!-- TODO: replace these with your real Instagram / LinkedIn links when ready -->
+        <ul class="mt-3 space-y-2 text-sm">
+          <li>Instagram — link coming soon</li>
+          <li>LinkedIn — link coming soon</li>
+        </ul>
+      </div>
+    </div>
+    <p class="border-t border-white/10 px-4 py-5 text-center text-sm">© <span data-year>2026</span> Lake Sentry · Hyderabad, India</p>
+  </footer>
+
+  <script src="assets/js/site.js"></script>
+  <script src="assets/js/lake-hero.js"></script>
+</body>
+</html>
