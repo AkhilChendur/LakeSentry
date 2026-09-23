@@ -1,0 +1,19 @@
+<!--
+  Generic image placeholder.
+  To use a real photo, change the <img> tag's src from
+  "assets/images/placeholder.svg" to your own file (e.g. "assets/images/hussain-sagar.jpg")
+  and update the alt text to describe what the photo shows.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-label="Image placeholder">
+  <rect width="800" height="500" fill="#EEF7F8"/>
+  <rect x="12" y="12" width="776" height="476" rx="18" fill="none" stroke="#76BFCB" stroke-width="4" stroke-dasharray="18 12"/>
+  <!-- simple "photo" icon: sun, hills and a lake -->
+  <g transform="translate(400 210)">
+    <rect x="-90" y="-70" width="180" height="140" rx="14" fill="#fff" stroke="#105565" stroke-width="6"/>
+    <circle cx="42" cy="-30" r="16" fill="#E2B24A"/>
+    <path d="M-80 40 L-30 -12 L10 28 L36 6 L80 44 L80 58 L-80 58 Z" fill="#3C9A55"/>
+    <path d="M-80 48 C-50 40 -30 56 0 48 S50 40 80 48 L80 58 L-80 58 Z" fill="#1F8295"/>
+  </g>
+  <text x="400" y="350" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="30" font-weight="600" fill="#0C4150">Photo coming soon</text>
+  <text x="400" y="390" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="20" fill="#105565">Replace this placeholder with your own image</text>
+</svg>

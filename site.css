@@ -1,0 +1,113 @@
+/* =====================================================================
+   Lake Sentry — shared custom CSS
+   ---------------------------------------------------------------------
+   Almost all styling is done with Tailwind utility classes directly in
+   the HTML. This file only holds the few things that are easier to
+   write as plain CSS: focus rings, the skip link, image placeholders
+   and reduced-motion handling.
+   ===================================================================== */
+
+html {
+  scroll-behavior: smooth;
+  /* Leaves room for the sticky header when jumping to #anchors */
+  scroll-padding-top: 5.5rem;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Make sure the `hidden` attribute always hides an element, even if it
+   also has a Tailwind display class such as `flex` or `grid`. */
+[hidden] {
+  display: none !important;
+}
+
+/* ---------------------------------------------------------------------
+   Visible keyboard focus (WCAG 2.4.7)
+   Every interactive element gets a thick, high-contrast outline when it
+   is reached with the keyboard. On light backgrounds the ring is dark
+   blue; inside anything marked `.on-dark` it switches to bright yellow.
+   --------------------------------------------------------------------- */
+:focus-visible {
+  outline: 3px solid #082E3A;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+.on-dark :focus-visible,
+.on-dark:focus-visible {
+  outline-color: #FDE047;
+}
+
+/* ---------------------------------------------------------------------
+   "Skip to main content" link (WCAG 2.4.1)
+   Hidden off-screen until a keyboard user tabs onto it.
+   --------------------------------------------------------------------- */
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -4rem;
+  z-index: 100;
+  padding: 0.75rem 1.25rem;
+  background: #FDE047;
+  color: #041B24;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  transition: top 0.15s ease;
+}
+.skip-link:focus {
+  top: 1rem;
+}
+
+/* ---------------------------------------------------------------------
+   Image placeholders
+   Each placeholder is a normal <img> pointing at placeholder.svg, so
+   swapping in a real photo is as simple as changing the `src` and `alt`.
+   --------------------------------------------------------------------- */
+.img-placeholder {
+  background: repeating-linear-gradient(
+    -45deg,
+    #EEF7F8,
+    #EEF7F8 12px,
+    #E3F1F3 12px,
+    #E3F1F3 24px
+  );
+}
+
+/* ---------------------------------------------------------------------
+   Lake map (App page) — SVG lake shapes
+   --------------------------------------------------------------------- */
+.map-lake {
+  cursor: pointer;
+  transition: fill 0.2s ease, stroke-width 0.2s ease;
+}
+.map-lake:hover .lake-shape,
+.map-lake:focus-visible .lake-shape,
+.map-lake[aria-pressed="true"] .lake-shape {
+  fill: #1F8295;
+  stroke: #FDE047;
+  stroke-width: 3;
+}
+.map-lake:focus-visible {
+  outline: none; /* the yellow stroke above is the focus indicator */
+}
+.map-lake:focus-visible .lake-label {
+  text-decoration: underline;
+}
+
+/* ---------------------------------------------------------------------
+   Respect "reduce motion" (WCAG 2.3.3)
+   --------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
