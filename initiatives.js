@@ -195,7 +195,7 @@
         const a = document.createElement('a');
         a.href = '#' + p.id;
         a.textContent = p.msg;
-        a.className = 'underline underline-offset-4';
+        a.className = 'text-coral underline underline-offset-4';
         a.addEventListener('click', function (ev) {
           ev.preventDefault();
           document.getElementById(p.id).focus();
@@ -240,45 +240,45 @@
   // Build one initiative "card". `actions` adds Approve/Reject buttons.
   function card(it, actions) {
     const li = document.createElement('li');
-    li.className = 'rounded-2xl bg-white p-5 shadow-sm ring-1 ring-lake-100';
+    li.className = 'glow-card rounded-2xl border border-line bg-panel p-5';
     li.dataset.id = it.id;
 
     const top = document.createElement('div');
     top.className = 'flex flex-wrap items-center gap-2 text-xs font-semibold';
     const type = document.createElement('span');
-    type.className = 'rounded-full bg-lake-100 px-3 py-1 text-lake-800';
+    type.className = 'rounded-full border border-aqua/50 px-3 py-1 font-mono text-aqua';
     type.textContent = it.type;
     top.appendChild(type);
     if (it.status === 'approved') {
       const rev = document.createElement('span');
-      rev.className = 'rounded-full bg-reed-100 px-3 py-1 text-reed-800';
+      rev.className = 'rounded-full border border-mint/50 px-3 py-1 font-mono text-mint';
       rev.textContent = '✓ Reviewed by Lake Sentry';
       top.appendChild(rev);
     }
     if (it.sample) {
       const s = document.createElement('span');
-      s.className = 'rounded-full bg-sand-100 px-3 py-1 text-sand-800';
+      s.className = 'rounded-full border border-sun/50 px-3 py-1 font-mono text-sun';
       s.textContent = 'Sample';
       top.appendChild(s);
     }
 
     const h = document.createElement('h4');
-    h.className = 'mt-3 font-display text-xl font-semibold text-lake-950';
+    h.className = 'mt-3 font-display text-xl font-bold text-txt-1';
     h.textContent = it.name;
 
     const meta = document.createElement('p');
-    meta.className = 'mt-1 text-sm text-slate-600';
+    meta.className = 'mt-1 text-sm text-txt-3';
     meta.textContent = [lakeName(it.lake), it.organization, it.date ? 'Date: ' + it.date : ''].filter(Boolean).join(' · ');
 
     const desc = document.createElement('p');
-    desc.className = 'mt-3 text-slate-700';
+    desc.className = 'mt-3';
     desc.textContent = it.description;
 
     li.append(top, h, meta, desc);
 
     if (it.participate) {
       const p = document.createElement('p');
-      p.className = 'mt-2 text-sm text-slate-700';
+      p.className = 'mt-2 text-sm';
       const b = document.createElement('strong');
       b.textContent = 'How to take part: ';
       p.append(b, document.createTextNode(it.participate));
@@ -288,21 +288,21 @@
       const a = document.createElement('a');
       a.href = it.link; // already validated as http(s) when submitted
       a.rel = 'noopener noreferrer';
-      a.className = 'mt-2 inline-block break-all text-sm font-semibold text-lake-700 underline underline-offset-4 hover:text-lake-900';
+      a.className = 'mt-2 inline-block break-all text-sm font-semibold text-aqua underline underline-offset-4 hover:text-mint';
       a.textContent = it.link;
       li.appendChild(a);
     }
 
     const foot = document.createElement('p');
-    foot.className = 'mt-3 text-xs text-slate-600';
+    foot.className = 'mt-3 font-mono text-xs text-txt-3';
     foot.textContent = 'Submitted ' + formatDate(it.submittedAt) + (it.reviewedAt ? ' · Reviewed ' + formatDate(it.reviewedAt) : '');
     li.appendChild(foot);
 
     if (actions) {
       const row = document.createElement('div');
       row.className = 'mt-4 flex flex-wrap gap-2';
-      row.appendChild(actionButton('Approve', 'bg-reed-700 text-white hover:bg-reed-800', it, 'approved'));
-      row.appendChild(actionButton('Reject', 'bg-white text-ink ring-1 ring-slate-400 hover:bg-slate-100', it, 'rejected'));
+      row.appendChild(actionButton('Approve', 'bg-mint text-[#00251A] hover:-translate-y-0.5', it, 'approved'));
+      row.appendChild(actionButton('Reject', 'border border-coral/70 text-coral hover:bg-coral/10', it, 'rejected'));
       li.appendChild(row);
     }
     return li;
@@ -311,7 +311,7 @@
   function actionButton(label, classes, it, newStatus) {
     const b = document.createElement('button');
     b.type = 'button';
-    b.className = 'rounded-lg px-4 py-2 text-sm font-semibold ' + classes;
+    b.className = 'rounded-md px-4 py-2 text-sm font-semibold transition ' + classes;
     b.textContent = label;
     // Give each button a unique accessible name, e.g. "Approve: Lakeside walk".
     b.setAttribute('aria-label', label + ': ' + it.name);

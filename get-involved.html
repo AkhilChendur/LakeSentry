@@ -1,45 +1,55 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="no-js">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Get Involved — Lake Sentry</title>
   <meta name="description" content="Take the Lake Sentry survey, see what Hyderabad residents told us, and find ways to help keep urban lakes clean." />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
 
-  <!-- Fonts: Fraunces (headings) + Inter (body text) from Google Fonts -->
+  <!-- Fonts: Space Grotesk (headings), Inter (body text), IBM Plex Mono (labels) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <!-- Tailwind CSS from its CDN (no install needed), then our shared settings -->
+  <!-- Tailwind CSS from its CDN (no install needed), then our shared settings.
+       All files sit in the same folder, so the links below are just file names. -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="assets/js/tailwind-config.js"></script>
-  <link rel="stylesheet" href="assets/css/site.css" />
+  <script src="tailwind-config.js"></script>
+  <link rel="stylesheet" href="site.css" />
 </head>
-<body class="bg-sand-50 font-sans text-ink text-[1.0625rem] leading-relaxed">
+<body class="bg-ink font-sans text-[1.0625rem] leading-relaxed text-txt-2">
 
+  <!-- Keyboard users can jump straight past the navigation -->
   <a href="#main" class="skip-link">Skip to main content</a>
+  <!-- Thin progress bar showing how far down the page you are -->
+  <div id="scroll-progress" aria-hidden="true"></div>
 
-  <!-- ============================ SITE HEADER ============================ -->
-  <header class="on-dark sticky top-0 z-50 border-b border-white/10 bg-lake-950/95 backdrop-blur">
+  <!-- ============================ SITE HEADER ============================
+       (identical on every page — only aria-current="page" moves) -->
+  <header class="sticky top-0 z-50 border-b border-line bg-ink/85 backdrop-blur-lg">
     <nav aria-label="Main" class="relative mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
-      <a href="index.html" class="flex items-center gap-2 rounded font-display text-xl font-semibold text-white">
-        <svg aria-hidden="true" class="h-8 w-8" viewBox="0 0 32 32" fill="none">
-          <circle cx="16" cy="16" r="14.5" stroke="#76BFCB" stroke-width="2" />
-          <path d="M5 18c2.5-2.5 5-2.5 7.5 0s5 2.5 7.5 0 5-2.5 7.5 0" stroke="#86CF98" stroke-width="2" stroke-linecap="round" />
-          <path d="M5 12.5c2.5-2.5 5-2.5 7.5 0s5 2.5 7.5 0 5-2.5 7.5 0" stroke="#A9D8DF" stroke-width="2" stroke-linecap="round" />
+      <a href="index.html" class="group flex items-center gap-2.5 rounded font-display text-xl font-bold text-txt-1">
+        <!-- Logo: a ring with two waves (decorative) -->
+        <svg aria-hidden="true" class="h-8 w-8 transition-transform duration-500 group-hover:rotate-[20deg]" viewBox="0 0 26 26" fill="none">
+          <circle cx="13" cy="13" r="12" stroke="#38E4F0" stroke-width="1.4" />
+          <path d="M4 15c2-2 4-2 6 0s4 2 6 0 4-2 6 0" stroke="#3CE8A0" stroke-width="1.4" />
+          <path d="M4 10c2-2 4-2 6 0s4 2 6 0 4-2 6 0" stroke="#38E4F0" stroke-width="1.2" opacity=".6" />
         </svg>
         Lake Sentry
       </a>
-      <button id="nav-toggle" type="button" class="inline-flex items-center gap-2 rounded-md border border-white/25 px-3 py-2 text-sm font-medium text-white md:hidden" aria-expanded="false" aria-controls="nav-menu">
+
+      <!-- Menu button — only shown on small screens -->
+      <button id="nav-toggle" type="button" class="inline-flex items-center gap-2 rounded-md border border-linehi px-3 py-2 text-sm font-medium text-txt-1 md:hidden" aria-expanded="false" aria-controls="nav-menu">
         <svg aria-hidden="true" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round" /></svg>
         <span data-label>Open menu</span>
       </button>
-      <ul id="nav-menu" class="absolute left-0 right-0 top-full hidden flex-col gap-1 border-b border-white/10 bg-lake-950 px-4 pb-4 md:static md:flex md:flex-row md:items-center md:gap-2 md:border-0 md:bg-transparent md:p-0">
-        <li><a href="index.html" class="block rounded-md px-3 py-2 text-lake-100 hover:bg-white/10 hover:text-white">Home</a></li>
-        <li><a href="about.html" class="block rounded-md px-3 py-2 text-lake-100 hover:bg-white/10 hover:text-white">About</a></li>
-        <li><a href="app.html" class="block rounded-md px-3 py-2 text-lake-100 hover:bg-white/10 hover:text-white">Lake Explorer App</a></li>
-        <li><a href="get-involved.html" aria-current="page" class="mt-2 block rounded-md bg-sand-300 px-4 py-2 font-semibold text-lake-950 underline decoration-lake-950 decoration-2 underline-offset-4 hover:bg-sand-100 md:ml-2 md:mt-0">Get involved</a></li>
+
+      <ul id="nav-menu" class="absolute left-0 right-0 top-full hidden flex-col gap-1 border-b border-line bg-deep px-4 pb-4 md:static md:flex md:flex-row md:items-center md:gap-1 md:border-0 md:bg-transparent md:p-0">
+        <li><a href="index.html" class="relative block rounded-md px-3 py-2 text-txt-2 transition-colors hover:text-txt-1 md:after:absolute md:after:bottom-1 md:after:left-3 md:after:h-0.5 md:after:w-0 md:after:rounded md:after:bg-aqua md:after:transition-all md:hover:after:w-[calc(100%-1.5rem)]">Home</a></li>
+        <li><a href="about.html" class="relative block rounded-md px-3 py-2 text-txt-2 transition-colors hover:text-txt-1 md:after:absolute md:after:bottom-1 md:after:left-3 md:after:h-0.5 md:after:w-0 md:after:rounded md:after:bg-aqua md:after:transition-all md:hover:after:w-[calc(100%-1.5rem)]">About</a></li>
+        <li><a href="app.html" class="relative block rounded-md px-3 py-2 text-txt-2 transition-colors hover:text-txt-1 md:after:absolute md:after:bottom-1 md:after:left-3 md:after:h-0.5 md:after:w-0 md:after:rounded md:after:bg-aqua md:after:transition-all md:hover:after:w-[calc(100%-1.5rem)]">Lake Explorer App</a></li>
+        <li><a href="get-involved.html" aria-current="page" class="mt-2 block rounded-md bg-aqua px-4 py-2 font-semibold text-[#00232A] transition hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(56,228,240,.3)] md:ml-3 md:mt-0 ring-2 ring-txt-1 ring-offset-2 ring-offset-ink">Get involved</a></li>
       </ul>
     </nav>
   </header>
@@ -47,172 +57,206 @@
   <main id="main">
 
     <!-- ============================ PAGE INTRO ============================ -->
-    <section class="on-dark bg-lake-900 text-white" aria-labelledby="page-title">
-      <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-        <p class="text-sm font-semibold uppercase tracking-[0.14em] text-lake-200">Get involved</p>
-        <h1 id="page-title" class="mt-2 max-w-3xl font-display text-4xl font-semibold leading-tight sm:text-5xl">“Lake pollution is a problem.” So what can we do about it?</h1>
-        <p class="mt-5 max-w-2xl text-lg text-lake-100">Most people already know lakes are polluted. Lake Sentry is about turning that awareness into action. Here's how you can help.</p>
+    <section class="relative overflow-hidden bg-deep2 pb-32 pt-20" aria-labelledby="page-title" data-wave="#040713">
+      <div class="caustics" aria-hidden="true"></div>
+      <div class="pointer-events-none absolute inset-0" data-bubbles="14" aria-hidden="true"></div>
+      <div class="relative mx-auto max-w-6xl px-4 sm:px-6">
+        <p class="eyebrow reveal !text-mint">Get involved</p>
+        <h1 id="page-title" class="reveal mt-4 max-w-4xl font-display text-4xl font-bold leading-tight text-txt-1 sm:text-6xl">“Lake pollution is a problem.” <span class="gradient-text">So what can we do about it?</span></h1>
+        <p class="reveal mt-6 max-w-2xl text-lg">Most people already know lakes are polluted. Lake Sentry is about turning that awareness into action. Here's how you can help, and what people have told us so far.</p>
       </div>
     </section>
 
     <!-- ============================ SURVEY ============================ -->
-    <section id="survey" class="mx-auto max-w-6xl px-4 py-20 sm:px-6" aria-labelledby="survey-title">
-      <div class="grid items-center gap-10 md:grid-cols-[1fr_18rem]">
+    <section id="survey" class="relative bg-ink pb-32 pt-20" aria-labelledby="survey-title" data-wave="#0B1330">
+      <div class="mx-auto grid max-w-6xl items-center gap-12 px-4 sm:px-6 md:grid-cols-[1fr_18rem]">
         <div>
-          <p class="text-sm font-semibold uppercase tracking-[0.14em] text-lake-700">Step one</p>
-          <h2 id="survey-title" class="mt-2 font-display text-3xl font-semibold text-lake-950 sm:text-4xl">Take the Lake Sentry survey</h2>
-          <p class="mt-4 max-w-prose text-slate-700">
-            The survey asks what floating waste you've seen, what you think causes it, how serious it is and whether you'd support technology to clean it up. Every response makes the research stronger and shapes what we build next.
+          <p class="eyebrow reveal">Step one</p>
+          <h2 id="survey-title" class="reveal mt-4 font-display text-3xl font-bold text-txt-1 sm:text-5xl">Take the Lake Sentry survey</h2>
+          <p class="reveal mt-5 max-w-prose">
+            The survey asks what floating waste you've noticed, what you think causes lake pollution, how serious it is, whether you'd support technology to clean it up, and how much awareness versus individual action matters. Every response makes the research stronger and shapes what gets built next.
           </p>
-          <p class="mt-4 text-slate-700">Scan the QR code with your phone's camera to open the survey.</p>
+          <p class="reveal mt-4 text-txt-1">📱 Scan the QR code with your phone's camera to open the survey.</p>
           <!-- TODO: add a direct link to the survey for people who can't scan the QR code, e.g.
                <a href="https://forms.gle/your-survey-id" class="...">Open the survey</a> -->
-          <p class="mt-2 text-sm text-slate-600">A direct link for desktop visitors will be added here soon.</p>
+          <p class="reveal mt-2 text-sm text-txt-3">A direct link for desktop visitors will be added here soon.</p>
         </div>
-        <figure class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-lake-100">
-          <img src="assets/images/survey-qr.png" width="621" height="913" class="mx-auto h-auto w-full max-w-[14rem]"
+        <figure class="reveal float-bob rounded-2xl border border-linehi bg-white p-5 shadow-[0_0_60px_rgba(56,228,240,.25)]">
+          <img src="survey-qr.png" width="621" height="913" class="mx-auto h-auto w-full max-w-[14rem]"
                alt="QR code that opens the Lake Sentry public survey, with the caption “Scan to fill out my survey!”" />
         </figure>
       </div>
     </section>
 
     <!-- ============================ SURVEY RESULTS ============================ -->
-    <section id="results" class="bg-white py-20" aria-labelledby="results-title">
+    <section id="results" class="relative bg-deep pb-32 pt-20" aria-labelledby="results-title" data-wave="#040713">
       <div class="mx-auto max-w-6xl px-4 sm:px-6">
-        <p class="text-sm font-semibold uppercase tracking-[0.14em] text-lake-700">What people told us</p>
-        <h2 id="results-title" class="mt-2 font-display text-3xl font-semibold text-lake-950 sm:text-4xl">Survey highlights (40 respondents)</h2>
+        <p class="eyebrow reveal">Primary research</p>
+        <h2 id="results-title" class="reveal mt-4 font-display text-3xl font-bold text-txt-1 sm:text-5xl">What Hyderabad residents told us.</h2>
+        <p class="reveal mt-4 max-w-prose">No personal information is shown. Figures are percentages of total responses.</p>
 
-        <!-- Simple bar chart built with HTML. Each bar's width is the percentage;
-             the number is also written as text so it doesn't rely on the bar alone. -->
-        <ul class="mt-10 space-y-6" aria-label="Survey results">
-          <li>
-            <div class="flex items-baseline justify-between gap-4"><span class="font-medium text-lake-950">Point to littering and poor waste disposal as the main cause</span><span class="font-display text-2xl font-semibold text-lake-800">87.5%</span></div>
-            <div class="mt-2 h-3 rounded-full bg-lake-100" aria-hidden="true"><div class="h-full rounded-full bg-lake-600" style="width:87.5%"></div></div>
-          </li>
-          <li>
-            <div class="flex items-baseline justify-between gap-4"><span class="font-medium text-lake-950">Would support an innovative bot to clean lakes</span><span class="font-display text-2xl font-semibold text-reed-800">80%</span></div>
-            <div class="mt-2 h-3 rounded-full bg-lake-100" aria-hidden="true"><div class="h-full rounded-full bg-reed-500" style="width:80%"></div></div>
-          </li>
-          <li>
-            <div class="flex items-baseline justify-between gap-4"><span class="font-medium text-lake-950">Believe people are aware of the dangers but don't act on them</span><span class="font-display text-2xl font-semibold text-sand-800">63%</span></div>
-            <div class="mt-2 h-3 rounded-full bg-lake-100" aria-hidden="true"><div class="h-full rounded-full bg-sand-400" style="width:63%"></div></div>
-          </li>
-        </ul>
+        <!-- Headline results (latest: 40 respondents). Bars grow when scrolled into view;
+             the number is always written as text too, so nothing depends on the bar alone. -->
+        <div class="reveal mt-10 rounded-2xl border border-line bg-panel p-6 sm:p-8">
+          <h3 class="font-display text-xl font-bold text-txt-1">Headline results <span class="font-mono text-sm font-normal text-txt-3">· 40 respondents</span></h3>
+          <ul class="mt-6 space-y-6">
+            <li>
+              <div class="flex items-baseline justify-between gap-4"><span>Point to littering and poor waste disposal as the main cause</span><span class="font-mono text-2xl font-semibold text-aqua">87.5%</span></div>
+              <div class="mt-2 h-3 overflow-hidden rounded-full bg-deep" aria-hidden="true"><div class="h-full rounded-full bg-gradient-to-r from-aqua to-mint" data-bar="87.5"></div></div>
+            </li>
+            <li>
+              <div class="flex items-baseline justify-between gap-4"><span>Would support an innovative bot to clean lakes</span><span class="font-mono text-2xl font-semibold text-mint">80%</span></div>
+              <div class="mt-2 h-3 overflow-hidden rounded-full bg-deep" aria-hidden="true"><div class="h-full rounded-full bg-gradient-to-r from-aqua to-mint" data-bar="80"></div></div>
+            </li>
+            <li>
+              <div class="flex items-baseline justify-between gap-4"><span>Believe people are aware of the dangers but don't act on them</span><span class="font-mono text-2xl font-semibold text-sun">63%</span></div>
+              <div class="mt-2 h-3 overflow-hidden rounded-full bg-deep" aria-hidden="true"><div class="h-full rounded-full bg-gradient-to-r from-sun to-coral" data-bar="63"></div></div>
+            </li>
+          </ul>
+        </div>
 
-        <figure class="mt-12 rounded-2xl border-l-4 border-lake-600 bg-lake-50 p-6">
-          <p class="font-display text-xl text-lake-950">The core issue isn't ignorance. Most people already understand the danger. What's missing is the will to act on it.</p>
-          <figcaption class="mt-3 text-sm text-slate-700">Takeaway from the expert interview with <span class="font-semibold">Vishal Raj</span>, Hyderabad environmental activist. It matches the survey results above.</figcaption>
+        <!-- Detailed breakdown from the first round of responses -->
+        <h3 class="reveal mt-14 font-display text-2xl font-bold text-txt-1">A closer look <span class="font-mono text-sm font-normal text-txt-3">· first round, 31 responses</span></h3>
+        <div class="mt-6 grid gap-5 lg:grid-cols-2">
+          <div class="reveal rounded-2xl border border-line bg-panel p-6">
+            <h4 class="font-semibold text-txt-1">Floating pollution respondents have noticed</h4>
+            <ul class="mt-5 space-y-3 text-sm">
+              <li><div class="flex justify-between gap-3"><span>Plastic litter, bags &amp; wrappers</span><span class="font-mono text-txt-1">90.3%</span></div><div class="mt-1 h-2 overflow-hidden rounded-full bg-deep" aria-hidden="true"><div class="h-full rounded-full bg-aqua" data-bar="90.3"></div></div></li>
+              <li><div class="flex justify-between gap-3"><span>Floating plastic bottles</span><span class="font-mono text-txt-1">80.6%</span></div><div class="mt-1 h-2 overflow-hidden rounded-full bg-deep" aria-hidden="true"><div class="h-full rounded-full bg-aqua" data-bar="80.6"></div></div></li>
+              <li><div class="flex justify-between gap-3"><span>Food packaging &amp; disposable waste</span><span class="font-mono text-txt-1">71%</span></div><div class="mt-1 h-2 overflow-hidden rounded-full bg-deep" aria-hidden="true"><div class="h-full rounded-full bg-aqua" data-bar="71"></div></div></li>
+              <li><div class="flex justify-between gap-3"><span>Glass bottles &amp; containers</span><span class="font-mono text-txt-1">41.9%</span></div><div class="mt-1 h-2 overflow-hidden rounded-full bg-deep" aria-hidden="true"><div class="h-full rounded-full bg-aqua" data-bar="41.9"></div></div></li>
+              <li><div class="flex justify-between gap-3"><span>Other floating debris</span><span class="font-mono text-txt-1">38.7%</span></div><div class="mt-1 h-2 overflow-hidden rounded-full bg-deep" aria-hidden="true"><div class="h-full rounded-full bg-aqua" data-bar="38.7"></div></div></li>
+            </ul>
+          </div>
+          <div class="reveal rounded-2xl border border-line bg-panel p-6" style="--delay:.1s">
+            <h4 class="font-semibold text-txt-1">Perceived main causes of lake pollution</h4>
+            <ul class="mt-5 space-y-3 text-sm">
+              <li><div class="flex justify-between gap-3"><span>Public littering / improper disposal</span><span class="font-mono text-txt-1">90.3%</span></div><div class="mt-1 h-2 overflow-hidden rounded-full bg-deep" aria-hidden="true"><div class="h-full rounded-full bg-coral" data-bar="90.3"></div></div></li>
+              <li><div class="flex justify-between gap-3"><span>Lack of awareness &amp; enforcement</span><span class="font-mono text-txt-1">51.6%</span></div><div class="mt-1 h-2 overflow-hidden rounded-full bg-deep" aria-hidden="true"><div class="h-full rounded-full bg-coral" data-bar="51.6"></div></div></li>
+              <li><div class="flex justify-between gap-3"><span>Sewage &amp; industrial discharge</span><span class="font-mono text-txt-1">48.4%</span></div><div class="mt-1 h-2 overflow-hidden rounded-full bg-deep" aria-hidden="true"><div class="h-full rounded-full bg-coral" data-bar="48.4"></div></div></li>
+              <li><div class="flex justify-between gap-3"><span>Lack of waste bins near lakes</span><span class="font-mono text-txt-1">41.9%</span></div><div class="mt-1 h-2 overflow-hidden rounded-full bg-deep" aria-hidden="true"><div class="h-full rounded-full bg-coral" data-bar="41.9"></div></div></li>
+            </ul>
+          </div>
+          <div class="reveal rounded-2xl border border-line bg-panel p-6">
+            <h4 class="font-semibold text-txt-1">Would you support bots or machines removing floating waste?</h4>
+            <ul class="mt-5 space-y-3 text-sm">
+              <li><div class="flex justify-between gap-3"><span>Yes</span><span class="font-mono text-txt-1">77.4%</span></div><div class="mt-1 h-2 overflow-hidden rounded-full bg-deep" aria-hidden="true"><div class="h-full rounded-full bg-mint" data-bar="77.4"></div></div></li>
+              <li><div class="flex justify-between gap-3"><span>Maybe</span><span class="font-mono text-txt-1">22.6%</span></div><div class="mt-1 h-2 overflow-hidden rounded-full bg-deep" aria-hidden="true"><div class="h-full rounded-full bg-sun" data-bar="22.6"></div></div></li>
+              <li><div class="flex justify-between gap-3"><span>No</span><span class="font-mono text-txt-1">0%</span></div><div class="mt-1 h-2 overflow-hidden rounded-full bg-deep" aria-hidden="true"><div class="h-full rounded-full bg-coral" data-bar="0"></div></div></li>
+            </ul>
+          </div>
+          <div class="reveal rounded-2xl border border-line bg-panel p-6" style="--delay:.1s">
+            <h4 class="font-semibold text-txt-1">How serious is lake pollution? <span class="font-normal text-txt-3">(1 = very serious)</span></h4>
+            <ul class="mt-5 space-y-3 text-sm">
+              <li><div class="flex justify-between gap-3"><span>1 · Very serious</span><span class="font-mono text-txt-1">25.8%</span></div><div class="mt-1 h-2 overflow-hidden rounded-full bg-deep" aria-hidden="true"><div class="h-full rounded-full bg-reef" data-bar="25.8"></div></div></li>
+              <li><div class="flex justify-between gap-3"><span>2</span><span class="font-mono text-txt-1">29%</span></div><div class="mt-1 h-2 overflow-hidden rounded-full bg-deep" aria-hidden="true"><div class="h-full rounded-full bg-reef" data-bar="29"></div></div></li>
+              <li><div class="flex justify-between gap-3"><span>3</span><span class="font-mono text-txt-1">9.7%</span></div><div class="mt-1 h-2 overflow-hidden rounded-full bg-deep" aria-hidden="true"><div class="h-full rounded-full bg-reef" data-bar="9.7"></div></div></li>
+              <li><div class="flex justify-between gap-3"><span>4</span><span class="font-mono text-txt-1">19.4%</span></div><div class="mt-1 h-2 overflow-hidden rounded-full bg-deep" aria-hidden="true"><div class="h-full rounded-full bg-reef" data-bar="19.4"></div></div></li>
+              <li><div class="flex justify-between gap-3"><span>5 · Not a problem</span><span class="font-mono text-txt-1">16.1%</span></div><div class="mt-1 h-2 overflow-hidden rounded-full bg-deep" aria-hidden="true"><div class="h-full rounded-full bg-reef" data-bar="16.1"></div></div></li>
+            </ul>
+            <p class="mt-4 text-sm"><strong class="font-mono text-mint">54.8%</strong> rated the problem a 1 or 2.</p>
+          </div>
+        </div>
+
+        <figure class="reveal mt-12 rounded-2xl border-l-4 border-aqua bg-panel p-6 sm:p-8">
+          <p class="font-display text-xl text-txt-1 sm:text-2xl">The core issue isn't ignorance. Most people already understand the danger. What's missing is the will to act on it.</p>
+          <figcaption class="mt-3 text-sm text-txt-3">Takeaway from the expert interview with <span class="font-semibold text-txt-2">Vishal Raj</span>, Hyderabad environmental activist. It matches the survey results above.</figcaption>
         </figure>
 
-        <h3 class="mt-14 font-display text-2xl font-semibold text-lake-950">Feedback we're taking seriously</h3>
+        <h3 class="reveal mt-14 font-display text-2xl font-bold text-txt-1">Feedback we're taking seriously</h3>
         <div class="mt-6 grid gap-5 sm:grid-cols-2">
-          <div class="rounded-2xl p-6 ring-1 ring-lake-100">
-            <h4 class="font-semibold text-lake-950">Scope &amp; feasibility</h4>
-            <p class="mt-2 text-slate-700">Could this extend to oceans? And a low-cost design matters: the benefits have to outweigh the cost for governments to adopt it.</p>
-          </div>
-          <div class="rounded-2xl p-6 ring-1 ring-lake-100">
-            <h4 class="font-semibold text-lake-950">Enforcement &amp; accountability</h4>
-            <p class="mt-2 text-slate-700">Several people felt the deeper issue is weak enforcement and indifference. Even official bodies sometimes dispose of waste improperly.</p>
-          </div>
-          <div class="rounded-2xl p-6 ring-1 ring-lake-100">
-            <h4 class="font-semibold text-lake-950">Test carefully first</h4>
-            <p class="mt-2 text-slate-700">People want rigorous testing, including making sure the robot can't harm fish or other wildlife.</p>
-          </div>
-          <div class="rounded-2xl p-6 ring-1 ring-lake-100">
-            <h4 class="font-semibold text-lake-950">Encouragement</h4>
-            <p class="mt-2 text-slate-700">Many respondents were simply glad someone is working on this, and shared tips for making the survey easier to read.</p>
-          </div>
+          <div class="reveal glow-card rounded-2xl border border-line bg-panel p-6"><h4 class="font-semibold text-aqua">Scope &amp; feasibility</h4><p class="mt-2 text-sm">Could this extend to oceans? A low-cost design matters: the benefits have to outweigh the cost for governments to adopt it.</p></div>
+          <div class="reveal glow-card rounded-2xl border border-line bg-panel p-6" style="--delay:.1s"><h4 class="font-semibold text-aqua">Enforcement &amp; accountability</h4><p class="mt-2 text-sm">Several people felt the deeper issue is weak enforcement and indifference. Even official bodies sometimes dispose of waste improperly.</p></div>
+          <div class="reveal glow-card rounded-2xl border border-line bg-panel p-6"><h4 class="font-semibold text-aqua">Test carefully first</h4><p class="mt-2 text-sm">People want rigorous testing, including making sure the bot can't harm fish or other wildlife, plus robust data to answer sceptics.</p></div>
+          <div class="reveal glow-card rounded-2xl border border-line bg-panel p-6" style="--delay:.1s"><h4 class="font-semibold text-aqua">Encouragement</h4><p class="mt-2 text-sm">Many respondents were simply glad someone is working on this, and shared tips for making the survey easier to read.</p></div>
         </div>
       </div>
     </section>
 
     <!-- ============================ TAKE ACTION ============================ -->
-    <section id="act" class="mx-auto max-w-6xl px-4 py-20 sm:px-6" aria-labelledby="act-title">
-      <p class="text-sm font-semibold uppercase tracking-[0.14em] text-reed-700">Take action</p>
-      <h2 id="act-title" class="mt-2 font-display text-3xl font-semibold text-lake-950 sm:text-4xl">Six things you can do today</h2>
-      <ul class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        <li class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-lake-100">
-          <p class="text-sm font-bold uppercase tracking-wider text-reed-700">Learn</p>
-          <p class="mt-2 text-slate-700">Read about the problem and explore each lake's page.</p>
-          <a href="app.html#map" class="mt-3 inline-flex font-semibold text-lake-700 underline underline-offset-4 hover:text-lake-900">Open the lake map</a>
-        </li>
-        <li class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-lake-100">
-          <p class="text-sm font-bold uppercase tracking-wider text-reed-700">Respond</p>
-          <p class="mt-2 text-slate-700">Complete the Lake Sentry survey. It takes a few minutes.</p>
-          <a href="#survey" class="mt-3 inline-flex font-semibold text-lake-700 underline underline-offset-4 hover:text-lake-900">Go to the survey</a>
-        </li>
-        <li class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-lake-100">
-          <p class="text-sm font-bold uppercase tracking-wider text-reed-700">Share</p>
-          <p class="mt-2 text-slate-700">Share Lake Sentry's awareness posts with friends and family.</p>
-          <p class="mt-3 text-sm text-slate-600">Social links coming soon.</p>
-        </li>
-        <li class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-lake-100">
-          <p class="text-sm font-bold uppercase tracking-wider text-reed-700">Discover</p>
-          <p class="mt-2 text-slate-700">Find lake clean-up and conservation initiatives near you.</p>
-          <a href="app.html#initiatives" class="mt-3 inline-flex font-semibold text-lake-700 underline underline-offset-4 hover:text-lake-900">See published initiatives</a>
-        </li>
-        <li class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-lake-100">
-          <p class="text-sm font-bold uppercase tracking-wider text-reed-700">Participate</p>
-          <p class="mt-2 text-slate-700">Join a local clean-up day. Lake Sentry is planning a joint clean-up with college eco-clubs.</p>
-        </li>
-        <li class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-lake-100">
-          <p class="text-sm font-bold uppercase tracking-wider text-reed-700">Submit</p>
-          <p class="mt-2 text-slate-700">Tell us about an initiative you know, so others can join in.</p>
-          <a href="app.html#initiatives" class="mt-3 inline-flex font-semibold text-lake-700 underline underline-offset-4 hover:text-lake-900">Submit an initiative</a>
-        </li>
-      </ul>
+    <section id="act" class="relative overflow-hidden bg-ink pb-32 pt-20" aria-labelledby="act-title" data-wave="#0F1C42">
+      <div class="pointer-events-none absolute inset-0" data-bubbles="10" aria-hidden="true"></div>
+      <div class="relative mx-auto max-w-6xl px-4 sm:px-6">
+        <p class="eyebrow reveal !text-mint">Take action</p>
+        <h2 id="act-title" class="reveal mt-4 font-display text-3xl font-bold text-txt-1 sm:text-5xl">Six things you can do today.</h2>
+        <ul class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <li class="reveal glow-card rounded-2xl border border-line bg-panel p-6"><p class="font-mono text-xs uppercase tracking-wider text-mint">01 · Learn</p><p class="mt-2">Explore the research and each Hyderabad lake's page.</p><a href="app.html#map" class="mt-3 inline-flex font-semibold text-aqua underline underline-offset-4 hover:text-mint">Open the lake map</a></li>
+          <li class="reveal glow-card rounded-2xl border border-line bg-panel p-6" style="--delay:.05s"><p class="font-mono text-xs uppercase tracking-wider text-mint">02 · Respond</p><p class="mt-2">Complete the Lake Sentry survey. It only takes a few minutes.</p><a href="#survey" class="mt-3 inline-flex font-semibold text-aqua underline underline-offset-4 hover:text-mint">Go to the survey</a></li>
+          <li class="reveal glow-card rounded-2xl border border-line bg-panel p-6" style="--delay:.1s"><p class="font-mono text-xs uppercase tracking-wider text-mint">03 · Share</p><p class="mt-2">Share credible awareness content from Instagram and LinkedIn.</p><p class="mt-3 text-sm text-txt-3">Social links coming soon.</p></li>
+          <li class="reveal glow-card rounded-2xl border border-line bg-panel p-6"><p class="font-mono text-xs uppercase tracking-wider text-mint">04 · Discover</p><p class="mt-2">Find lake-cleaning and conservation initiatives near you.</p><a href="app.html#initiatives" class="mt-3 inline-flex font-semibold text-aqua underline underline-offset-4 hover:text-mint">See published initiatives</a></li>
+          <li class="reveal glow-card rounded-2xl border border-line bg-panel p-6" style="--delay:.05s"><p class="font-mono text-xs uppercase tracking-wider text-mint">05 · Participate</p><p class="mt-2">Join a local clean-up day. A joint clean-up with college eco-clubs is being planned.</p></li>
+          <li class="reveal glow-card rounded-2xl border border-line bg-panel p-6" style="--delay:.1s"><p class="font-mono text-xs uppercase tracking-wider text-mint">06 · Submit</p><p class="mt-2">Tell us about a conservation initiative so others can join in.</p><a href="app.html#initiatives" class="mt-3 inline-flex font-semibold text-aqua underline underline-offset-4 hover:text-mint">Submit an initiative</a></li>
+        </ul>
+      </div>
     </section>
 
-    <!-- ============================ PARTNERS + CAMPAIGN ============================ -->
-    <section class="bg-white py-20" aria-labelledby="partner-title">
+    <!-- ============================ PARTNERS ============================ -->
+    <section id="partners" class="relative bg-deep2 py-24" aria-labelledby="partner-title">
       <div class="mx-auto grid max-w-6xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-2">
         <div>
-          <p class="text-sm font-semibold uppercase tracking-[0.14em] text-lake-700">Working together</p>
-          <h2 id="partner-title" class="mt-2 font-display text-3xl font-semibold text-lake-950 sm:text-4xl">Are you an NGO, a lake authority or a CSR team?</h2>
-          <p class="mt-4 text-slate-700">
-            Lake Sentry wants to join existing lake-restoration efforts, not duplicate them. We are looking for partners to help with site access and permissions, supervised test runs, training volunteer operators and, once the model is proven, funding to build more robots.
-          </p>
+          <p class="eyebrow reveal">Working together</p>
+          <h2 id="partner-title" class="reveal mt-4 font-display text-3xl font-bold leading-tight text-txt-1 sm:text-4xl">Are you an NGO, a lake authority or a CSR team?</h2>
+          <p class="reveal mt-5">Lake Sentry wants to join existing lake-restoration efforts, not duplicate them. We're looking for partners to help with:</p>
+          <ul class="reveal mt-4 space-y-2">
+            <li>→ Lake access and permissions (GHMC / HYDRAA, resident associations)</li>
+            <li>→ Supervised test runs of the V1 prototype</li>
+            <li>→ Training volunteer operators from nonprofits and eco-clubs</li>
+            <li>→ Funding to build more robots once the model is proven</li>
+          </ul>
           <!-- TODO: add a contact email or form link, e.g. <a href="mailto:hello@lakesentry.in">hello@lakesentry.in</a> -->
-          <p class="mt-6 rounded-lg bg-sand-100 px-4 py-3 text-sand-800">Contact details coming soon.</p>
+          <p class="reveal mt-6 rounded-lg border border-sun/40 bg-sun/10 px-4 py-3 text-sun">Contact details coming soon.</p>
         </div>
         <!-- IMAGE PLACEHOLDER — swap in a campaign post or clean-up day photo -->
-        <figure class="overflow-hidden rounded-2xl ring-1 ring-lake-100">
-          <img src="assets/images/placeholder.svg" width="800" height="500" loading="lazy" class="img-placeholder h-auto w-full"
+        <figure class="reveal overflow-hidden rounded-2xl border border-line">
+          <img src="placeholder.svg" width="800" height="500" loading="lazy" class="img-placeholder h-auto w-full"
                alt="Placeholder for a photo of volunteers at a Lake Sentry lake clean-up day." />
-          <figcaption class="bg-white px-5 py-3 text-sm text-slate-700">Clean-up day with eco-club volunteers (photo to be added).</figcaption>
+          <figcaption class="bg-panel px-5 py-3 text-sm">Clean-up day with eco-club volunteers (photo to be added).</figcaption>
         </figure>
       </div>
     </section>
   </main>
 
   <!-- ============================ SITE FOOTER ============================ -->
-  <footer class="on-dark bg-lake-950 text-lake-100">
-    <div class="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-3">
+  <footer class="relative border-t border-line bg-deep2 text-txt-2">
+    <div class="mx-auto grid max-w-6xl gap-10 px-4 py-16 sm:px-6 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
       <div>
-        <p class="font-display text-xl font-semibold text-white">Lake Sentry</p>
+        <p class="flex items-center gap-2 font-display text-xl font-bold text-txt-1">
+          <svg aria-hidden="true" class="h-7 w-7" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="13" r="12" stroke="#38E4F0" stroke-width="1.4" /><path d="M4 15c2-2 4-2 6 0s4 2 6 0 4-2 6 0" stroke="#3CE8A0" stroke-width="1.4" /></svg>
+          Lake Sentry
+        </p>
         <p class="mt-3 text-sm leading-relaxed">A student-led environmental project combining research, engineering and awareness to reduce floating waste in Hyderabad's urban lakes.</p>
       </div>
       <nav aria-label="Footer">
-        <h2 class="text-sm font-semibold uppercase tracking-wider text-lake-200">Pages</h2>
-        <ul class="mt-3 space-y-2 text-sm">
-          <li><a href="index.html" class="underline-offset-4 hover:text-white hover:underline">Home</a></li>
-          <li><a href="about.html" class="underline-offset-4 hover:text-white hover:underline">About</a></li>
-          <li><a href="app.html" class="underline-offset-4 hover:text-white hover:underline">Lake Explorer App</a></li>
-          <li><a href="get-involved.html" class="underline-offset-4 hover:text-white hover:underline">Get involved</a></li>
+        <h2 class="font-mono text-xs uppercase tracking-wider text-txt-3">Explore</h2>
+        <ul class="mt-4 space-y-2 text-sm">
+          <li><a href="index.html" class="hover:text-aqua">Home</a></li>
+          <li><a href="about.html" class="hover:text-aqua">About the project</a></li>
+          <li><a href="about.html#v1" class="hover:text-aqua">Prototype V1</a></li>
+          <li><a href="app.html" class="hover:text-aqua">Lake Explorer App</a></li>
         </ul>
       </nav>
       <div>
-        <h2 class="text-sm font-semibold uppercase tracking-wider text-lake-200">Follow the campaign</h2>
+        <h2 class="font-mono text-xs uppercase tracking-wider text-txt-3">Participate</h2>
+        <ul class="mt-4 space-y-2 text-sm">
+          <li><a href="get-involved.html#survey" class="hover:text-aqua">Take the survey</a></li>
+          <li><a href="app.html#initiatives" class="hover:text-aqua">Submit an initiative</a></li>
+          <li><a href="about.html#sdgs" class="hover:text-aqua">UN SDGs</a></li>
+          <li><a href="get-involved.html#partners" class="hover:text-aqua">Partner with us</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2 class="font-mono text-xs uppercase tracking-wider text-txt-3">Connect</h2>
         <!-- TODO: replace these with your real Instagram / LinkedIn links when ready -->
-        <ul class="mt-3 space-y-2 text-sm">
-          <li>Instagram — link coming soon</li>
-          <li>LinkedIn — link coming soon</li>
+        <ul class="mt-4 space-y-2 text-sm">
+          <li>Instagram (link coming soon)</li>
+          <li>LinkedIn (link coming soon)</li>
+          <li>LakeSentry.in</li>
         </ul>
       </div>
     </div>
-    <p class="border-t border-white/10 px-4 py-5 text-center text-sm">© <span data-year>2026</span> Lake Sentry · Hyderabad, India</p>
+    <div class="border-t border-line px-4 py-6 text-center text-sm text-txt-3">© <span data-year>2026</span> Lake Sentry · Hyderabad, India · Keystone International School</div>
   </footer>
 
-  <script src="assets/js/site.js"></script>
+  <script src="site.js"></script>
 </body>
 </html>

@@ -272,7 +272,7 @@
     tripStart = 0;
     recordFlashUntil = clock + 2600;
     addLogRow(trip);
-    const msg = 'Trip ' + trip.n + ' recorded: ' + trip.pieces + ' pieces, ' + formatWeight(grams) + ', in ' + seconds + ' seconds.';
+    const msg = 'Trip ' + trip.n + ' recorded: ' + trip.pieces + (trip.pieces === 1 ? ' piece, ' : ' pieces, ') + formatWeight(grams) + ', in ' + seconds + ' seconds.';
     say(msg);
     return msg;
   }
@@ -315,8 +315,8 @@
 
     // Water
     const g = ctx.createLinearGradient(0, 0, 0, BANK_Y);
-    g.addColorStop(0, '#1F6F86');
-    g.addColorStop(1, '#0C4150');
+    g.addColorStop(0, '#1E5C94');
+    g.addColorStop(1, '#0B1330');
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, W, BANK_Y);
     // Gentle wave lines
@@ -506,7 +506,7 @@
     ui.storageText.textContent = used + '%';
     const bat = Math.round(battery);
     ui.batteryBar.style.width = bat + '%';
-    ui.batteryBar.className = 'h-full rounded-full ' + (bat < 20 ? 'bg-red-700' : 'bg-reed-500');
+    ui.batteryBar.className = 'h-full rounded-full ' + (bat < 20 ? 'bg-coral' : 'bg-mint');
     ui.batteryText.textContent = bat + '%';
     ui.tripPieces.textContent = String(storage.length);
     ui.totalPieces.textContent = String(totals.pieces);
@@ -531,12 +531,12 @@
   function addLogRow(trip) {
     ui.logEmpty.hidden = true;
     const tr = document.createElement('tr');
-    tr.className = 'border-t border-lake-100';
+    tr.className = 'border-t border-line';
     const breakdown = Object.keys(trip.counts).map(function (k) { return trip.counts[k] + ' × ' + TYPES[k].label; }).join(', ');
     [String(trip.n), String(trip.pieces), formatWeight(trip.grams), trip.seconds + ' s', breakdown].forEach(function (v, i) {
       const cell = document.createElement(i === 0 ? 'th' : 'td');
       if (i === 0) cell.scope = 'row';
-      cell.className = 'px-3 py-2 ' + (i === 0 ? 'font-semibold text-lake-950' : 'text-slate-700');
+      cell.className = 'px-3 py-2 ' + (i === 0 ? 'font-mono font-semibold text-aqua' : 'text-txt-2');
       cell.textContent = v;
       tr.appendChild(cell);
     });

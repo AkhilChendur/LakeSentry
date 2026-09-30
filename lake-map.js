@@ -88,23 +88,23 @@
 
     // Background, rivers and area names are decoration only.
     const bg = el('g', { 'aria-hidden': 'true' });
-    bg.appendChild(el('rect', { width: VIEW_W, height: VIEW_H, fill: '#F5EEDC' }));
+    bg.appendChild(el('rect', { width: VIEW_W, height: VIEW_H, fill: '#0F1C42' }));
     // faint grid
-    for (let x = 50; x < VIEW_W; x += 50) bg.appendChild(el('line', { x1: x, y1: 0, x2: x, y2: VIEW_H, stroke: '#EBDDBB', 'stroke-width': 1 }));
-    for (let y = 50; y < VIEW_H; y += 50) bg.appendChild(el('line', { x1: 0, y1: y, x2: VIEW_W, y2: y, stroke: '#EBDDBB', 'stroke-width': 1 }));
+    for (let x = 50; x < VIEW_W; x += 50) bg.appendChild(el('line', { x1: x, y1: 0, x2: x, y2: VIEW_H, stroke: 'rgba(148,196,255,0.08)', 'stroke-width': 1 }));
+    for (let y = 50; y < VIEW_H; y += 50) bg.appendChild(el('line', { x1: 0, y1: y, x2: VIEW_W, y2: y, stroke: 'rgba(148,196,255,0.08)', 'stroke-width': 1 }));
     // Musi river (runs west -> east through the city) and the Esi river
-    bg.appendChild(el('path', { d: 'M150 372 C230 360 260 330 330 335 S470 350 540 340 S650 330 700 345 S770 360 800 352', fill: 'none', stroke: '#76BFCB', 'stroke-width': 6, 'stroke-linecap': 'round' }));
-    bg.appendChild(el('path', { d: 'M340 490 C380 440 430 400 470 350', fill: 'none', stroke: '#76BFCB', 'stroke-width': 4, 'stroke-linecap': 'round' }));
-    bg.appendChild(el('text', { x: 560, y: 368, fill: '#105565', 'font-size': 14, 'font-style': 'italic' }, 'Musi river'));
+    bg.appendChild(el('path', { d: 'M150 372 C230 360 260 330 330 335 S470 350 540 340 S650 330 700 345 S770 360 800 352', fill: 'none', stroke: '#1E5C94', 'stroke-width': 7, 'stroke-linecap': 'round' }));
+    bg.appendChild(el('path', { d: 'M340 490 C380 440 430 400 470 350', fill: 'none', stroke: '#1E5C94', 'stroke-width': 5, 'stroke-linecap': 'round' }));
+    bg.appendChild(el('text', { x: 560, y: 368, fill: '#96A8CC', 'font-size': 14, 'font-style': 'italic' }, 'Musi river'));
     // Area names
     [['Gachibowli', 230, 190], ['Kukatpally', 520, 118], ['Secunderabad', 690, 170], ['Old City', 640, 430]].forEach(function (a) {
-      bg.appendChild(el('text', { x: a[1], y: a[2], fill: '#6B5A3A', 'font-size': 14, 'font-weight': 500, 'letter-spacing': '0.08em' }, a[0].toUpperCase()));
+      bg.appendChild(el('text', { x: a[1], y: a[2], fill: '#96A8CC', 'font-size': 13, 'font-family': 'IBM Plex Mono, monospace', 'letter-spacing': '0.08em' }, a[0].toUpperCase()));
     });
     // Compass
     const compass = el('g', { transform: 'translate(752 56)' });
-    compass.appendChild(el('circle', { r: 24, fill: '#FFFFFF', stroke: '#105565', 'stroke-width': 2 }));
-    compass.appendChild(el('path', { d: 'M0 -16 L7 6 L0 2 L-7 6 Z', fill: '#105565' }));
-    compass.appendChild(el('text', { y: 18, 'text-anchor': 'middle', 'font-size': 11, 'font-weight': 700, fill: '#105565' }, 'N'));
+    compass.appendChild(el('circle', { r: 24, fill: '#131F42', stroke: '#38E4F0', 'stroke-width': 1.5 }));
+    compass.appendChild(el('path', { d: 'M0 -16 L7 6 L0 2 L-7 6 Z', fill: '#38E4F0' }));
+    compass.appendChild(el('text', { y: 18, 'text-anchor': 'middle', 'font-size': 11, 'font-weight': 700, fill: '#CDD8ED' }, 'N'));
     bg.appendChild(compass);
     svg.appendChild(bg);
 
@@ -122,12 +122,16 @@
       g.appendChild(el('path', {
         class: 'lake-shape',
         d: lakePath(p.x, p.y, 10 + lake.size * 12, lake.id),
-        fill: lake.verified ? '#3F9FB0' : '#A9D8DF',
-        stroke: '#105565',
+        fill: lake.verified ? '#1CA9BE' : 'rgba(28,169,190,0.35)',
+        stroke: lake.verified ? '#38E4F0' : '#96A8CC',
         'stroke-width': 1.5,
         'stroke-dasharray': lake.verified ? '' : '5 4',
       }));
-      // Label with a white "halo" so it stays readable over anything.
+      // Lakes with Lake Sentry field notes get a gently pulsing ring.
+      if (lake.status === 'observed') {
+        g.appendChild(el('circle', { class: 'pulse-ring', cx: p.x, cy: p.y, r: 10 + lake.size * 10, fill: 'none', stroke: '#3CE8A0', 'stroke-width': 2, 'aria-hidden': 'true' }));
+      }
+      // Label with a dark "halo" so it stays readable over anything.
       g.appendChild(el('text', {
         class: 'lake-label',
         x: p.x + (lake.labelDx || 0),
@@ -135,8 +139,8 @@
         'text-anchor': 'middle',
         'font-size': 15,
         'font-weight': 600,
-        fill: '#082E3A',
-        stroke: '#FFFFFF',
+        fill: '#FBFDFF',
+        stroke: '#040713',
         'stroke-width': 4,
         'paint-order': 'stroke',
       }, lake.name.replace(/ \(.*\)/, '')));
@@ -179,13 +183,13 @@
       btn.type = 'button';
       btn.dataset.id = lake.id;
       btn.setAttribute('aria-pressed', 'false');
-      btn.className = 'flex w-full items-center justify-between gap-3 rounded-lg px-4 py-3 text-left ring-1 ring-lake-100 hover:bg-lake-50 aria-pressed:bg-lake-700 aria-pressed:text-white aria-pressed:ring-lake-700';
+      btn.className = 'flex w-full items-center justify-between gap-3 rounded-lg border border-line bg-panel px-4 py-3 text-left text-txt-1 transition hover:translate-x-1 hover:border-aqua aria-pressed:border-aqua aria-pressed:bg-aqua/15';
       const name = document.createElement('span');
       name.className = 'font-semibold';
       name.textContent = lake.name;
       const badge = document.createElement('span');
       badge.className = 'shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold ' +
-        (lake.status === 'observed' ? 'bg-reed-100 text-reed-800' : 'bg-sand-100 text-sand-800');
+        (lake.status === 'observed' ? 'border border-mint/50 text-mint' : 'border border-sun/50 text-sun');
       badge.textContent = lake.status === 'observed' ? 'Field notes' : 'Visit planned';
       btn.append(name, badge);
       btn.addEventListener('click', function () { selectLake(lake.id); });
@@ -199,10 +203,10 @@
   function sectionText(text) {
     const p = document.createElement('p');
     if (/^TODO:?/i.test(text)) {
-      p.className = 'mt-1 italic text-slate-600';
+      p.className = 'mt-1 italic text-txt-3';
       p.textContent = 'To be added: ' + text.replace(/^TODO:?\s*/i, '');
     } else {
-      p.className = 'mt-1 text-slate-700';
+      p.className = 'mt-1';
       p.textContent = text;
     }
     return p;
@@ -211,7 +215,7 @@
   function section(title, content) {
     const wrap = document.createElement('div');
     const h = document.createElement('h4');
-    h.className = 'text-sm font-bold uppercase tracking-wider text-lake-700';
+    h.className = 'font-mono text-xs uppercase tracking-wider text-aqua';
     h.textContent = title;
     wrap.appendChild(h);
     wrap.appendChild(typeof content === 'string' ? sectionText(content) : content);
@@ -227,33 +231,33 @@
 
     // Photo (placeholder until you add real photos in lakes-data.js)
     const fig = document.createElement('figure');
-    fig.className = 'overflow-hidden rounded-2xl ring-1 ring-lake-100 self-start';
+    fig.className = 'overflow-hidden rounded-2xl border border-line self-start';
     const img = document.createElement('img');
     img.src = lake.photo;
     img.alt = lake.photoAlt;
     img.width = 800; img.height = 500;
     img.className = 'img-placeholder h-auto w-full';
     const cap = document.createElement('figcaption');
-    cap.className = 'bg-white px-4 py-2 text-sm text-slate-700';
+    cap.className = 'bg-deep px-4 py-2 text-sm';
     cap.textContent = lake.photo.indexOf('placeholder') !== -1 ? 'Field photo coming soon.' : lake.name;
     fig.append(img, cap);
 
     const body = document.createElement('div');
     const area = document.createElement('p');
-    area.className = 'text-sm font-semibold uppercase tracking-wider text-slate-600';
+    area.className = 'font-mono text-xs uppercase tracking-wider text-txt-3';
     area.textContent = lake.area;
     const title = document.createElement('h3');
     title.id = 'lake-detail-title';
-    title.className = 'mt-1 font-display text-3xl font-semibold text-lake-950';
+    title.className = 'mt-2 font-display text-3xl font-bold text-txt-1';
     title.textContent = lake.name;
     const badges = document.createElement('p');
     badges.className = 'mt-3 flex flex-wrap gap-2 text-xs font-semibold';
     [
-      lake.status === 'observed' ? ['Lake Sentry field notes', 'bg-reed-100 text-reed-800'] : ['Site visit planned', 'bg-sand-100 text-sand-800'],
-      lake.verified ? ['Location verified', 'bg-lake-100 text-lake-800'] : ['Location to be verified', 'bg-sand-100 text-sand-800'],
+      lake.status === 'observed' ? ['Lake Sentry field notes', 'border border-mint/50 text-mint'] : ['Site visit planned', 'border border-sun/50 text-sun'],
+      lake.verified ? ['Location verified', 'border border-aqua/50 text-aqua'] : ['Location to be verified', 'border border-sun/50 text-sun'],
     ].forEach(function (b) {
       const s = document.createElement('span');
-      s.className = 'rounded-full px-3 py-1 ' + b[1];
+      s.className = 'rounded-full px-3 py-1 font-mono ' + b[1];
       s.textContent = b[0];
       badges.appendChild(s);
     });
@@ -277,7 +281,7 @@
     const approved = (window.LakeSentryInitiatives && window.LakeSentryInitiatives.approvedFor(lake.id)) || [];
     if (approved.length) {
       const ul = document.createElement('ul');
-      ul.className = 'mt-1 list-disc space-y-1 pl-5 text-slate-700';
+      ul.className = 'mt-1 list-disc space-y-1 pl-5';
       approved.forEach(function (it) {
         const li = document.createElement('li');
         li.textContent = it.name + (it.organization ? ' (' + it.organization + ')' : '');
@@ -286,13 +290,13 @@
       wrap.appendChild(ul);
     } else {
       const p = document.createElement('p');
-      p.className = 'mt-1 text-slate-700';
+      p.className = 'mt-1';
       p.textContent = 'No published initiatives for this lake yet.';
       wrap.appendChild(p);
     }
     const link = document.createElement('a');
     link.href = '#initiatives';
-    link.className = 'mt-2 inline-flex font-semibold text-lake-700 underline underline-offset-4 hover:text-lake-900';
+    link.className = 'mt-2 inline-flex font-semibold text-aqua underline underline-offset-4 hover:text-mint';
     link.textContent = 'Submit an initiative for ' + lake.name;
     link.addEventListener('click', function () {
       // Pre-select this lake in the submission form further down the page.

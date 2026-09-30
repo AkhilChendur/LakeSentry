@@ -1,49 +1,47 @@
 /* =====================================================================
    Lake Sentry — shared custom CSS
    ---------------------------------------------------------------------
-   Almost all styling is done with Tailwind utility classes directly in
-   the HTML. This file only holds the few things that are easier to
-   write as plain CSS: focus rings, the skip link, image placeholders
-   and reduced-motion handling.
+   Most styling is done with Tailwind classes in the HTML. This file
+   holds what's easier in plain CSS:
+     1. Base page + accessibility helpers (focus ring, skip link)
+     2. Lake-themed animations: waves, bubbles, shimmering light,
+        click ripples, scroll reveals, gradient text
+     3. Pieces used by the App page (map, placeholders)
+     4. Reduced-motion rules
    ===================================================================== */
 
+/* ---------------------------------------------------------------------
+   1. BASE
+   --------------------------------------------------------------------- */
 html {
   scroll-behavior: smooth;
-  /* Leaves room for the sticky header when jumping to #anchors */
-  scroll-padding-top: 5.5rem;
+  scroll-padding-top: 5.5rem; /* room for the sticky header when jumping to #anchors */
 }
-
 body {
+  background: #040713;
+  color: #CDD8ED;
   -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+::selection {
+  background: #38E4F0;
+  color: #040713;
 }
 
-/* Make sure the `hidden` attribute always hides an element, even if it
-   also has a Tailwind display class such as `flex` or `grid`. */
+/* The `hidden` attribute always wins, even over Tailwind's `flex`/`grid`. */
 [hidden] {
   display: none !important;
 }
 
-/* ---------------------------------------------------------------------
-   Visible keyboard focus (WCAG 2.4.7)
-   Every interactive element gets a thick, high-contrast outline when it
-   is reached with the keyboard. On light backgrounds the ring is dark
-   blue; inside anything marked `.on-dark` it switches to bright yellow.
-   --------------------------------------------------------------------- */
+/* Visible keyboard focus (WCAG 2.4.7): a thick bright-yellow ring that
+   stands out against every dark background on the site. */
 :focus-visible {
-  outline: 3px solid #082E3A;
+  outline: 3px solid #FDE047;
   outline-offset: 3px;
   border-radius: 4px;
 }
-.on-dark :focus-visible,
-.on-dark:focus-visible {
-  outline-color: #FDE047;
-}
 
-/* ---------------------------------------------------------------------
-   "Skip to main content" link (WCAG 2.4.1)
-   Hidden off-screen until a keyboard user tabs onto it.
-   --------------------------------------------------------------------- */
+/* "Skip to main content" link (WCAG 2.4.1) — appears when tabbed to. */
 .skip-link {
   position: absolute;
   left: 1rem;
@@ -51,7 +49,7 @@ body {
   z-index: 100;
   padding: 0.75rem 1.25rem;
   background: #FDE047;
-  color: #041B24;
+  color: #040713;
   font-weight: 600;
   border-radius: 0.5rem;
   transition: top 0.15s ease;
@@ -60,54 +58,303 @@ body {
   top: 1rem;
 }
 
-/* ---------------------------------------------------------------------
-   Image placeholders
-   Each placeholder is a normal <img> pointing at placeholder.svg, so
-   swapping in a real photo is as simple as changing the `src` and `alt`.
-   --------------------------------------------------------------------- */
-.img-placeholder {
-  background: repeating-linear-gradient(
-    -45deg,
-    #EEF7F8,
-    #EEF7F8 12px,
-    #E3F1F3 12px,
-    #E3F1F3 24px
-  );
+/* Small mono "eyebrow" label above headings, with a short aqua line. */
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #38E4F0;
+}
+.eyebrow::before {
+  content: "";
+  width: 1.6rem;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
 }
 
 /* ---------------------------------------------------------------------
-   Lake map (App page) — SVG lake shapes
+   2. ANIMATIONS
    --------------------------------------------------------------------- */
+
+/* Scroll progress bar across the top of the page */
+#scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 60;
+  height: 3px;
+  width: 100%;
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+  background: linear-gradient(90deg, #38E4F0, #22C3A6, #3CE8A0);
+}
+
+/* Headline text with a slowly moving "light on water" gradient */
+.gradient-text {
+  background: linear-gradient(110deg, #FFFFFF 20%, #38E4F0 40%, #22C3A6 55%, #3CE8A0 70%, #FFFFFF 90%);
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer 9s ease-in-out infinite alternate;
+}
+@keyframes shimmer {
+  from { background-position: 0% 50%; }
+  to   { background-position: 100% 50%; }
+}
+
+/* Fade-and-rise when a section scrolls into view (site.js adds .is-visible) */
+.reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition: opacity 0.8s cubic-bezier(.2,.7,.3,1), transform 0.8s cubic-bezier(.2,.7,.3,1);
+  transition-delay: var(--delay, 0s);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+/* If JavaScript is off, never hide content */
+.no-js .reveal {
+  opacity: 1;
+  transform: none;
+}
+
+/* Animated waves between sections (the SVG is added by site.js).
+   Each wave layer is twice as wide as the screen and slides left
+   forever, so it looks like an endless rolling wave. */
+.wave-divider {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 70px;
+  overflow: hidden;
+  pointer-events: none;
+  line-height: 0;
+}
+.wave-divider svg {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 200%;
+  height: 100%;
+}
+.wave-divider .wave-back {
+  opacity: 0.45;
+  animation: wave-slide 18s linear infinite;
+}
+.wave-divider .wave-front {
+  animation: wave-slide 11s linear infinite reverse;
+}
+@keyframes wave-slide {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* Rising bubbles (the spans are added by site.js into [data-bubbles]) */
+.bubble {
+  position: absolute;
+  bottom: -20px;
+  border-radius: 50%;
+  border: 1px solid rgba(56, 228, 240, 0.45);
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.45), rgba(56,228,240,0.08) 60%);
+  pointer-events: none;
+  animation: bubble-rise linear infinite;
+}
+@keyframes bubble-rise {
+  0%   { transform: translate(0, 0) scale(0.6); opacity: 0; }
+  10%  { opacity: 0.9; }
+  50%  { transform: translate(14px, -45vh) scale(1); }
+  90%  { opacity: 0.6; }
+  100% { transform: translate(-10px, -95vh) scale(1.1); opacity: 0; }
+}
+
+/* Shimmering underwater light ("caustics") for section backgrounds */
+.caustics {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.55;
+  background:
+    radial-gradient(40% 30% at 20% 30%, rgba(56, 228, 240, 0.10), transparent 70%),
+    radial-gradient(35% 25% at 80% 20%, rgba(60, 232, 160, 0.08), transparent 70%),
+    radial-gradient(30% 30% at 60% 80%, rgba(34, 195, 166, 0.10), transparent 70%);
+  background-size: 180% 180%;
+  animation: caustics 22s ease-in-out infinite alternate;
+}
+@keyframes caustics {
+  0%   { background-position: 0% 0%, 100% 0%, 50% 100%; }
+  50%  { background-position: 60% 40%, 40% 60%, 20% 30%; }
+  100% { background-position: 100% 100%, 0% 100%, 80% 0%; }
+}
+
+/* Ripple rings where you click anywhere on the page (added by site.js) */
+.click-ripple {
+  position: fixed;
+  z-index: 70;
+  width: 16px;
+  height: 16px;
+  margin: -8px 0 0 -8px;
+  border-radius: 50%;
+  border: 2px solid rgba(56, 228, 240, 0.8);
+  pointer-events: none;
+  animation: click-ripple 0.9s ease-out forwards;
+}
+.click-ripple.second {
+  animation-delay: 0.15s;
+  opacity: 0;
+}
+@keyframes click-ripple {
+  0%   { transform: scale(0.3); opacity: 0.9; }
+  100% { transform: scale(5); opacity: 0; }
+}
+
+/* Cards that glow like light on water when hovered/focused */
+.glow-card {
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.glow-card:hover,
+.glow-card:focus-within {
+  transform: translateY(-4px);
+  border-color: rgba(56, 228, 240, 0.55);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.35), 0 0 0 6px rgba(56, 228, 240, 0.06);
+}
+
+/* Gentle bobbing, like something floating */
+.float-bob {
+  animation: float-bob 6s ease-in-out infinite;
+}
+@keyframes float-bob {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50%      { transform: translateY(-10px) rotate(-1deg); }
+}
+
+/* Animated bars (survey results): width grows when scrolled into view */
+[data-bar] {
+  width: 0;
+  transition: width 1.4s cubic-bezier(.2,.7,.3,1);
+}
+
+/* Pulsing ring used on the map for lakes with field notes */
+.pulse-ring {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: pulse-ring 2.8s ease-out infinite;
+}
+@keyframes pulse-ring {
+  0%   { transform: scale(0.9); opacity: 0.7; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
+/* V1 diagram (About page) */
+#v1-diagram .v1-part {
+  cursor: pointer;
+  transition: opacity 0.25s ease, filter 0.25s ease;
+}
+#v1-diagram.has-active .v1-part {
+  opacity: 0.35;
+}
+#v1-diagram .v1-part:hover,
+#v1-diagram .v1-part.is-active {
+  opacity: 1;
+  filter: drop-shadow(0 0 8px rgba(56, 228, 240, 0.8));
+}
+.v1-spin {
+  animation: v1-spin 6s linear infinite;
+}
+@keyframes v1-spin {
+  to { transform: rotate(360deg); }
+}
+.v1-belt {
+  animation: v1-belt 1s linear infinite;
+}
+@keyframes v1-belt {
+  to { stroke-dashoffset: 22; }
+}
+/* A bottle riding up the conveyor and dropping into storage */
+.v1-bottle {
+  animation: v1-bottle 4s ease-in-out infinite;
+}
+@keyframes v1-bottle {
+  0%   { transform: translate(575px, 214px) rotate(36deg); opacity: 0; }
+  10%  { opacity: 1; }
+  70%  { transform: translate(410px, 96px) rotate(36deg); opacity: 1; }
+  85%  { transform: translate(360px, 140px) rotate(90deg); opacity: 1; }
+  100% { transform: translate(340px, 160px) rotate(120deg); opacity: 0; }
+}
+
+/* ---------------------------------------------------------------------
+   3. APP PAGE PIECES
+   --------------------------------------------------------------------- */
+.img-placeholder {
+  background: #131F42;
+}
+
 .map-lake {
   cursor: pointer;
-  transition: fill 0.2s ease, stroke-width 0.2s ease;
+}
+.map-lake .lake-shape {
+  transition: fill 0.2s ease, stroke 0.2s ease, stroke-width 0.2s ease;
 }
 .map-lake:hover .lake-shape,
 .map-lake:focus-visible .lake-shape,
 .map-lake[aria-pressed="true"] .lake-shape {
-  fill: #1F8295;
+  fill: #38E4F0;
   stroke: #FDE047;
   stroke-width: 3;
 }
 .map-lake:focus-visible {
-  outline: none; /* the yellow stroke above is the focus indicator */
+  outline: none; /* the yellow outline on the lake shape is the focus indicator */
 }
 .map-lake:focus-visible .lake-label {
   text-decoration: underline;
 }
 
 /* ---------------------------------------------------------------------
-   Respect "reduce motion" (WCAG 2.3.3)
+   4. REDUCED MOTION (WCAG 2.3.3)
+   Decorative animations stop. The home-page lake keeps moving gently
+   (it has its own Pause button).
    --------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
+  html { scroll-behavior: auto; }
+  .gradient-text,
+  .wave-divider svg,
+  .bubble,
+  .caustics,
+  .float-bob,
+  .pulse-ring,
+  .click-ripple,
+  .v1-spin,
+  .v1-belt,
+  .v1-bottle {
+    animation: none !important;
   }
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
+  .v1-bottle { transform: translate(470px, 150px) rotate(36deg); }
+  .bubble,
+  .click-ripple { display: none; }
+  .reveal { opacity: 1; transform: none; transition: none; }
+  [data-bar] { transition: none; }
+  .glow-card:hover { transform: none; }
+}
+
+/* Big faint background word on the Prevent / Remove / Connect cards.
+   It's pure decoration, so the text lives in CSS (screen readers skip it). */
+.ghost-word::after {
+  content: attr(data-text);
+  position: absolute;
+  right: 0.5rem;
+  bottom: -1.5rem;
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  font-size: 6rem;
+  font-weight: 700;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.04);
+  pointer-events: none;
 }

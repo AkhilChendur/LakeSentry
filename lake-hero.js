@@ -9,6 +9,8 @@
         drift with the current and get pushed around by the ripples.
      3. A tiny Lake Sentry robot that cruises around collecting trash —
         a playful nod to the real V1 prototype.
+     4. Fish shadows swimming under the surface (they dart away from
+        your cursor), lily pads and swaying reeds at the edges.
 
    How the ripples work (the classic "2D wave equation" trick):
      - The water is split into a grid of small cells. Each cell stores a
@@ -25,8 +27,8 @@
      - The canvas is purely decorative (aria-hidden) — all real content
        is in normal HTML on top of it.
      - A "Pause animation" button stops all motion (WCAG 2.2.2).
-     - If the visitor's system asks for reduced motion, the lake starts
-       paused and shows a still picture instead.
+     - If the visitor's system asks for reduced motion, the lake still
+       moves, but more calmly (no raindrops, slower robot).
    ===================================================================== */
 (function () {
   'use strict';
@@ -47,15 +49,17 @@
     shade: 5.5,                // how strongly slopes are lit (bigger = more contrast)
     cursorStrength: 7,         // ripple size from moving the cursor
     splashStrength: 60,        // ripple size from a click / tap
-    rainEveryMs: [500, 1400],  // random gap between ambient raindrops
+    rainEveryMs: reduceMotion ? [5000, 9000] : [500, 1400], // gap between ambient raindrops
     trashCount: isSmallScreen ? 9 : 16,
-    botSpeed: 0.85,            // pixels per frame
+    botSpeed: reduceMotion ? 0.5 : 0.85, // pixels per frame
+    fishCount: isSmallScreen ? 3 : 5,
   };
 
   /* ---------- Water colours (top of the lake -> bottom) ---------- */
-  const WATER_TOP = [26, 96, 118];
-  const WATER_MID = [12, 64, 82];
-  const WATER_BOTTOM = [5, 33, 45];
+  // (the original Lake Sentry blues: #1E5C94 -> #164A7C -> #0B1330)
+  const WATER_TOP = [30, 92, 148];
+  const WATER_MID = [18, 66, 112];
+  const WATER_BOTTOM = [11, 19, 48];
 
   /* ---------- State ---------- */
   let W = 0, H = 0, dpr = 1;          // canvas size in CSS pixels + pixel ratio
@@ -66,7 +70,9 @@
   let trash = [];
   let bot = null;
   let collected = 0;
-  let running = !reduceMotion;
+  let running = true;
+  let fish = [], lilies = [], reeds = [];
+  let pointer = null;                 // where the cursor is over the lake (or null)
   let visible = true;
   let rafId = null;
   let lastTime = 0, accumulator = 0, nextRainAt = 0, clock = 0;
@@ -488,6 +494,148 @@
   }
 
   /* =============================================================
+     5b. Fish, lily pads and reeds — extra lake life
+     ============================================================= */
+  function makeFish() {
+    return {
+      x: rand(0, W), y: rand(H * 0.2, H * 0.95),
+      angle: rand(0, Math.PI * 2), speed: rand(0.4, 0.8),
+      size: rand(22, 36), phase: rand(0, 10), turn: 0,
+    };
+  }
+
+  function updateFish(f, dt) {
+    let wanted = f.angle + f.turn;
+    let speed = f.speed;
+    // Scared of the cursor: swim quickly away from it.
+    if (pointer) {
+      const d = Math.hypot(f.x - pointer.x, f.y - pointer.y);
+      if (d < 140) {
+        wanted = Math.atan2(f.y - pointer.y, f.x - pointer.x);
+        speed = f.speed * 4;
+        if (Math.random() < 0.04) disturb(f.x, f.y, 1.5, 6); // a little splash
+      }
+    }
+    // Stay inside the lake: turn back toward the middle near the edges.
+    if (f.x < 40 || f.x > W - 40 || f.y < H * 0.12 || f.y > H - 30) {
+      wanted = Math.atan2(H * 0.55 - f.y, W / 2 - f.x);
+    }
+    // Wander: a slowly changing turn.
+    f.turn += rand(-0.01, 0.01) * dt;
+    f.turn = Math.max(-0.02, Math.min(0.02, f.turn));
+    let diff = wanted - f.angle;
+    while (diff > Math.PI) diff -= Math.PI * 2;
+    while (diff < -Math.PI) diff += Math.PI * 2;
+    f.angle += Math.max(-0.08, Math.min(0.08, diff)) * dt;
+    f.x += Math.cos(f.angle) * speed * dt;
+    f.y += Math.sin(f.angle) * speed * dt;
+    f.phase += 0.12 * speed * dt;
+  }
+
+  function drawFish(f) {
+    ctx.save();
+    ctx.translate(f.x * dpr, f.y * dpr);
+    ctx.rotate(f.angle);
+    ctx.scale(dpr, dpr);
+    const s = f.size;
+    const tail = Math.sin(f.phase) * s * 0.18; // tail wiggle
+    ctx.fillStyle = 'rgba(4, 10, 28, 0.32)';   // dark shadow under the water
+    ctx.beginPath();
+    ctx.ellipse(0, 0, s * 0.5, s * 0.18, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(-s * 0.42, 0);
+    ctx.lineTo(-s * 0.78, -s * 0.2 + tail);
+    ctx.lineTo(-s * 0.78, s * 0.2 + tail);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function makeLily(i) {
+    // Lily pads sit near the left and right edges of the lake.
+    const left = i % 2 === 0;
+    return {
+      x: left ? rand(20, W * 0.14) : rand(W * 0.86, W - 20),
+      y: rand(H * 0.25, H * 0.9),
+      r: rand(16, 28), angle: rand(0, Math.PI * 2),
+      flower: Math.random() < 0.45, phase: rand(0, 10),
+    };
+  }
+
+  function drawLily(l, time) {
+    const w = sampleWater(l.x, l.y);
+    const bob = Math.sin(time * 0.001 + l.phase) * 1.5 - w.h * 0.3;
+    ctx.save();
+    ctx.translate(l.x * dpr, (l.y + bob) * dpr);
+    ctx.rotate(l.angle + Math.sin(time * 0.0004 + l.phase) * 0.1);
+    ctx.scale(dpr, dpr);
+    // pad with its classic notch
+    ctx.fillStyle = 'rgba(46, 125, 80, 0.9)';
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.arc(0, 0, l.r, 0.35, Math.PI * 2 - 0.1);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(120, 200, 140, 0.5)';
+    ctx.lineWidth = 1;
+    for (let k = 0; k < 5; k++) {
+      const a = 0.8 + k * 1.1;
+      ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(Math.cos(a) * l.r * 0.85, Math.sin(a) * l.r * 0.85); ctx.stroke();
+    }
+    if (l.flower) {
+      ctx.fillStyle = '#F7B7D2';
+      for (let k = 0; k < 6; k++) {
+        const a = (k / 6) * Math.PI * 2;
+        ctx.beginPath();
+        ctx.ellipse(Math.cos(a) * 5 - 4, Math.sin(a) * 5 - 4, 5, 2.6, a, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.fillStyle = '#FFC163';
+      ctx.beginPath(); ctx.arc(-4, -4, 3, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  function makeReeds() {
+    const list = [];
+    const clusters = isSmallScreen ? 3 : 6;
+    for (let i = 0; i < clusters; i++) {
+      const left = i % 2 === 0;
+      list.push({
+        x: left ? rand(0, W * 0.12) : rand(W * 0.88, W),
+        blades: 3 + Math.floor(rand(0, 3)),
+        h: rand(50, 95), sway: rand(0.5, 1), phase: rand(0, 10),
+      });
+    }
+    return list;
+  }
+
+  function drawReeds(time) {
+    ctx.lineCap = 'round';
+    reeds.forEach(function (c) {
+      for (let b = 0; b < c.blades; b++) {
+        const bx = (c.x + (b - c.blades / 2) * 8) * dpr;
+        const bh = c.h * (0.7 + (b % 3) * 0.15) * dpr;
+        const sway = Math.sin(time * 0.0009 * c.sway + c.phase + b) * 10 * dpr;
+        ctx.beginPath();
+        ctx.moveTo(bx, H * dpr);
+        ctx.quadraticCurveTo(bx + sway * 0.5, H * dpr - bh * 0.55, bx + sway, H * dpr - bh);
+        ctx.strokeStyle = 'rgba(60, 160, 100, 0.55)';
+        ctx.lineWidth = 3 * dpr;
+        ctx.stroke();
+        // cattail tip
+        if (b % 2 === 0) {
+          ctx.fillStyle = 'rgba(120, 80, 40, 0.85)';
+          ctx.beginPath();
+          ctx.ellipse(bx + sway, H * dpr - bh, 3 * dpr, 8 * dpr, sway * 0.01, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+    });
+  }
+
+  /* =============================================================
      6. Main loop
      ============================================================= */
   function frame(now) {
@@ -515,12 +663,11 @@
       nextRainAt = clock + rand(SETTINGS.rainEveryMs[0], SETTINGS.rainEveryMs[1]);
     }
 
+    fish.forEach(function (f) { updateFish(f, dt); });
     trash.forEach(function (p) { updateTrash(p, clock, dt); });
     updateBot(clock, dt);
 
-    drawWater(clock);
-    trash.forEach(function (p) { drawTrash(p, clock); });
-    drawBot();
+    drawScene();
 
     rafId = requestAnimationFrame(frame);
   }
@@ -532,12 +679,18 @@
     }
   }
 
-  // Draw one frame without animating (used for reduced motion / paused).
-  function drawStill() {
+  // Draw everything, back to front: water, fish (under the surface),
+  // lily pads, trash, the robot and finally the reeds at the edges.
+  function drawScene() {
     drawWater(clock);
+    fish.forEach(drawFish);
+    lilies.forEach(function (l) { drawLily(l, clock); });
     trash.forEach(function (p) { drawTrash(p, clock); });
     drawBot();
+    drawReeds(clock);
   }
+  // Used when the animation is paused.
+  function drawStill() { drawScene(); }
 
   /* =============================================================
      7. Cursor, touch and button input
@@ -548,6 +701,7 @@
     const rect = hero.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
+    pointer = { x: x, y: y };
     if (last) {
       // Fill in the gap between this point and the last one so fast
       // cursor movements still leave a continuous trail of ripples.
@@ -559,8 +713,9 @@
       }
     }
     last = { x: x, y: y };
+    pointer = { x: x, y: y };
   });
-  hero.addEventListener('pointerleave', function () { last = null; });
+  hero.addEventListener('pointerleave', function () { last = null; pointer = null; });
   hero.addEventListener('pointerdown', function (e) {
     if (!running) return;
     // Don't splash when the visitor is clicking a link or button.
@@ -603,11 +758,13 @@
   resize();
   for (let i = 0; i < SETTINGS.trashCount; i++) trash.push(makeTrash(false));
   bot = makeBot();
+  for (let i = 0; i < SETTINGS.fishCount; i++) fish.push(makeFish());
+  for (let i = 0; i < (isSmallScreen ? 2 : 5); i++) lilies.push(makeLily(i));
+  reeds = makeReeds();
 
   // Pre-run a few raindrops so the still picture isn't a flat lake.
   for (let i = 0; i < 6; i++) disturb(rand(0, W), rand(0, H), 2.5, 30);
   for (let i = 0; i < 40; i++) stepWater();
 
-  setRunning(running);
-  if (!running) drawStill();
+  setRunning(true);
 })();

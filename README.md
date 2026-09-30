@@ -2,64 +2,65 @@
 
 A four-page website for **Lake Sentry**, a Hyderabad project that removes and prevents floating trash in urban lakes.
 
-There's nothing to install. **Double-click `index.html`** to open it in your browser. You need an internet connection, because Tailwind CSS and the Google Fonts load from their CDNs.
+There's nothing to install. Double-click `index.html` to open it in a browser. You need an internet connection, because Tailwind CSS and the Google Fonts load from their CDNs.
+
+## Uploading to GitHub (and Vercel)
+
+**Every file sits in one folder, with no subfolders.** Drag all the files straight into the top level of your GitHub repo (**Add file → Upload files**) and commit. Files with the same name get replaced.
+
+Vercel is connected to the repo, so it redeploys automatically after each commit. `index.html` must be at the top level of the repo, not inside a folder.
 
 ## Pages
 
 | File | Page | What's on it |
 |---|---|---|
-| `index.html` | Home | Project name, one-line description, and an interactive lake: move the cursor to make ripples, click to splash, and watch a mini Lake Sentry collect floating trash |
-| `about.html` | About | What the project does, the problem, the research, V1 and V2, awareness, who it's for, the SDGs, the team and sources |
-| `app.html` | Lake Explorer App | Three working tools: an interactive lake map with lake pages, a V1 robot simulator, and the Submit → Review → Approve → Publish initiative network |
-| `get-involved.html` | Get involved | Survey QR code, survey highlights, ways to take action, and partner information |
+| `index.html` | Home | An interactive lake: ripples follow your cursor, trash floats, fish swim away from you, lily pads and reeds sway, and a mini Lake Sentry robot collects trash. Plus the Prevent/Remove/Connect plan, count-up statistics and the awareness funnel |
+| `about.html` | About | What it does, the problem, the research (Hussain Sagar timeline, interview notes), an interactive V1 diagram, the engineering iteration, V2, the awareness campaign, the LakeSentry.in platform, stakeholders, impact targets, risks, feasibility, SDGs, the team and sources |
+| `app.html` | Lake Explorer App | A lake map with lake pages, a V1 robot simulator, and the Submit → Review → Approve → Publish initiative network |
+| `get-involved.html` | Get involved | Survey QR code, animated survey results (headline and detailed), feedback themes, six actions and partner information |
 
-## Folder layout
+## Files
 
-```
-lake-sentry/
-├── index.html, about.html, app.html, get-involved.html
-└── assets/
-    ├── css/site.css             focus rings, skip link, reduced-motion rules
-    ├── js/tailwind-config.js    colour palette + fonts (edit here to re-theme the site)
-    ├── js/site.js               mobile menu + footer year (used on every page)
-    ├── js/lake-hero.js          Home page ripple/trash animation
-    ├── js/lakes-data.js         ALL lake information (edit this to add lakes, research and photos)
-    ├── js/lake-map.js           App page, tool 1: the lake map
-    ├── js/bot-sim.js            App page, tool 2: the V1 simulator
-    ├── js/initiatives.js        App page, tool 3: the initiative network
-    └── images/                  photos, survey QR code, placeholder.svg
-```
+| File | What it does |
+|---|---|
+| `tailwind-config.js` | Colour palette and fonts. Edit here to re-theme the whole site |
+| `site.css` | Focus rings, skip link and all lake animations (waves, bubbles, ripples, shimmer) |
+| `site.js` | Mobile menu, scroll progress bar, reveal-on-scroll, count-up numbers, waves, bubbles and click ripples |
+| `lake-hero.js` | The home page lake animation |
+| `about.js` | The interactive V1 diagram |
+| `lakes-data.js` | **All lake information.** Edit this to add lakes, research, field notes and photos |
+| `lake-map.js`, `bot-sim.js`, `initiatives.js` | The three App-page tools |
+| `v1-prototype.png`, `the-rollers.png`, `survey-qr.png` | Photos and the survey QR code |
+| `placeholder.svg`, `favicon.svg` | The image placeholder and the browser-tab icon |
 
 ## Adding your own photos
 
-Every spot waiting for a photo uses `assets/images/placeholder.svg` and has a comment such as `<!-- IMAGE PLACEHOLDER -->` above it. To add a photo:
+Every spot waiting for a photo uses `placeholder.svg`, with an `<!-- IMAGE PLACEHOLDER -->` comment above it. To add a photo:
 
-1. Put your photo in `assets/images/` (for example `field-visit-1.jpg`).
-2. Change the `<img src="...">` to point at it.
-3. Rewrite the `alt="..."` text so it describes what the photo shows.
+1. Upload your photo next to the other files (for example `field-visit-1.jpg`).
+2. Change `src="placeholder.svg"` to `src="field-visit-1.jpg"`.
+3. Rewrite the `alt="..."` text to describe what the photo shows.
 
-Lake photos are set in `assets/js/lakes-data.js` through each lake's `photo` and `photoAlt` fields.
+Lake photos are set in `lakes-data.js` through each lake's `photo` and `photoAlt` fields.
 
-## Things marked TODO
+## Things still to fill in
 
-Search the files for `TODO` to find what still needs your input:
+Search the files for `TODO`:
 
 - the direct survey link (`get-involved.html`)
-- Instagram / LinkedIn links (the footer on each page)
+- Instagram and LinkedIn links (the footer on every page)
 - a partner contact email (`get-involved.html`)
-- field notes and research for each lake (`assets/js/lakes-data.js`)
+- field notes and research for each lake (`lakes-data.js`)
 
 ## Accessibility (WCAG 2.1 AA)
 
-- Colour contrast is checked: body text is 7:1 or better, and all text is at least 4.5:1.
-- A visible focus ring appears on every link, button and form field, and a "Skip to main content" link is included.
-- Everything works with the keyboard, including the lake map (Tab + Enter) and the simulator (arrow keys).
-- Every image has alt text. Decorative graphics are hidden from screen readers.
-- The home animation has a Pause button and stays still if your device asks for reduced motion.
-- Form errors are listed in a summary and linked to their fields. Status messages are announced to screen readers.
-
-The pages were checked with the axe accessibility checker, which found no WCAG 2.1 A/AA violations.
+- Every text colour has at least 4.5:1 contrast on its background, and most are 10:1 or better.
+- A thick yellow focus ring appears on everything you can Tab to, and there's a "Skip to main content" link.
+- Everything works with a keyboard, including the lake map (Tab + Enter), the V1 diagram and the simulator (arrow keys).
+- Every image has alt text. Decorative animations are hidden from screen readers.
+- The home animation has a Pause button. When a device asks for reduced motion, the lake moves more calmly and the other decorative animations stop.
+- The pages were checked with the axe accessibility checker, which found no WCAG 2.1 A/AA violations.
 
 ## Note on the demo data
 
-The initiative network saves submissions in your browser's `localStorage`, so it runs without a server. Anything you submit stays on your own computer. Use **Reset demo data** on the App page to start again.
+The initiative network saves submissions in the visitor's browser (`localStorage`), so it works without a server. Use **Reset demo data** on the App page to start again.
