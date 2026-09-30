@@ -29,20 +29,27 @@
        (identical on every page — only aria-current="page" moves) -->
   <header class="sticky top-0 z-50 border-b border-line bg-ink/85 backdrop-blur-lg">
     <nav aria-label="Main" class="relative mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
-      <a href="index.html" class="group flex items-center gap-2.5 rounded font-display text-xl font-bold text-txt-1">
-        <!-- Logo: a ring with two waves (decorative) -->
-        <svg aria-hidden="true" class="h-8 w-8 transition-transform duration-500 group-hover:rotate-[20deg]" viewBox="0 0 26 26" fill="none">
-          <circle cx="13" cy="13" r="12" stroke="#38E4F0" stroke-width="1.4" />
-          <path d="M4 15c2-2 4-2 6 0s4 2 6 0 4-2 6 0" stroke="#3CE8A0" stroke-width="1.4" />
-          <path d="M4 10c2-2 4-2 6 0s4 2 6 0 4-2 6 0" stroke="#38E4F0" stroke-width="1.2" opacity=".6" />
-        </svg>
-        Lake Sentry
-      </a>
+      <div class="flex items-center gap-2 sm:gap-3">
+        <!-- Admin login (top-left). Opens a login box; see admin-auth.js -->
+        <button id="admin-btn" type="button" aria-haspopup="dialog" class="inline-flex items-center gap-1.5 rounded-md border border-linehi px-2.5 py-1.5 font-mono text-xs text-txt-2 transition hover:border-aqua hover:text-aqua">
+          <svg aria-hidden="true" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 2a4 4 0 0 0-4 4v2H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-1V6a4 4 0 0 0-4-4Zm2 6V6a2 2 0 1 0-4 0v2h4Z" clip-rule="evenodd" /></svg>
+          <span data-admin-label>Admin</span>
+        </button>
+        <a href="index.html" class="group flex items-center gap-2 rounded font-display text-lg font-bold text-txt-1 sm:text-xl">
+          <!-- Logo: a ring with two waves (decorative) -->
+          <svg aria-hidden="true" class="h-8 w-8 transition-transform duration-500 group-hover:rotate-[20deg]" viewBox="0 0 26 26" fill="none">
+            <circle cx="13" cy="13" r="12" stroke="#38E4F0" stroke-width="1.4" />
+            <path d="M4 15c2-2 4-2 6 0s4 2 6 0 4-2 6 0" stroke="#3CE8A0" stroke-width="1.4" />
+            <path d="M4 10c2-2 4-2 6 0s4 2 6 0 4-2 6 0" stroke="#38E4F0" stroke-width="1.2" opacity=".6" />
+          </svg>
+          Lake Sentry
+        </a>
+      </div>
 
       <!-- Menu button — only shown on small screens -->
       <button id="nav-toggle" type="button" class="inline-flex items-center gap-2 rounded-md border border-linehi px-3 py-2 text-sm font-medium text-txt-1 md:hidden" aria-expanded="false" aria-controls="nav-menu">
         <svg aria-hidden="true" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round" /></svg>
-        <span data-label>Open menu</span>
+        <span data-label class="sr-only sm:not-sr-only">Open menu</span>
       </button>
 
       <ul id="nav-menu" class="absolute left-0 right-0 top-full hidden flex-col gap-1 border-b border-line bg-deep px-4 pb-4 md:static md:flex md:flex-row md:items-center md:gap-1 md:border-0 md:bg-transparent md:p-0">
@@ -650,6 +657,7 @@
         <h2 class="font-mono text-xs uppercase tracking-wider text-txt-3">Participate</h2>
         <ul class="mt-4 space-y-2 text-sm">
           <li><a href="https://docs.google.com/forms/d/e/1FAIpQLScOvBmpAHLoiJ6ZfsDkbI8g9bO4nfaFDodWxb_4oyn3Qfj4OQ/viewform?usp=header" target="_blank" rel="noopener noreferrer" class="hover:text-aqua">Take the survey ↗<span class="sr-only"> (opens in a new tab)</span></a></li>
+          <li><a href="app.html#stories" class="hover:text-aqua">Share a lake story</a></li>
           <li><a href="app.html#initiatives" class="hover:text-aqua">Submit an initiative</a></li>
           <li><a href="about.html#sdgs" class="hover:text-aqua">UN SDGs</a></li>
           <li><a href="get-involved.html#partners" class="hover:text-aqua">Partner with us</a></li>
@@ -669,6 +677,7 @@
   </footer>
 
   <script src="site.js"></script>
+  <script src="admin-auth.js"></script>
   <script src="about.js"></script>
 </body>
 </html>

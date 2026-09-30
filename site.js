@@ -52,6 +52,18 @@
     else if (desktop.addListener) desktop.addListener(onChange);
   }
 
+  /* ---------- 1b. Header height ----------
+     Sticky bars below the header (the App page's tool tabs) use
+     --header-h so they sit right under it on every screen size. */
+  const header = document.querySelector('header');
+  if (header) {
+    const setHeaderHeight = function () {
+      document.documentElement.style.setProperty('--header-h', header.offsetHeight + 'px');
+    };
+    setHeaderHeight();
+    window.addEventListener('resize', setHeaderHeight);
+  }
+
   /* ---------- 2. Footer year ---------- */
   document.querySelectorAll('[data-year]').forEach(function (el) {
     el.textContent = String(new Date().getFullYear());

@@ -3,9 +3,10 @@
    ---------------------------------------------------------------------
    Visitors can write a post about a lake and attach up to 3 photos.
 
-   Like the initiative network, posts are reviewed before they appear:
+   Like the initiative network, posts are reviewed before they appear.
+   The Lake Sentry team approves them in the Admin panel (admin.html):
 
-       Post  ->  Review  ->  Approve / Reject  ->  Published
+       Post  ->  Review (admin)  ->  Approve / Reject  ->  Published
 
    How photos work:
      - The visitor picks photos from their device.
@@ -16,10 +17,9 @@
 
    Where is the data stored?
    This site has no server yet, so posts and photos are saved in the
-   visitor's own browser (localStorage). They survive a page refresh,
-   but only that visitor sees them. To share posts with everyone, the
-   `save()`/`load()` functions below would be swapped for calls to a
-   small online database; nothing else on the page needs to change.
+   visitor's own browser (see store.js). They survive a page refresh,
+   but only that browser sees them. To share posts with everyone, only
+   store.js needs to change; nothing else on the page does.
 
    Security: everything visitors type is inserted with `textContent`
    (never `innerHTML`), and photos are re-drawn through a <canvas>, so
@@ -28,55 +28,19 @@
 (function () {
   'use strict';
 
-  const STORAGE_KEY = 'lakeSentry.posts.v1';
   const MAX_PHOTOS = 3;
   const MAX_SIDE = 1000;       // longest side of a resized photo, in pixels
   const JPEG_QUALITY = 0.78;
   const lakes = window.LAKE_SENTRY_LAKES || [];
-
-  const SAMPLES = [
-    {
-      id: 'post-sample-1', sample: true, status: 'approved',
-      author: 'Lake Sentry team', lake: 'hussain-sagar',
-      title: 'Example: what a lake story looks like',
-      text: 'This is a sample post. Share what you notice at a lake: floating waste, wildlife, a clean-up you joined, or an idea to keep it clean. Posts are reviewed before they appear here.',
-      photos: [], likes: 3, liked: false,
-      postedAt: Date.now() - 86400000 * 3, reviewedAt: Date.now() - 86400000 * 2,
-    },
-  ];
-
-  /* ---------- Saving and loading ---------- */
-  let items = load();
-  function load() {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) return JSON.parse(raw);
-    } catch (e) { /* storage blocked: start with the samples */ }
-    return SAMPLES.map(function (s) { return Object.assign({}, s); });
-  }
-  // Returns false if the browser's storage is full (photos take space).
-  function save() {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-      return true;
-    } catch (e) {
-      return false;
-    } finally {
-      document.dispatchEvent(new CustomEvent('lakesentry:posts-changed'));
-    }
-  }
+  const store = window.LakeSentryStore;
+  const cards = window.LakeSentryCards;
 
   // Used by lake-map.js to show a lake's posts on its lake page.
   window.LakeSentryPosts = {
     approvedFor: function (lakeId) {
-      return items.filter(function (p) { return p.status === 'approved' && p.lake === lakeId; });
+      return store.read('posts').filter(function (p) { return p.status === 'approved' && p.lake === lakeId; });
     },
   };
-
-  function lakeName(id) {
-    const lake = lakes.find(function (l) { return l.id === id; });
-    return lake ? lake.name : 'Other lake';
-  }
 
   /* ---------- Page elements ---------- */
   const $ = function (id) { return document.getElementById(id); };
@@ -87,9 +51,6 @@
   const errorSummary = $('post-errors');
   const successMsg = $('post-success');
   const announcer = $('post-status');
-  const queueList = $('post-queue');
-  const queueEmpty = $('post-queue-empty');
-  const queueCount = $('post-queue-count');
   const feed = $('post-feed');
   const feedEmpty = $('post-feed-empty');
   const filterSelect = $('post-filter');
@@ -274,12 +235,10 @@
       likes: 0, liked: false,
       postedAt: Date.now(), reviewedAt: null,
     };
-    items.push(post);
-    if (!save()) {
-      // Not enough browser storage: undo and tell the visitor.
-      items.pop();
-      save();
-      announce('');
+    const list = store.read('posts');
+    list.push(post);
+    if (!store.write('posts', list)) {
+      // Not enough browser storage: tell the visitor (nothing was saved).
       const list = errorSummary.querySelector('ul');
       list.textContent = '';
       const li = document.createElement('li');
@@ -292,145 +251,53 @@
     form.reset();
     pending = [];
     renderPreviews();
-    render();
     successMsg.hidden = false;
     successMsg.focus();
   });
 
-  /* ---------- Showing posts ---------- */
+  /* ---------- Showing published posts ---------- */
   function announce(msg) { announcer.textContent = msg; }
 
-  function formatDate(ts) {
-    return new Date(ts).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
-  }
-
-  function postCard(p, withReview) {
-    const li = document.createElement('li');
-    li.className = 'glow-card overflow-hidden rounded-2xl border border-line bg-panel';
-
-    // Photos: one big photo, or a grid if there are several.
-    if (p.photos.length) {
-      const gallery = document.createElement('div');
-      gallery.className = 'grid gap-0.5 bg-deep ' + (p.photos.length > 1 ? 'grid-cols-2' : '');
-      p.photos.forEach(function (ph, i) {
-        const img = document.createElement('img');
-        img.src = ph.src;
-        img.alt = ph.alt;
-        img.loading = 'lazy';
-        img.className = 'w-full object-cover ' + (p.photos.length === 3 && i === 0 ? 'col-span-2 aspect-[2/1]' : 'aspect-[4/3]');
-        gallery.appendChild(img);
-      });
-      li.appendChild(gallery);
-    }
-
-    const body = document.createElement('div');
-    body.className = 'p-5';
-    const tags = document.createElement('p');
-    tags.className = 'flex flex-wrap gap-2 font-mono text-xs';
-    const lake = document.createElement('span');
-    lake.className = 'rounded-full border border-aqua/50 px-3 py-1 text-aqua';
-    lake.textContent = '📍 ' + lakeName(p.lake);
-    tags.appendChild(lake);
-    if (p.status === 'approved') {
-      const ok = document.createElement('span');
-      ok.className = 'rounded-full border border-mint/50 px-3 py-1 text-mint';
-      ok.textContent = '✓ Reviewed';
-      tags.appendChild(ok);
-    }
-    if (p.sample) {
-      const s = document.createElement('span');
-      s.className = 'rounded-full border border-sun/50 px-3 py-1 text-sun';
-      s.textContent = 'Sample';
-      tags.appendChild(s);
-    }
-    const h = document.createElement('h4');
-    h.className = 'mt-3 font-display text-xl font-bold text-txt-1';
-    h.textContent = p.title;
-    const meta = document.createElement('p');
-    meta.className = 'mt-1 font-mono text-xs text-txt-3';
-    meta.textContent = 'By ' + p.author + ' · ' + formatDate(p.postedAt);
-    const text = document.createElement('p');
-    text.className = 'mt-3 whitespace-pre-line';
-    text.textContent = p.text;
-    body.append(tags, h, meta, text);
-
-    const row = document.createElement('div');
-    row.className = 'mt-4 flex flex-wrap items-center gap-2';
-    if (withReview) {
-      row.appendChild(button('Approve', 'bg-mint text-[#00251A] hover:-translate-y-0.5', 'Approve post: ' + p.title, function () { review(p.id, 'approved'); }));
-      row.appendChild(button('Reject', 'border border-coral/70 text-coral hover:bg-coral/10', 'Reject post: ' + p.title, function () { review(p.id, 'rejected'); }));
-    } else {
-      // A simple "helpful" button (saved in this browser).
-      const like = button((p.liked ? '💙 ' : '🤍 ') + p.likes + ' found this helpful', 'border border-linehi text-txt-1 hover:border-aqua', null, function () {
-        p.liked = !p.liked;
-        p.likes += p.liked ? 1 : -1;
-        save();
-        render();
-        const again = feed.querySelector('[data-like="' + p.id + '"]');
-        if (again) again.focus();
-      });
-      like.setAttribute('aria-pressed', String(!!p.liked));
-      like.dataset.like = p.id;
-      row.appendChild(like);
-    }
-    body.appendChild(row);
-    li.appendChild(body);
-    return li;
-  }
-
-  function button(label, classes, ariaLabel, onClick) {
-    const b = document.createElement('button');
-    b.type = 'button';
-    b.className = 'rounded-md px-4 py-2 text-sm font-semibold transition ' + classes;
-    b.textContent = label;
-    if (ariaLabel) b.setAttribute('aria-label', ariaLabel);
-    b.addEventListener('click', onClick);
-    return b;
-  }
-
-  function review(id, status) {
-    const p = items.find(function (x) { return x.id === id; });
+  function toggleLike(id) {
+    const list = store.read('posts');
+    const p = list.find(function (x) { return x.id === id; });
     if (!p) return;
-    p.status = status;
-    p.reviewedAt = Date.now();
-    save();
-    render();
-    announce('“' + p.title + '” was ' + (status === 'approved' ? 'approved and published.' : 'rejected and will not be published.'));
-    const next = queueList.querySelector('button');
-    (next || $('post-queue-title')).focus();
+    p.liked = !p.liked;
+    p.likes += p.liked ? 1 : -1;
+    store.write('posts', list); // redraws the feed via the change event
+    const again = feed.querySelector('[data-like="' + id + '"]');
+    if (again) again.focus();
   }
 
   function render() {
-    const pendingPosts = items.filter(function (p) { return p.status === 'pending'; });
-    queueList.textContent = '';
-    pendingPosts.forEach(function (p) { queueList.appendChild(postCard(p, true)); });
-    queueEmpty.hidden = pendingPosts.length > 0;
-    queueCount.textContent = String(pendingPosts.length);
-
     const filter = filterSelect.value;
-    const published = items
+    const published = store.read('posts')
       .filter(function (p) { return p.status === 'approved' && (!filter || p.lake === filter); })
       .sort(function (a, b) { return b.postedAt - a.postedAt; });
     feed.textContent = '';
-    published.forEach(function (p) { feed.appendChild(postCard(p, false)); });
+    published.forEach(function (p) {
+      feed.appendChild(cards.postCard(p, {
+        actions: [{
+          // A simple "helpful" button (remembered in this browser).
+          label: (p.liked ? '💙 ' : '🤍 ') + p.likes + ' found this helpful',
+          classes: 'border border-linehi text-txt-1 hover:border-aqua',
+          pressed: !!p.liked,
+          data: { like: p.id },
+          onClick: function () { toggleLike(p.id); },
+        }],
+      }));
+    });
     feedEmpty.hidden = published.length > 0;
   }
 
   filterSelect.addEventListener('change', render);
+  document.addEventListener('lakesentry:posts-changed', render);
 
-  // The lake page's "see posts" link filters the feed to that lake.
+  // The lake page's "read the stories" link filters the feed to that lake.
   document.addEventListener('lakesentry:show-posts', function (e) {
     filterSelect.value = e.detail.lake;
     $('post-lake').value = e.detail.lake;
     render();
-  });
-
-  $('post-reset').addEventListener('click', function () {
-    if (!window.confirm('Delete all posts saved in this browser and restore the sample?')) return;
-    items = SAMPLES.map(function (s) { return Object.assign({}, s); });
-    save();
-    render();
-    announce('Posts reset.');
   });
 
   renderPreviews();

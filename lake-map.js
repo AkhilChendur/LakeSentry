@@ -347,6 +347,7 @@
         e.preventDefault();
         // Filter the story feed to this lake and pre-select it in the form.
         document.dispatchEvent(new CustomEvent('lakesentry:show-posts', { detail: { lake: lake.id } }));
+        if (window.LakeSentryTabs) window.LakeSentryTabs.show(l[1]); // open the Lake stories tab
         const target = document.getElementById(l[1]);
         target.scrollIntoView({ behavior: 'smooth', block: 'center' });
         target.focus({ preventScroll: true });

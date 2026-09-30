@@ -16,7 +16,8 @@ Vercel is connected to the repo, so it redeploys automatically after each commit
 |---|---|---|
 | `index.html` | Home | An interactive lake: ripples follow your cursor, trash floats, fish swim away from you, lily pads and reeds sway, and a mini Lake Sentry robot collects trash. Plus the Prevent/Remove/Connect plan, count-up statistics and the awareness funnel |
 | `about.html` | About | What it does, the problem, the research (Hussain Sagar timeline, interview notes), an interactive V1 diagram, the engineering iteration, V2, the awareness campaign, the LakeSentry.in platform, stakeholders, impact targets, risks, feasibility, SDGs, the team and sources |
-| `app.html` | Lake Explorer App | A lake map with lake pages, a V1 robot simulator, the Submit → Review → Approve → Publish initiative network, and **Lake stories**, where visitors share posts and photos about a lake |
+| `app.html` | Lake Explorer App | Four tools in tabs: **Lake stories** (share posts and photos), **Initiatives** (submit a clean-up effort), the **Lake map** with lake pages, and the **V1 simulator** |
+| `admin.html` | Admin panel | For the Lake Sentry team. Review, approve, reject, unpublish or delete initiatives and lake stories. Open it with the 🔒 **Admin** button in the top-left of any page |
 | `get-involved.html` | Get involved | “Answer the survey” button (opens the Google Form), animated survey results (headline and detailed), feedback themes, six actions and partner information |
 
 ## Files
@@ -30,8 +31,19 @@ Vercel is connected to the repo, so it redeploys automatically after each commit
 | `about.js` | The interactive V1 diagram |
 | `lakes-data.js` | **All lake information.** Edit this to add lakes, research, field notes and photos |
 | `lake-map.js`, `bot-sim.js`, `initiatives.js`, `posts.js` | The four App-page tools |
+| `tabs.js` | The tool tabs on the App page and admin panel |
+| `store.js`, `cards.js` | Where submissions are saved, and how they're drawn (shared by the App page and admin panel) |
+| `admin-auth.js`, `admin.js` | The admin login (including the password) and the admin panel |
 | `v1-prototype.png`, `the-rollers.png` | Photos of the V1 prototype and “The Rollers” |
 | `placeholder.svg`, `favicon.svg` | The image placeholder and the browser-tab icon |
+
+## Admin login
+
+Click the 🔒 **Admin** button in the top-left corner of any page.
+
+- **Default password:** `LakeSentry@2026`. Change it: log in, open **Settings**, type a new password, then paste the line it gives you into `admin-auth.js` in place of the `PASSWORD_HASH` line.
+- Submissions only appear on the public site after you approve them.
+- **Important:** without a server, the password check happens in the visitor's browser. It keeps casual visitors out of the review screens, but it isn't real security. Also, each browser keeps its own submissions, so the admin panel only shows the submissions made in the browser it's opened in. Connecting an online database and login service (such as Firebase or Supabase) fixes both.
 
 ## Adding your own photos
 

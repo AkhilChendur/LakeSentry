@@ -28,6 +28,15 @@ body {
   color: #040713;
 }
 
+/* Pages with a sticky tab bar need more room when jumping to #anchors */
+html:has([data-tabs]) {
+  scroll-padding-top: 9.5rem;
+}
+/* Hide the scrollbar on the swipeable tab bar (it still scrolls) */
+[data-tabs]::-webkit-scrollbar {
+  display: none;
+}
+
 /* The `hidden` attribute always wins, even over Tailwind's `flex`/`grid`. */
 [hidden] {
   display: none !important;

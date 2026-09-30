@@ -658,7 +658,12 @@
   $('sim-solar').addEventListener('change', function (e) { say(e.target.checked ? 'Solar panel on: the battery slowly recharges while the robot works.' : 'Solar panel off.'); if (!running) draw(); });
   $('sim-sensor-toggle').addEventListener('change', function (e) { say(e.target.checked ? 'Waste-detection sensor on: it points to the nearest collectable trash.' : 'Sensor off.'); updateUI(true); if (!running) draw(); });
 
-  // Pause automatically if the visitor switches tabs.
+  // Pause when the visitor switches to another tool tab on the page.
+  document.addEventListener('lakesentry:tab-changed', function (e) {
+    if (e.detail.panel !== 'simulator' && running) setRunning(false);
+  });
+
+  // Pause automatically if the visitor switches browser tabs.
   document.addEventListener('visibilitychange', function () { if (document.hidden && running) setRunning(false); });
 
   reset();

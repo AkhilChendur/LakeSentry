@@ -29,20 +29,27 @@
        (identical on every page — only aria-current="page" moves) -->
   <header class="sticky top-0 z-50 border-b border-line bg-ink/85 backdrop-blur-lg">
     <nav aria-label="Main" class="relative mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
-      <a href="index.html" class="group flex items-center gap-2.5 rounded font-display text-xl font-bold text-txt-1">
-        <!-- Logo: a ring with two waves (decorative) -->
-        <svg aria-hidden="true" class="h-8 w-8 transition-transform duration-500 group-hover:rotate-[20deg]" viewBox="0 0 26 26" fill="none">
-          <circle cx="13" cy="13" r="12" stroke="#38E4F0" stroke-width="1.4" />
-          <path d="M4 15c2-2 4-2 6 0s4 2 6 0 4-2 6 0" stroke="#3CE8A0" stroke-width="1.4" />
-          <path d="M4 10c2-2 4-2 6 0s4 2 6 0 4-2 6 0" stroke="#38E4F0" stroke-width="1.2" opacity=".6" />
-        </svg>
-        Lake Sentry
-      </a>
+      <div class="flex items-center gap-2 sm:gap-3">
+        <!-- Admin login (top-left). Opens a login box; see admin-auth.js -->
+        <button id="admin-btn" type="button" aria-haspopup="dialog" class="inline-flex items-center gap-1.5 rounded-md border border-linehi px-2.5 py-1.5 font-mono text-xs text-txt-2 transition hover:border-aqua hover:text-aqua">
+          <svg aria-hidden="true" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 2a4 4 0 0 0-4 4v2H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-1V6a4 4 0 0 0-4-4Zm2 6V6a2 2 0 1 0-4 0v2h4Z" clip-rule="evenodd" /></svg>
+          <span data-admin-label>Admin</span>
+        </button>
+        <a href="index.html" class="group flex items-center gap-2 rounded font-display text-lg font-bold text-txt-1 sm:text-xl">
+          <!-- Logo: a ring with two waves (decorative) -->
+          <svg aria-hidden="true" class="h-8 w-8 transition-transform duration-500 group-hover:rotate-[20deg]" viewBox="0 0 26 26" fill="none">
+            <circle cx="13" cy="13" r="12" stroke="#38E4F0" stroke-width="1.4" />
+            <path d="M4 15c2-2 4-2 6 0s4 2 6 0 4-2 6 0" stroke="#3CE8A0" stroke-width="1.4" />
+            <path d="M4 10c2-2 4-2 6 0s4 2 6 0 4-2 6 0" stroke="#38E4F0" stroke-width="1.2" opacity=".6" />
+          </svg>
+          Lake Sentry
+        </a>
+      </div>
 
       <!-- Menu button — only shown on small screens -->
       <button id="nav-toggle" type="button" class="inline-flex items-center gap-2 rounded-md border border-linehi px-3 py-2 text-sm font-medium text-txt-1 md:hidden" aria-expanded="false" aria-controls="nav-menu">
         <svg aria-hidden="true" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round" /></svg>
-        <span data-label>Open menu</span>
+        <span data-label class="sr-only sm:not-sr-only">Open menu</span>
       </button>
 
       <ul id="nav-menu" class="absolute left-0 right-0 top-full hidden flex-col gap-1 border-b border-line bg-deep px-4 pb-4 md:static md:flex md:flex-row md:items-center md:gap-1 md:border-0 md:bg-transparent md:p-0">
@@ -57,31 +64,242 @@
   <main id="main">
 
     <!-- ============================ PAGE INTRO ============================ -->
-    <section class="relative overflow-hidden bg-deep2 pb-32 pt-16" aria-labelledby="page-title" data-wave="#040713">
+    <section class="relative overflow-hidden bg-deep2 pb-5 pt-6 sm:pb-8 sm:pt-12" aria-labelledby="page-title">
       <div class="caustics" aria-hidden="true"></div>
-      <div class="pointer-events-none absolute inset-0" data-bubbles="10" aria-hidden="true"></div>
+      <div class="pointer-events-none absolute inset-0" data-bubbles="8" aria-hidden="true"></div>
       <div class="relative mx-auto max-w-6xl px-4 sm:px-6">
-        <p class="eyebrow reveal">Interactive demo</p>
-        <h1 id="page-title" class="reveal mt-4 font-display text-5xl font-bold text-txt-1 sm:text-6xl"><span class="gradient-text">Lake Explorer</span></h1>
-        <p class="reveal mt-4 max-w-2xl text-lg">A working preview of LakeSentry.in: explore Hyderabad's lakes, drive a simulated Lake Sentry V1, and try the reviewed initiative network.</p>
-        <nav aria-label="Tools on this page" class="reveal mt-10">
-          <ul class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <li><a href="#map" class="glow-card block rounded-xl border border-line bg-panel p-5"><span class="block font-mono text-xs text-aqua">TOOL 01</span><span class="mt-1 block font-display text-lg font-bold text-txt-1">🗺️ Lake map</span><span class="text-sm">Explore each lake's page</span></a></li>
-            <li><a href="#simulator" class="glow-card block rounded-xl border border-line bg-panel p-5"><span class="block font-mono text-xs text-aqua">TOOL 02</span><span class="mt-1 block font-display text-lg font-bold text-txt-1">🤖 V1 simulator</span><span class="text-sm">Aim, scoop, return, record</span></a></li>
-            <li><a href="#initiatives" class="glow-card block rounded-xl border border-line bg-panel p-5"><span class="block font-mono text-xs text-aqua">TOOL 03</span><span class="mt-1 block font-display text-lg font-bold text-txt-1">🤝 Initiative network</span><span class="text-sm">Submit, review, publish</span></a></li>
-            <li><a href="#stories" class="glow-card block rounded-xl border border-line bg-panel p-5"><span class="block font-mono text-xs text-aqua">TOOL 04</span><span class="mt-1 block font-display text-lg font-bold text-txt-1">📸 Lake stories</span><span class="text-sm">Share photos &amp; posts</span></a></li>
-          </ul>
-        </nav>
+        <p class="eyebrow hidden sm:flex">Interactive demo</p>
+        <h1 id="page-title" class="font-display text-3xl font-bold text-txt-1 sm:mt-3 sm:text-6xl"><span class="gradient-text">Lake Explorer</span></h1>
+        <p class="mt-2 max-w-2xl text-sm sm:mt-3 sm:text-lg">Share lake photos and stories, submit a clean-up initiative, explore the lake map, or drive a simulated Lake Sentry V1.</p>
+      </div>
+    </section>
+
+    <!-- ============================ TOOL TABS ============================
+         Each tool opens right here, so nothing is far down the page.
+         Tab logic: tabs.js. The bar sticks under the header while scrolling. -->
+    <div class="sticky top-[var(--header-h,64px)] z-40 border-b border-line bg-ink/90 backdrop-blur-lg">
+      <div role="tablist" data-tabs aria-label="Lake Explorer tools" class="mx-auto grid max-w-6xl grid-cols-4 gap-1.5 px-3 py-2.5 sm:flex sm:gap-2 sm:overflow-x-auto sm:px-6 sm:py-3 [scrollbar-width:none]">
+        <button type="button" role="tab" id="tab-stories" aria-controls="stories" aria-selected="true" class="relative flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-xl border border-line px-1 py-2 text-xs font-semibold text-txt-2 transition hover:border-aqua hover:text-txt-1 aria-selected:border-aqua aria-selected:bg-aqua aria-selected:text-[#00232A] sm:shrink-0 sm:flex-row sm:gap-2 sm:rounded-full sm:px-4 sm:py-2.5 sm:text-base"><span aria-hidden="true">📸</span><span class="sm:hidden">Stories</span><span class="hidden sm:inline">Lake stories</span></button>
+        <button type="button" role="tab" id="tab-initiatives" aria-controls="initiatives" aria-selected="false" class="relative flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-xl border border-line px-1 py-2 text-xs font-semibold text-txt-2 transition hover:border-aqua hover:text-txt-1 aria-selected:border-aqua aria-selected:bg-aqua aria-selected:text-[#00232A] sm:shrink-0 sm:flex-row sm:gap-2 sm:rounded-full sm:px-4 sm:py-2.5 sm:text-base"><span aria-hidden="true">🤝</span>Initiatives</button>
+        <button type="button" role="tab" id="tab-map" aria-controls="map" aria-selected="false" class="relative flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-xl border border-line px-1 py-2 text-xs font-semibold text-txt-2 transition hover:border-aqua hover:text-txt-1 aria-selected:border-aqua aria-selected:bg-aqua aria-selected:text-[#00232A] sm:shrink-0 sm:flex-row sm:gap-2 sm:rounded-full sm:px-4 sm:py-2.5 sm:text-base"><span aria-hidden="true">🗺️</span><span class="sm:hidden">Map</span><span class="hidden sm:inline">Lake map</span></button>
+        <button type="button" role="tab" id="tab-simulator" aria-controls="simulator" aria-selected="false" class="relative flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-xl border border-line px-1 py-2 text-xs font-semibold text-txt-2 transition hover:border-aqua hover:text-txt-1 aria-selected:border-aqua aria-selected:bg-aqua aria-selected:text-[#00232A] sm:shrink-0 sm:flex-row sm:gap-2 sm:rounded-full sm:px-4 sm:py-2.5 sm:text-base"><span aria-hidden="true">🤖</span><span class="sm:hidden">Simulator</span><span class="hidden sm:inline">V1 simulator</span></button>
+      </div>
+    </div>
+
+    <!-- =====================================================================
+         TAB 1 — LAKE STORIES: community photos & posts   (logic: posts.js)
+         ===================================================================== -->
+    <section id="stories" role="tabpanel" aria-labelledby="tab-stories" class="relative bg-ink pb-24 pt-6 sm:pt-10">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6">
+        <h2 class="font-display text-2xl font-bold text-txt-1 sm:text-4xl">Share a lake story</h2>
+        <p class="mt-2 max-w-prose text-sm sm:text-base">Share what you saw at a lake: floating waste, wildlife, or a clean-up you joined. Add up to 3 photos. Every post is reviewed before it's published.</p>
+
+        <div class="mt-5 grid items-start gap-8 sm:mt-8 lg:grid-cols-[1fr_1.1fr]">
+          <!-- ---------- Post form ---------- -->
+          <div class="rounded-3xl border border-line bg-panel p-5 sm:p-8">
+            <h3 class="font-display text-2xl font-bold text-txt-1">Write a post</h3>
+            <p class="mt-1 text-sm text-txt-3">Fields marked “required” must be filled in.</p>
+            <div id="post-errors" hidden tabindex="-1" aria-labelledby="post-errors-title" class="mt-5 rounded-xl border-2 border-coral bg-coral/10 p-4 text-txt-1">
+              <h4 id="post-errors-title" class="font-semibold text-coral">Please fix the following:</h4>
+              <ul class="mt-2 list-disc space-y-1 pl-5 text-sm"></ul>
+            </div>
+            <div id="post-success" hidden tabindex="-1" role="status" class="mt-5 rounded-xl border-2 border-mint bg-mint/10 p-4 text-txt-1">
+              <p class="font-semibold text-mint">Thanks for sharing! Your post was sent to the Lake Sentry team.</p>
+              <p class="text-sm">It will appear in the stories once it has been reviewed and approved.</p>
+            </div>
+
+            <form id="post-form" class="mt-5 space-y-5" novalidate>
+              <div class="grid gap-5 sm:grid-cols-2">
+                <div>
+                  <label for="post-author" class="block font-semibold text-txt-1">Your first name or nickname</label>
+                  <p id="post-author-hint" class="text-sm text-txt-3">Optional. Please don't use your full name.</p>
+                  <input id="post-author" type="text" autocomplete="nickname" maxlength="40" aria-describedby="post-author-hint"
+                         class="mt-1 w-full rounded-md border border-txt-3/80 bg-deep px-3 py-2.5 text-txt-1" />
+                </div>
+                <div>
+                  <label for="post-lake" class="block font-semibold text-txt-1">Lake <span class="font-normal text-txt-3">(required)</span></label>
+                  <p class="text-sm text-txt-3" aria-hidden="true">&nbsp;</p>
+                  <select id="post-lake" required aria-describedby="post-lake-error"
+                          class="mt-1 w-full rounded-md border border-txt-3/80 bg-deep px-3 py-2.5 text-txt-1 aria-[invalid=true]:border-2 aria-[invalid=true]:border-coral"></select>
+                  <p id="post-lake-error" hidden class="mt-1 text-sm font-medium text-coral"></p>
+                </div>
+              </div>
+
+              <div>
+                <label for="post-title" class="block font-semibold text-txt-1">Title <span class="font-normal text-txt-3">(required)</span></label>
+                <input id="post-title" type="text" maxlength="90" required aria-describedby="post-title-error"
+                       class="mt-1 w-full rounded-md border border-txt-3/80 bg-deep px-3 py-2.5 text-txt-1 aria-[invalid=true]:border-2 aria-[invalid=true]:border-coral" />
+                <p id="post-title-error" hidden class="mt-1 text-sm font-medium text-coral"></p>
+              </div>
+
+              <div>
+                <label for="post-text" class="block font-semibold text-txt-1">Your post <span class="font-normal text-txt-3">(required)</span></label>
+                <textarea id="post-text" rows="5" maxlength="2000" required aria-describedby="post-text-error"
+                          class="mt-1 w-full rounded-md border border-txt-3/80 bg-deep px-3 py-2.5 text-txt-1 aria-[invalid=true]:border-2 aria-[invalid=true]:border-coral"></textarea>
+                <p id="post-text-error" hidden class="mt-1 text-sm font-medium text-coral"></p>
+              </div>
+
+              <!-- Photo upload -->
+              <div>
+                <label for="post-photos" class="block font-semibold text-txt-1">Photos <span class="font-normal text-txt-3">(optional, up to 3)</span></label>
+                <p id="post-photos-hint" class="text-sm text-txt-3">JPG or PNG. Large photos are shrunk automatically.</p>
+                <input id="post-photos" type="file" accept="image/*" multiple aria-describedby="post-photos-hint post-photo-count"
+                       class="mt-2 block w-full text-sm text-txt-2 file:mr-4 file:cursor-pointer file:rounded-md file:border-0 file:bg-aqua file:px-4 file:py-2.5 file:font-semibold file:text-[#00232A] hover:file:-translate-y-0.5" />
+                <p id="post-photo-count" class="mt-2 font-mono text-xs text-txt-3" aria-live="polite">0 of 3 photos added</p>
+                <ul id="post-previews" class="mt-3 space-y-3" aria-label="Photos you've added"></ul>
+              </div>
+
+              <!-- Safety guidelines -->
+              <div class="rounded-lg border border-sun/40 bg-sun/[.06] p-4 text-sm">
+                <p class="font-semibold text-sun">Posting guidelines</p>
+                <ul class="mt-2 space-y-1">
+                  <li>· Only share photos you took yourself, or have permission to share.</li>
+                  <li>· Avoid photos where people's faces can be clearly recognised.</li>
+                  <li>· Stay on topic and be respectful. Posts that break these rules won't be approved.</li>
+                </ul>
+                <label class="mt-3 flex cursor-pointer items-start gap-3">
+                  <input id="post-consent" type="checkbox" aria-describedby="post-consent-error" class="mt-1 h-4 w-4 accent-aqua" />
+                  <span class="text-txt-1">I've read the guidelines and I have the right to share these photos. <span class="text-txt-3">(required)</span></span>
+                </label>
+                <p id="post-consent-error" hidden class="mt-1 text-sm font-medium text-coral"></p>
+              </div>
+
+              <button type="submit" class="rounded-md bg-aqua px-6 py-3 font-semibold text-[#00232A] transition hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(56,228,240,.35)]">Submit post for review</button>
+            </form>
+          </div>
+
+          <!-- ---------- Published posts ---------- -->
+          <div>
+            <div class="flex flex-wrap items-end justify-between gap-4">
+              <h3 id="post-feed-title" tabindex="-1" class="font-display text-2xl font-bold text-txt-1">Published stories</h3>
+              <div>
+                <label for="post-filter" class="block text-sm font-semibold text-txt-1">Show stories from</label>
+                <select id="post-filter" class="mt-1 rounded-md border border-txt-3/80 bg-deep px-3 py-2 text-txt-1"></select>
+              </div>
+            </div>
+            <ul id="post-feed" class="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2" aria-label="Published lake stories"></ul>
+            <p id="post-feed-empty" hidden class="mt-5 rounded-xl border border-line bg-panel px-4 py-3">No published stories for this lake yet. Be the first to share one!</p>
+          </div>
+        </div>
+        <p id="post-status" class="sr-only" role="status" aria-live="polite"></p>
       </div>
     </section>
 
     <!-- =====================================================================
-         TOOL 1 — INTERACTIVE LAKE MAP   (logic: lake-map.js, data: lakes-data.js)
+         TAB 2 — LAKE INITIATIVE NETWORK   (logic: initiatives.js)
          ===================================================================== -->
-    <section id="map" class="relative bg-ink pb-32 pt-16" aria-labelledby="map-heading" data-wave="#0F1C42">
+    <section id="initiatives" role="tabpanel" aria-labelledby="tab-initiatives" hidden class="relative bg-ink pb-24 pt-6 sm:pt-10">
       <div class="mx-auto max-w-6xl px-4 sm:px-6">
-        <p class="eyebrow reveal">Tool 01</p>
-        <h2 id="map-heading" class="reveal mt-4 font-display text-3xl font-bold text-txt-1 sm:text-5xl">Explore Hyderabad's lakes</h2>
+        <h2 id="init-heading" class="font-display text-2xl font-bold text-txt-1 sm:text-4xl">Lake Initiative Network</h2>
+        <p class="mt-2 max-w-prose">Know about a lake clean-up or conservation effort? Submit it here. Nothing is published automatically: the Lake Sentry team reviews every submission first.</p>
+        <ol class="mt-5 flex flex-wrap items-center gap-2 font-mono text-xs sm:text-sm" aria-label="Review workflow">
+          <li class="rounded-full border border-aqua/50 bg-aqua/10 px-3 py-1.5 text-aqua">01 · Submit</li>
+          <li aria-hidden="true" class="text-txt-3">→</li>
+          <li class="rounded-full border border-sun/50 bg-sun/10 px-3 py-1.5 text-sun">02 · Review</li>
+          <li aria-hidden="true" class="text-txt-3">→</li>
+          <li class="rounded-full border border-sun/50 bg-sun/10 px-3 py-1.5 text-sun">03 · Approve / reject</li>
+          <li aria-hidden="true" class="text-txt-3">→</li>
+          <li class="rounded-full border border-mint/50 bg-mint/10 px-3 py-1.5 text-mint">04 · Publish</li>
+        </ol>
+
+        <div class="mt-8 grid items-start gap-8 lg:grid-cols-[1fr_1.1fr]">
+          <!-- ---------- Submission form ---------- -->
+          <div class="rounded-3xl border border-line bg-panel p-5 sm:p-8">
+            <h3 class="font-display text-2xl font-bold text-txt-1">Submit an initiative</h3>
+            <p class="mt-1 text-sm text-txt-3">Fields marked “required” must be filled in.</p>
+            <div id="init-errors" hidden tabindex="-1" aria-labelledby="init-errors-title" class="mt-5 rounded-xl border-2 border-coral bg-coral/10 p-4 text-txt-1">
+              <h4 id="init-errors-title" class="font-semibold text-coral">Please fix the following:</h4>
+              <ul class="mt-2 list-disc space-y-1 pl-5 text-sm"></ul>
+            </div>
+            <!-- Success message -->
+            <div id="init-success" hidden tabindex="-1" role="status" class="mt-5 rounded-xl border-2 border-mint bg-mint/10 p-4 text-txt-1">
+              <p class="font-semibold text-mint">Thank you! Your initiative was sent to the Lake Sentry team.</p>
+              <p class="text-sm">It will appear in the list once it has been reviewed and approved.</p>
+            </div>
+
+            <form id="initiative-form" class="mt-5 space-y-5" novalidate>
+              <div>
+                <label for="init-name" class="block font-semibold text-txt-1">Name of the initiative <span class="font-normal text-txt-3">(required)</span></label>
+                <input id="init-name" name="name" type="text" autocomplete="off" required aria-describedby="init-name-error"
+                       class="mt-1 w-full rounded-md border border-txt-3/80 bg-deep px-3 py-2.5 text-txt-1 aria-[invalid=true]:border-2 aria-[invalid=true]:border-coral" />
+                <p id="init-name-error" hidden class="mt-1 text-sm font-medium text-coral"></p>
+              </div>
+
+              <div class="grid gap-5 sm:grid-cols-2">
+                <div>
+                  <label for="init-lake" class="block font-semibold text-txt-1">Lake <span class="font-normal text-txt-3">(required)</span></label>
+                  <select id="init-lake" name="lake" required aria-describedby="init-lake-error"
+                          class="mt-1 w-full rounded-md border border-txt-3/80 bg-deep px-3 py-2.5 text-txt-1 aria-[invalid=true]:border-2 aria-[invalid=true]:border-coral"></select>
+                  <p id="init-lake-error" hidden class="mt-1 text-sm font-medium text-coral"></p>
+                </div>
+                <div>
+                  <label for="init-type" class="block font-semibold text-txt-1">Activity type <span class="font-normal text-txt-3">(required)</span></label>
+                  <select id="init-type" name="type" required aria-describedby="init-type-error"
+                          class="mt-1 w-full rounded-md border border-txt-3/80 bg-deep px-3 py-2.5 text-txt-1 aria-[invalid=true]:border-2 aria-[invalid=true]:border-coral">
+                    <option value="">Choose a type…</option>
+                  </select>
+                  <p id="init-type-error" hidden class="mt-1 text-sm font-medium text-coral"></p>
+                </div>
+              </div>
+
+              <div class="grid gap-5 sm:grid-cols-2">
+                <div>
+                  <label for="init-org" class="block font-semibold text-txt-1">Organisation or group</label>
+                  <input id="init-org" name="organization" type="text" autocomplete="organization" class="mt-1 w-full rounded-md border border-txt-3/80 bg-deep px-3 py-2.5 text-txt-1" />
+                </div>
+                <div>
+                  <label for="init-date" class="block font-semibold text-txt-1">Date</label>
+                  <input id="init-date" name="date" type="date" class="mt-1 w-full rounded-md border border-txt-3/80 bg-deep px-3 py-2.5 text-txt-1 [color-scheme:dark]" />
+                </div>
+              </div>
+
+              <div>
+                <label for="init-description" class="block font-semibold text-txt-1">What does the initiative do? <span class="font-normal text-txt-3">(required)</span></label>
+                <p id="init-description-hint" class="text-sm text-txt-3">At least 20 characters.</p>
+                <textarea id="init-description" name="description" rows="4" required aria-describedby="init-description-hint init-description-error"
+                          class="mt-1 w-full rounded-md border border-txt-3/80 bg-deep px-3 py-2.5 text-txt-1 aria-[invalid=true]:border-2 aria-[invalid=true]:border-coral"></textarea>
+                <p id="init-description-error" hidden class="mt-1 text-sm font-medium text-coral"></p>
+              </div>
+
+              <div>
+                <label for="init-participate" class="block font-semibold text-txt-1">How can people take part?</label>
+                <input id="init-participate" name="participate" type="text" class="mt-1 w-full rounded-md border border-txt-3/80 bg-deep px-3 py-2.5 text-txt-1" />
+              </div>
+
+              <div>
+                <label for="init-link" class="block font-semibold text-txt-1">Website or social media link</label>
+                <p id="init-link-hint" class="text-sm text-txt-3">For example: https://instagram.com/yourgroup</p>
+                <input id="init-link" name="link" type="url" inputmode="url" aria-describedby="init-link-hint init-link-error"
+                       class="mt-1 w-full rounded-md border border-txt-3/80 bg-deep px-3 py-2.5 text-txt-1 aria-[invalid=true]:border-2 aria-[invalid=true]:border-coral" />
+                <p id="init-link-error" hidden class="mt-1 text-sm font-medium text-coral"></p>
+              </div>
+
+              <!-- PHOTO UPLOAD PLACEHOLDER: uploads need a real server, so this is a note for now -->
+              <p class="rounded-lg border border-sun/40 bg-sun/10 px-4 py-3 text-sm">📷 Photo uploads will be available on the live LakeSentry.in site.</p>
+
+              <button type="submit" class="rounded-md bg-aqua px-6 py-3 font-semibold text-[#00232A] transition hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(56,228,240,.35)]">Submit for review</button>
+            </form>
+          </div>
+
+          <!-- ---------- Published initiatives ---------- -->
+          <div>
+            <div class="flex flex-wrap items-end justify-between gap-4">
+              <h3 class="font-display text-2xl font-bold text-txt-1">Published initiatives</h3>
+              <div>
+                <label for="published-filter" class="block text-sm font-semibold text-txt-1">Show initiatives at</label>
+                <select id="published-filter" class="mt-1 rounded-md border border-txt-3/80 bg-deep px-3 py-2 text-txt-1"></select>
+              </div>
+            </div>
+            <ul id="published-list" class="mt-5 space-y-4" aria-label="Published initiatives"></ul>
+            <p id="published-empty" hidden class="mt-5 rounded-xl border border-line bg-panel px-4 py-3">No published initiatives for this selection yet.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="map" role="tabpanel" aria-labelledby="tab-map" hidden class="relative bg-ink pb-24 pt-12">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6">
+                <h2 id="map-heading" class="reveal mt-4 font-display text-3xl font-bold text-txt-1 sm:text-5xl">Explore Hyderabad's lakes</h2>
         <p class="reveal mt-3 max-w-prose">Hover over a lake to see its name. Select it, with a click or by pressing Enter, to open its lake page. You can also use the list.</p>
 
         <div class="mt-10 grid gap-6 lg:grid-cols-[1.7fr_1fr]">
@@ -116,13 +334,9 @@
       </div>
     </section>
 
-    <!-- =====================================================================
-         TOOL 2 — LAKE SENTRY V1 SIMULATOR   (logic: bot-sim.js)
-         ===================================================================== -->
-    <section id="simulator" class="relative bg-deep2 pb-32 pt-16" aria-labelledby="sim-heading" data-wave="#040713">
+    <section id="simulator" role="tabpanel" aria-labelledby="tab-simulator" hidden class="relative bg-ink pb-24 pt-12">
       <div class="mx-auto max-w-6xl px-4 sm:px-6">
-        <p class="eyebrow reveal">Tool 02</p>
-        <h2 id="sim-heading" class="reveal mt-4 font-display text-3xl font-bold text-txt-1 sm:text-5xl">Drive Lake Sentry V1</h2>
+                <h2 id="sim-heading" class="reveal mt-4 font-display text-3xl font-bold text-txt-1 sm:text-5xl">Drive Lake Sentry V1</h2>
         <p class="reveal mt-3 max-w-prose">
           Pilot the remote-controlled robot around a lake. Drive <strong class="text-txt-1">forward into trash</strong> so the mesh conveyor lifts it aboard, then return to the yellow zone on the bank to unload and record your trip. Switch to the original smooth conveyor rod to see the slipping problem V1 had to solve.
         </p>
@@ -224,261 +438,6 @@
         </div>
       </div>
     </section>
-
-    <!-- =====================================================================
-         TOOL 3 — LAKE INITIATIVE NETWORK   (logic: initiatives.js)
-         ===================================================================== -->
-    <section id="initiatives" class="relative bg-ink pb-32 pt-16" aria-labelledby="init-heading" data-wave="#0F1C42">
-      <div class="mx-auto max-w-6xl px-4 sm:px-6">
-        <p class="eyebrow reveal">Tool 03</p>
-        <h2 id="init-heading" class="reveal mt-4 font-display text-3xl font-bold text-txt-1 sm:text-5xl">Lake Initiative Network</h2>
-        <p class="reveal mt-3 max-w-prose">Know about a lake clean-up or conservation effort? Submit it here. Nothing is published automatically: every submission is reviewed first.</p>
-
-        <ol class="reveal mt-8 flex flex-wrap items-center gap-2 font-mono text-sm" aria-label="Review workflow">
-          <li class="rounded-full border border-aqua/50 bg-aqua/10 px-4 py-2 text-aqua">01 · Submit</li>
-          <li aria-hidden="true" class="text-txt-3">→</li>
-          <li class="rounded-full border border-sun/50 bg-sun/10 px-4 py-2 text-sun">02 · Review</li>
-          <li aria-hidden="true" class="text-txt-3">→</li>
-          <li class="rounded-full border border-sun/50 bg-sun/10 px-4 py-2 text-sun">03 · Approve / reject</li>
-          <li aria-hidden="true" class="text-txt-3">→</li>
-          <li class="rounded-full border border-mint/50 bg-mint/10 px-4 py-2 text-mint">04 · Publish</li>
-        </ol>
-
-        <div class="mt-10 grid items-start gap-8 lg:grid-cols-2">
-          <!-- ---------- Submission form ---------- -->
-          <div class="reveal rounded-3xl border border-line bg-panel p-6 sm:p-8">
-            <h3 class="font-display text-2xl font-bold text-txt-1">Submit an initiative</h3>
-            <p class="mt-1 text-sm text-txt-3">Fields marked “required” must be filled in.</p>
-
-            <!-- Error summary: shown (and focused) when the form has problems -->
-            <div id="init-errors" hidden tabindex="-1" aria-labelledby="init-errors-title" class="mt-5 rounded-xl border-2 border-coral bg-coral/10 p-4 text-txt-1">
-              <h4 id="init-errors-title" class="font-semibold text-coral">Please fix the following:</h4>
-              <ul class="mt-2 list-disc space-y-1 pl-5 text-sm"></ul>
-            </div>
-            <!-- Success message -->
-            <div id="init-success" hidden tabindex="-1" role="status" class="mt-5 rounded-xl border-2 border-mint bg-mint/10 p-4 text-txt-1">
-              <p class="font-semibold text-mint">Thank you! Your initiative was submitted and is waiting for review.</p>
-              <p class="text-sm">You can see it in the review queue.</p>
-            </div>
-
-            <form id="initiative-form" class="mt-5 space-y-5" novalidate>
-              <div>
-                <label for="init-name" class="block font-semibold text-txt-1">Name of the initiative <span class="font-normal text-txt-3">(required)</span></label>
-                <input id="init-name" name="name" type="text" autocomplete="off" required aria-describedby="init-name-error"
-                       class="mt-1 w-full rounded-md border border-txt-3/80 bg-deep px-3 py-2.5 text-txt-1 aria-[invalid=true]:border-2 aria-[invalid=true]:border-coral" />
-                <p id="init-name-error" hidden class="mt-1 text-sm font-medium text-coral"></p>
-              </div>
-
-              <div class="grid gap-5 sm:grid-cols-2">
-                <div>
-                  <label for="init-lake" class="block font-semibold text-txt-1">Lake <span class="font-normal text-txt-3">(required)</span></label>
-                  <select id="init-lake" name="lake" required aria-describedby="init-lake-error"
-                          class="mt-1 w-full rounded-md border border-txt-3/80 bg-deep px-3 py-2.5 text-txt-1 aria-[invalid=true]:border-2 aria-[invalid=true]:border-coral"></select>
-                  <p id="init-lake-error" hidden class="mt-1 text-sm font-medium text-coral"></p>
-                </div>
-                <div>
-                  <label for="init-type" class="block font-semibold text-txt-1">Activity type <span class="font-normal text-txt-3">(required)</span></label>
-                  <select id="init-type" name="type" required aria-describedby="init-type-error"
-                          class="mt-1 w-full rounded-md border border-txt-3/80 bg-deep px-3 py-2.5 text-txt-1 aria-[invalid=true]:border-2 aria-[invalid=true]:border-coral">
-                    <option value="">Choose a type…</option>
-                  </select>
-                  <p id="init-type-error" hidden class="mt-1 text-sm font-medium text-coral"></p>
-                </div>
-              </div>
-
-              <div class="grid gap-5 sm:grid-cols-2">
-                <div>
-                  <label for="init-org" class="block font-semibold text-txt-1">Organisation or group</label>
-                  <input id="init-org" name="organization" type="text" autocomplete="organization" class="mt-1 w-full rounded-md border border-txt-3/80 bg-deep px-3 py-2.5 text-txt-1" />
-                </div>
-                <div>
-                  <label for="init-date" class="block font-semibold text-txt-1">Date</label>
-                  <input id="init-date" name="date" type="date" class="mt-1 w-full rounded-md border border-txt-3/80 bg-deep px-3 py-2.5 text-txt-1 [color-scheme:dark]" />
-                </div>
-              </div>
-
-              <div>
-                <label for="init-description" class="block font-semibold text-txt-1">What does the initiative do? <span class="font-normal text-txt-3">(required)</span></label>
-                <p id="init-description-hint" class="text-sm text-txt-3">At least 20 characters.</p>
-                <textarea id="init-description" name="description" rows="4" required aria-describedby="init-description-hint init-description-error"
-                          class="mt-1 w-full rounded-md border border-txt-3/80 bg-deep px-3 py-2.5 text-txt-1 aria-[invalid=true]:border-2 aria-[invalid=true]:border-coral"></textarea>
-                <p id="init-description-error" hidden class="mt-1 text-sm font-medium text-coral"></p>
-              </div>
-
-              <div>
-                <label for="init-participate" class="block font-semibold text-txt-1">How can people take part?</label>
-                <input id="init-participate" name="participate" type="text" class="mt-1 w-full rounded-md border border-txt-3/80 bg-deep px-3 py-2.5 text-txt-1" />
-              </div>
-
-              <div>
-                <label for="init-link" class="block font-semibold text-txt-1">Website or social media link</label>
-                <p id="init-link-hint" class="text-sm text-txt-3">For example: https://instagram.com/yourgroup</p>
-                <input id="init-link" name="link" type="url" inputmode="url" aria-describedby="init-link-hint init-link-error"
-                       class="mt-1 w-full rounded-md border border-txt-3/80 bg-deep px-3 py-2.5 text-txt-1 aria-[invalid=true]:border-2 aria-[invalid=true]:border-coral" />
-                <p id="init-link-error" hidden class="mt-1 text-sm font-medium text-coral"></p>
-              </div>
-
-              <!-- PHOTO UPLOAD PLACEHOLDER: uploads need a real server, so this is a note for now -->
-              <p class="rounded-lg border border-sun/40 bg-sun/10 px-4 py-3 text-sm">📷 Photo uploads will be available on the live LakeSentry.in site.</p>
-
-              <button type="submit" class="rounded-md bg-aqua px-6 py-3 font-semibold text-[#00232A] transition hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(56,228,240,.35)]">Submit for review</button>
-            </form>
-          </div>
-
-          <!-- ---------- Review queue (demo "admin" view) ---------- -->
-          <div class="reveal rounded-3xl border border-dashed border-sun/50 bg-sun/[.04] p-6 sm:p-8">
-            <h3 id="review-title" tabindex="-1" class="flex items-center gap-3 font-display text-2xl font-bold text-txt-1">
-              Review queue
-              <span class="rounded-full bg-sun px-3 py-0.5 font-mono text-sm font-semibold text-[#241600]"><span id="review-count">0</span> <span class="sr-only">waiting</span></span>
-            </h3>
-            <p class="mt-2 text-sm">
-              <strong class="text-sun">Demo reviewer view.</strong> On the live site only the Lake Sentry team would see this. It's here so you can try the whole workflow. Your submissions are saved in this browser only.
-            </p>
-            <ul id="review-queue" class="mt-5 space-y-4" aria-label="Submissions waiting for review"></ul>
-            <p id="review-empty" hidden class="mt-5 rounded-xl border border-line bg-panel px-4 py-3">Nothing waiting for review. Submit an initiative to see it here.</p>
-          </div>
-        </div>
-
-        <!-- ---------- Published initiatives ---------- -->
-        <div class="mt-16">
-          <div class="flex flex-wrap items-end justify-between gap-4">
-            <h3 class="font-display text-2xl font-bold text-txt-1">Published initiatives</h3>
-            <div>
-              <label for="published-filter" class="block text-sm font-semibold text-txt-1">Show initiatives at</label>
-              <select id="published-filter" class="mt-1 rounded-md border border-txt-3/80 bg-deep px-3 py-2 text-txt-1"></select>
-            </div>
-          </div>
-          <ul id="published-list" class="mt-5 grid gap-4 md:grid-cols-2" aria-label="Published initiatives"></ul>
-          <p id="published-empty" hidden class="mt-5 rounded-xl border border-line bg-panel px-4 py-3">No published initiatives for this selection yet.</p>
-
-          <details class="mt-8 rounded-2xl border border-line bg-panel p-5">
-            <summary class="cursor-pointer font-semibold text-txt-1">Rejected submissions (<span id="rejected-count">0</span>)</summary>
-            <p class="mt-2 text-sm text-txt-3">Rejected submissions are never published. They're listed here for transparency in this demo.</p>
-            <ul id="rejected-list" class="mt-4 space-y-4"></ul>
-          </details>
-
-          <button id="init-reset" type="button" class="mt-6 rounded-md border border-linehi px-4 py-2 text-sm font-semibold text-txt-1 transition hover:border-coral hover:text-coral">Reset demo data</button>
-        </div>
-
-        <!-- Screen-reader announcements for approve/reject -->
-        <p id="init-status" class="sr-only" role="status" aria-live="polite"></p>
-      </div>
-    </section>
-
-    <!-- =====================================================================
-         TOOL 4 — LAKE STORIES: community photos & posts   (logic: posts.js)
-         ===================================================================== -->
-    <section id="stories" class="relative overflow-hidden bg-deep2 pb-24 pt-16" aria-labelledby="stories-heading">
-      <div class="caustics" aria-hidden="true"></div>
-      <div class="relative mx-auto max-w-6xl px-4 sm:px-6">
-        <p class="eyebrow reveal">Tool 04</p>
-        <h2 id="stories-heading" class="reveal mt-4 font-display text-3xl font-bold text-txt-1 sm:text-5xl">Lake stories</h2>
-        <p class="reveal mt-3 max-w-prose">Been to a lake lately? Share what you saw: floating waste, wildlife, a clean-up you joined, or an idea to keep it clean. Add up to 3 photos. Every post is reviewed before it's published.</p>
-
-        <div class="mt-10 grid items-start gap-8 lg:grid-cols-2">
-          <!-- ---------- Post form ---------- -->
-          <div class="reveal rounded-3xl border border-line bg-panel p-6 sm:p-8">
-            <h3 class="font-display text-2xl font-bold text-txt-1">Write a post</h3>
-            <p class="mt-1 text-sm text-txt-3">Fields marked “required” must be filled in.</p>
-
-            <div id="post-errors" hidden tabindex="-1" aria-labelledby="post-errors-title" class="mt-5 rounded-xl border-2 border-coral bg-coral/10 p-4 text-txt-1">
-              <h4 id="post-errors-title" class="font-semibold text-coral">Please fix the following:</h4>
-              <ul class="mt-2 list-disc space-y-1 pl-5 text-sm"></ul>
-            </div>
-            <div id="post-success" hidden tabindex="-1" role="status" class="mt-5 rounded-xl border-2 border-mint bg-mint/10 p-4 text-txt-1">
-              <p class="font-semibold text-mint">Thanks for sharing! Your post is waiting for review.</p>
-              <p class="text-sm">You can see it in the review queue.</p>
-            </div>
-
-            <form id="post-form" class="mt-5 space-y-5" novalidate>
-              <div class="grid gap-5 sm:grid-cols-2">
-                <div>
-                  <label for="post-author" class="block font-semibold text-txt-1">Your first name or nickname</label>
-                  <p id="post-author-hint" class="text-sm text-txt-3">Optional. Please don't use your full name.</p>
-                  <input id="post-author" type="text" autocomplete="nickname" maxlength="40" aria-describedby="post-author-hint"
-                         class="mt-1 w-full rounded-md border border-txt-3/80 bg-deep px-3 py-2.5 text-txt-1" />
-                </div>
-                <div>
-                  <label for="post-lake" class="block font-semibold text-txt-1">Lake <span class="font-normal text-txt-3">(required)</span></label>
-                  <p class="text-sm text-txt-3" aria-hidden="true">&nbsp;</p>
-                  <select id="post-lake" required aria-describedby="post-lake-error"
-                          class="mt-1 w-full rounded-md border border-txt-3/80 bg-deep px-3 py-2.5 text-txt-1 aria-[invalid=true]:border-2 aria-[invalid=true]:border-coral"></select>
-                  <p id="post-lake-error" hidden class="mt-1 text-sm font-medium text-coral"></p>
-                </div>
-              </div>
-
-              <div>
-                <label for="post-title" class="block font-semibold text-txt-1">Title <span class="font-normal text-txt-3">(required)</span></label>
-                <input id="post-title" type="text" maxlength="90" required aria-describedby="post-title-error"
-                       class="mt-1 w-full rounded-md border border-txt-3/80 bg-deep px-3 py-2.5 text-txt-1 aria-[invalid=true]:border-2 aria-[invalid=true]:border-coral" />
-                <p id="post-title-error" hidden class="mt-1 text-sm font-medium text-coral"></p>
-              </div>
-
-              <div>
-                <label for="post-text" class="block font-semibold text-txt-1">Your post <span class="font-normal text-txt-3">(required)</span></label>
-                <textarea id="post-text" rows="5" maxlength="2000" required aria-describedby="post-text-error"
-                          class="mt-1 w-full rounded-md border border-txt-3/80 bg-deep px-3 py-2.5 text-txt-1 aria-[invalid=true]:border-2 aria-[invalid=true]:border-coral"></textarea>
-                <p id="post-text-error" hidden class="mt-1 text-sm font-medium text-coral"></p>
-              </div>
-
-              <!-- Photo upload -->
-              <div>
-                <label for="post-photos" class="block font-semibold text-txt-1">Photos <span class="font-normal text-txt-3">(optional, up to 3)</span></label>
-                <p id="post-photos-hint" class="text-sm text-txt-3">JPG or PNG. Large photos are shrunk automatically.</p>
-                <input id="post-photos" type="file" accept="image/*" multiple aria-describedby="post-photos-hint post-photo-count"
-                       class="mt-2 block w-full text-sm text-txt-2 file:mr-4 file:cursor-pointer file:rounded-md file:border-0 file:bg-aqua file:px-4 file:py-2.5 file:font-semibold file:text-[#00232A] hover:file:-translate-y-0.5" />
-                <p id="post-photo-count" class="mt-2 font-mono text-xs text-txt-3" aria-live="polite">0 of 3 photos added</p>
-                <ul id="post-previews" class="mt-3 space-y-3" aria-label="Photos you've added"></ul>
-              </div>
-
-              <!-- Safety guidelines -->
-              <div class="rounded-lg border border-sun/40 bg-sun/[.06] p-4 text-sm">
-                <p class="font-semibold text-sun">Posting guidelines</p>
-                <ul class="mt-2 space-y-1">
-                  <li>· Only share photos you took yourself, or have permission to share.</li>
-                  <li>· Avoid photos where people's faces can be clearly recognised.</li>
-                  <li>· Stay on topic and be respectful. Posts that break these rules won't be approved.</li>
-                </ul>
-                <label class="mt-3 flex cursor-pointer items-start gap-3">
-                  <input id="post-consent" type="checkbox" aria-describedby="post-consent-error" class="mt-1 h-4 w-4 accent-aqua" />
-                  <span class="text-txt-1">I've read the guidelines and I have the right to share these photos. <span class="text-txt-3">(required)</span></span>
-                </label>
-                <p id="post-consent-error" hidden class="mt-1 text-sm font-medium text-coral"></p>
-              </div>
-
-              <button type="submit" class="rounded-md bg-aqua px-6 py-3 font-semibold text-[#00232A] transition hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(56,228,240,.35)]">Submit post for review</button>
-            </form>
-          </div>
-
-          <!-- ---------- Post review queue (demo "admin" view) ---------- -->
-          <div class="reveal rounded-3xl border border-dashed border-sun/50 bg-sun/[.04] p-6 sm:p-8">
-            <h3 id="post-queue-title" tabindex="-1" class="flex items-center gap-3 font-display text-2xl font-bold text-txt-1">
-              Posts waiting for review
-              <span class="rounded-full bg-sun px-3 py-0.5 font-mono text-sm font-semibold text-[#241600]"><span id="post-queue-count">0</span> <span class="sr-only">waiting</span></span>
-            </h3>
-            <p class="mt-2 text-sm"><strong class="text-sun">Demo reviewer view.</strong> On the live site only the Lake Sentry team would see this. For now, posts and photos are saved in this browser only.</p>
-            <ul id="post-queue" class="mt-5 space-y-4" aria-label="Posts waiting for review"></ul>
-            <p id="post-queue-empty" hidden class="mt-5 rounded-xl border border-line bg-panel px-4 py-3">Nothing waiting for review. Write a post to see it here.</p>
-          </div>
-        </div>
-
-        <!-- ---------- Published posts ---------- -->
-        <div class="mt-16">
-          <div class="flex flex-wrap items-end justify-between gap-4">
-            <h3 id="post-feed-title" tabindex="-1" class="font-display text-2xl font-bold text-txt-1">Published lake stories</h3>
-            <div>
-              <label for="post-filter" class="block text-sm font-semibold text-txt-1">Show stories from</label>
-              <select id="post-filter" class="mt-1 rounded-md border border-txt-3/80 bg-deep px-3 py-2 text-txt-1"></select>
-            </div>
-          </div>
-          <ul id="post-feed" class="mt-5 grid gap-5 md:grid-cols-2 lg:grid-cols-3" aria-label="Published lake stories"></ul>
-          <p id="post-feed-empty" hidden class="mt-5 rounded-xl border border-line bg-panel px-4 py-3">No published stories for this lake yet. Be the first to share one!</p>
-          <button id="post-reset" type="button" class="mt-6 rounded-md border border-linehi px-4 py-2 text-sm font-semibold text-txt-1 transition hover:border-coral hover:text-coral">Reset posts saved in this browser</button>
-        </div>
-
-        <p id="post-status" class="sr-only" role="status" aria-live="polite"></p>
-      </div>
-    </section>
   </main>
 
   <!-- ============================ SITE FOOTER ============================ -->
@@ -523,10 +482,14 @@
   </footer>
 
   <script src="site.js"></script>
+  <script src="admin-auth.js"></script>
   <script src="lakes-data.js"></script>
+  <script src="store.js"></script>
+  <script src="cards.js"></script>
   <script src="initiatives.js"></script>
   <script src="posts.js"></script>
   <script src="lake-map.js"></script>
   <script src="bot-sim.js"></script>
+  <script src="tabs.js"></script>
 </body>
 </html>

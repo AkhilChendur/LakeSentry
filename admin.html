@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Panel — Lake Sentry</title>
+  <meta name="description" content="Lake Sentry team admin panel for reviewing initiatives and lake stories." />
+  <meta name="robots" content="noindex" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+
+  <!-- Fonts: Space Grotesk (headings), Inter (body text), IBM Plex Mono (labels) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS from its CDN (no install needed), then our shared settings.
+       All files sit in the same folder, so the links below are just file names. -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="tailwind-config.js"></script>
+  <link rel="stylesheet" href="site.css" />
+</head>
+<body class="bg-ink font-sans text-[1.0625rem] leading-relaxed text-txt-2">
+
+  <!-- Keyboard users can jump straight past the navigation -->
+  <a href="#main" class="skip-link">Skip to main content</a>
+  <!-- Thin progress bar showing how far down the page you are -->
+  <div id="scroll-progress" aria-hidden="true"></div>
+
+  <!-- ============================ SITE HEADER ============================
+       (identical on every page — only aria-current="page" moves) -->
+  <header class="sticky top-0 z-50 border-b border-line bg-ink/85 backdrop-blur-lg">
+    <nav aria-label="Main" class="relative mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
+      <div class="flex items-center gap-2 sm:gap-3">
+        <!-- Admin login (top-left). Opens a login box; see admin-auth.js -->
+        <button id="admin-btn" type="button" aria-haspopup="dialog" class="inline-flex items-center gap-1.5 rounded-md border border-linehi px-2.5 py-1.5 font-mono text-xs text-txt-2 transition hover:border-aqua hover:text-aqua">
+          <svg aria-hidden="true" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 2a4 4 0 0 0-4 4v2H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-1V6a4 4 0 0 0-4-4Zm2 6V6a2 2 0 1 0-4 0v2h4Z" clip-rule="evenodd" /></svg>
+          <span data-admin-label>Admin</span>
+        </button>
+        <a href="index.html" class="group flex items-center gap-2 rounded font-display text-lg font-bold text-txt-1 sm:text-xl">
+          <!-- Logo: a ring with two waves (decorative) -->
+          <svg aria-hidden="true" class="h-8 w-8 transition-transform duration-500 group-hover:rotate-[20deg]" viewBox="0 0 26 26" fill="none">
+            <circle cx="13" cy="13" r="12" stroke="#38E4F0" stroke-width="1.4" />
+            <path d="M4 15c2-2 4-2 6 0s4 2 6 0 4-2 6 0" stroke="#3CE8A0" stroke-width="1.4" />
+            <path d="M4 10c2-2 4-2 6 0s4 2 6 0 4-2 6 0" stroke="#38E4F0" stroke-width="1.2" opacity=".6" />
+          </svg>
+          Lake Sentry
+        </a>
+      </div>
+
+      <!-- Menu button — only shown on small screens -->
+      <button id="nav-toggle" type="button" class="inline-flex items-center gap-2 rounded-md border border-linehi px-3 py-2 text-sm font-medium text-txt-1 md:hidden" aria-expanded="false" aria-controls="nav-menu">
+        <svg aria-hidden="true" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round" /></svg>
+        <span data-label class="sr-only sm:not-sr-only">Open menu</span>
+      </button>
+
+      <ul id="nav-menu" class="absolute left-0 right-0 top-full hidden flex-col gap-1 border-b border-line bg-deep px-4 pb-4 md:static md:flex md:flex-row md:items-center md:gap-1 md:border-0 md:bg-transparent md:p-0">
+        <li><a href="index.html" class="relative block rounded-md px-3 py-2 text-txt-2 transition-colors hover:text-txt-1 md:after:absolute md:after:bottom-1 md:after:left-3 md:after:h-0.5 md:after:w-0 md:after:rounded md:after:bg-aqua md:after:transition-all md:hover:after:w-[calc(100%-1.5rem)]">Home</a></li>
+        <li><a href="about.html" class="relative block rounded-md px-3 py-2 text-txt-2 transition-colors hover:text-txt-1 md:after:absolute md:after:bottom-1 md:after:left-3 md:after:h-0.5 md:after:w-0 md:after:rounded md:after:bg-aqua md:after:transition-all md:hover:after:w-[calc(100%-1.5rem)]">About</a></li>
+        <li><a href="app.html" class="relative block rounded-md px-3 py-2 text-txt-2 transition-colors hover:text-txt-1 md:after:absolute md:after:bottom-1 md:after:left-3 md:after:h-0.5 md:after:w-0 md:after:rounded md:after:bg-aqua md:after:transition-all md:hover:after:w-[calc(100%-1.5rem)]">Lake Explorer App</a></li>
+        <li><a href="get-involved.html" class="mt-2 block rounded-md bg-aqua px-4 py-2 font-semibold text-[#00232A] transition hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(56,228,240,.3)] md:ml-3 md:mt-0">Get involved</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main">
+
+    <!-- ============================ PAGE INTRO ============================ -->
+    <section class="relative overflow-hidden bg-deep2 pb-8 pt-10" aria-labelledby="admin-page-title">
+      <div class="caustics" aria-hidden="true"></div>
+      <div class="relative mx-auto max-w-6xl px-4 sm:px-6">
+        <p class="eyebrow">Lake Sentry team</p>
+        <h1 id="admin-page-title" class="mt-3 font-display text-4xl font-bold text-txt-1 sm:text-5xl">Admin panel</h1>
+        <p class="mt-3 max-w-2xl">Review initiatives and lake stories before they appear on the public site.</p>
+      </div>
+    </section>
+
+    <!-- ============================ LOGIN (shown when logged out) ============================ -->
+    <section id="admin-login" class="bg-ink px-4 py-16 sm:px-6" aria-labelledby="admin-login-title">
+      <div class="mx-auto max-w-md rounded-2xl border border-linehi bg-panel p-6 shadow-2xl sm:p-8">
+        <h2 id="admin-login-title" class="font-display text-2xl font-bold text-txt-1">Log in</h2>
+        <p class="mt-1 text-sm">This area is for the Lake Sentry team only.</p>
+        <form id="admin-login-form" class="mt-5" novalidate>
+          <label for="admin-login-password" class="block font-semibold text-txt-1">Password</label>
+          <div class="mt-1 flex gap-2">
+            <input id="admin-login-password" type="password" autocomplete="current-password" aria-describedby="admin-login-form-error"
+                   class="min-w-0 flex-1 rounded-md border border-txt-3/80 bg-deep px-3 py-2.5 text-txt-1 aria-[invalid=true]:border-2 aria-[invalid=true]:border-coral" />
+            <button id="admin-login-show" type="button" aria-pressed="false" class="rounded-md border border-linehi px-3 text-sm font-semibold text-txt-1 hover:border-aqua">Show</button>
+          </div>
+          <p id="admin-login-form-error" role="alert" class="mt-2 min-h-[1.25rem] text-sm font-medium text-coral"></p>
+          <button type="submit" class="mt-3 w-full rounded-md bg-aqua px-5 py-3 font-semibold text-[#00232A] transition hover:-translate-y-0.5">Log in</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- ============================ PANEL (shown when logged in) ============================ -->
+    <div id="admin-panel" hidden>
+      <div class="sticky top-[var(--header-h,64px)] z-40 border-b border-line bg-ink/90 backdrop-blur-lg">
+        <div class="mx-auto flex max-w-6xl items-center gap-3 px-3 py-2.5 sm:px-6 sm:py-3">
+          <h2 id="admin-panel-title" tabindex="-1" class="sr-only">Admin sections</h2>
+          <div role="tablist" data-tabs aria-labelledby="admin-panel-title" class="grid flex-1 grid-cols-4 gap-1.5 sm:flex sm:gap-2 sm:overflow-x-auto [scrollbar-width:none]">
+            <button type="button" role="tab" id="tab-dashboard" aria-controls="dashboard" aria-selected="true" class="relative flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-xl border border-line px-1 py-2 text-xs font-semibold text-txt-2 transition hover:border-aqua hover:text-txt-1 aria-selected:border-aqua aria-selected:bg-aqua aria-selected:text-[#00232A] sm:shrink-0 sm:flex-row sm:gap-2 sm:rounded-full sm:px-4 sm:py-2.5 sm:text-base"><span aria-hidden="true">📊</span><span class="sm:hidden">Home</span><span class="hidden sm:inline">Dashboard</span></button>
+            <button type="button" role="tab" id="tab-review-initiatives" aria-controls="review-initiatives" aria-selected="false" class="relative flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-xl border border-line px-1 py-2 text-xs font-semibold text-txt-2 transition hover:border-aqua hover:text-txt-1 aria-selected:border-aqua aria-selected:bg-aqua aria-selected:text-[#00232A] sm:shrink-0 sm:flex-row sm:gap-2 sm:rounded-full sm:px-4 sm:py-2.5 sm:text-base"><span aria-hidden="true">🤝</span>Initiatives <span class="absolute -right-1 -top-1.5 rounded-full bg-sun px-1.5 py-0.5 font-mono text-[0.7rem] font-bold leading-none text-[#241600] sm:static sm:px-2 sm:text-xs" data-badge="initiatives" hidden>0</span></button>
+            <button type="button" role="tab" id="tab-review-stories" aria-controls="review-stories" aria-selected="false" class="relative flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-xl border border-line px-1 py-2 text-xs font-semibold text-txt-2 transition hover:border-aqua hover:text-txt-1 aria-selected:border-aqua aria-selected:bg-aqua aria-selected:text-[#00232A] sm:shrink-0 sm:flex-row sm:gap-2 sm:rounded-full sm:px-4 sm:py-2.5 sm:text-base"><span aria-hidden="true">📸</span><span class="sm:hidden">Stories</span><span class="hidden sm:inline">Lake stories</span> <span class="absolute -right-1 -top-1.5 rounded-full bg-sun px-1.5 py-0.5 font-mono text-[0.7rem] font-bold leading-none text-[#241600] sm:static sm:px-2 sm:text-xs" data-badge="posts" hidden>0</span></button>
+            <button type="button" role="tab" id="tab-settings" aria-controls="settings" aria-selected="false" class="relative flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-xl border border-line px-1 py-2 text-xs font-semibold text-txt-2 transition hover:border-aqua hover:text-txt-1 aria-selected:border-aqua aria-selected:bg-aqua aria-selected:text-[#00232A] sm:shrink-0 sm:flex-row sm:gap-2 sm:rounded-full sm:px-4 sm:py-2.5 sm:text-base"><span aria-hidden="true">⚙️</span>Settings</button>
+          </div>
+          <button id="admin-logout" type="button" class="hidden shrink-0 rounded-md sm:block border border-linehi px-3 py-2 text-sm font-semibold text-txt-1 transition hover:border-coral hover:text-coral">Log out</button>
+        </div>
+      </div>
+
+      <!-- DASHBOARD -->
+      <section id="dashboard" role="tabpanel" aria-labelledby="tab-dashboard" class="bg-ink pb-20 pt-10">
+        <div class="mx-auto max-w-6xl px-4 sm:px-6">
+          <p id="dash-summary" class="rounded-xl border border-aqua/40 bg-aqua/10 px-5 py-4 font-semibold text-txt-1"></p>
+          <dl class="mt-6 grid grid-cols-2 gap-4 md:grid-cols-3">
+            <div class="flex flex-col rounded-xl border border-sun/50 bg-panel p-5"><dt class="mt-1 text-sm text-txt-3">Initiatives waiting for review</dt><dd id="stat-init-pending" class="order-first font-mono text-4xl font-semibold text-sun">0</dd></div>
+            <div class="flex flex-col rounded-xl border border-sun/50 bg-panel p-5"><dt class="mt-1 text-sm text-txt-3">Lake stories waiting for review</dt><dd id="stat-post-pending" class="order-first font-mono text-4xl font-semibold text-sun">0</dd></div>
+            <div class="flex flex-col rounded-xl border border-line bg-panel p-5"><dt class="mt-1 text-sm text-txt-3">Published initiatives</dt><dd id="stat-init-approved" class="order-first font-mono text-4xl font-semibold text-mint">0</dd></div>
+            <div class="flex flex-col rounded-xl border border-line bg-panel p-5"><dt class="mt-1 text-sm text-txt-3">Published lake stories</dt><dd id="stat-post-approved" class="order-first font-mono text-4xl font-semibold text-mint">0</dd></div>
+            <div class="flex flex-col rounded-xl border border-line bg-panel p-5"><dt class="mt-1 text-sm text-txt-3">Photos uploaded</dt><dd id="stat-photos" class="order-first font-mono text-4xl font-semibold text-aqua">0</dd></div>
+            <div class="flex flex-col rounded-xl border border-line bg-panel p-5"><dt class="mt-1 text-sm text-txt-3">Rejected initiatives</dt><dd id="stat-init-rejected" class="order-first font-mono text-4xl font-semibold text-coral">0</dd></div>
+          </dl>
+          <div class="mt-6 flex flex-wrap gap-3">
+            <a href="#review-initiatives" class="rounded-md bg-aqua px-5 py-3 font-semibold text-[#00232A] transition hover:-translate-y-0.5">Review initiatives</a>
+            <a href="#review-stories" class="rounded-md border border-linehi px-5 py-3 font-semibold text-txt-1 transition hover:border-aqua hover:text-aqua">Review lake stories</a>
+          </div>
+          <p class="mt-8 rounded-lg border border-sun/40 bg-sun/[.06] px-4 py-3 text-sm">
+            <strong class="text-sun">Note:</strong> the site doesn't have an online database yet, so submissions are saved in each visitor's own browser. This panel shows the submissions made in <em>this</em> browser.
+          </p>
+          <!-- Phones: the Log out button lives here instead of in the tab bar -->
+          <button type="button" data-logout class="mt-6 w-full rounded-md border border-linehi px-4 py-3 font-semibold text-txt-1 transition hover:border-coral hover:text-coral sm:hidden">Log out</button>
+        </div>
+      </section>
+
+      <!-- INITIATIVES -->
+      <section id="review-initiatives" role="tabpanel" aria-labelledby="tab-review-initiatives" hidden class="bg-ink pb-20 pt-2">
+        <div class="mx-auto max-w-6xl px-4 sm:px-6">
+          <h3 id="adm-init-pending-title" tabindex="-1" class="mt-10 flex items-center gap-3 font-display text-xl font-bold text-txt-1">
+            Waiting for review <span class="rounded-full border border-line px-2.5 py-0.5 font-mono text-sm text-sun" data-list-count="adm-init-pending">0</span>
+          </h3>
+          <ul id="adm-init-pending" aria-labelledby="adm-init-pending-title" class="mt-4 grid gap-4 md:grid-cols-2"></ul>
+          <h3 id="adm-init-approved-title" tabindex="-1" class="mt-10 flex items-center gap-3 font-display text-xl font-bold text-txt-1">
+            Published <span class="rounded-full border border-line px-2.5 py-0.5 font-mono text-sm text-mint" data-list-count="adm-init-approved">0</span>
+          </h3>
+          <ul id="adm-init-approved" aria-labelledby="adm-init-approved-title" class="mt-4 grid gap-4 md:grid-cols-2"></ul>
+          <h3 id="adm-init-rejected-title" tabindex="-1" class="mt-10 flex items-center gap-3 font-display text-xl font-bold text-txt-1">
+            Rejected <span class="rounded-full border border-line px-2.5 py-0.5 font-mono text-sm text-coral" data-list-count="adm-init-rejected">0</span>
+          </h3>
+          <ul id="adm-init-rejected" aria-labelledby="adm-init-rejected-title" class="mt-4 grid gap-4 md:grid-cols-2"></ul>
+        </div>
+      </section>
+
+      <!-- LAKE STORIES -->
+      <section id="review-stories" role="tabpanel" aria-labelledby="tab-review-stories" hidden class="bg-ink pb-20 pt-2">
+        <div class="mx-auto max-w-6xl px-4 sm:px-6">
+          <h3 id="adm-post-pending-title" tabindex="-1" class="mt-10 flex items-center gap-3 font-display text-xl font-bold text-txt-1">
+            Waiting for review <span class="rounded-full border border-line px-2.5 py-0.5 font-mono text-sm text-sun" data-list-count="adm-post-pending">0</span>
+          </h3>
+          <ul id="adm-post-pending" aria-labelledby="adm-post-pending-title" class="mt-4 grid gap-4 md:grid-cols-2"></ul>
+          <h3 id="adm-post-approved-title" tabindex="-1" class="mt-10 flex items-center gap-3 font-display text-xl font-bold text-txt-1">
+            Published <span class="rounded-full border border-line px-2.5 py-0.5 font-mono text-sm text-mint" data-list-count="adm-post-approved">0</span>
+          </h3>
+          <ul id="adm-post-approved" aria-labelledby="adm-post-approved-title" class="mt-4 grid gap-4 md:grid-cols-2"></ul>
+          <h3 id="adm-post-rejected-title" tabindex="-1" class="mt-10 flex items-center gap-3 font-display text-xl font-bold text-txt-1">
+            Rejected <span class="rounded-full border border-line px-2.5 py-0.5 font-mono text-sm text-coral" data-list-count="adm-post-rejected">0</span>
+          </h3>
+          <ul id="adm-post-rejected" aria-labelledby="adm-post-rejected-title" class="mt-4 grid gap-4 md:grid-cols-2"></ul>
+        </div>
+      </section>
+
+      <!-- SETTINGS -->
+      <section id="settings" role="tabpanel" aria-labelledby="tab-settings" hidden class="bg-ink pb-20 pt-10">
+        <div class="mx-auto grid max-w-6xl items-start gap-6 px-4 sm:px-6 lg:grid-cols-2">
+          <div class="rounded-2xl border border-line bg-panel p-6">
+            <h3 class="font-display text-xl font-bold text-txt-1">Change the admin password</h3>
+            <p class="mt-2 text-sm">Type a new password. You'll get one line of code to paste into <code class="font-mono text-aqua">admin-auth.js</code> in your GitHub repo, replacing the <code class="font-mono text-aqua">PASSWORD_HASH</code> line. (Or ask Claude to change it for you.)</p>
+            <form id="pw-form" class="mt-4 space-y-3" novalidate>
+              <div>
+                <label for="pw-new" class="block font-semibold text-txt-1">New password <span class="font-normal text-txt-3">(at least 10 characters)</span></label>
+                <input id="pw-new" type="password" autocomplete="new-password" aria-describedby="pw-error" class="mt-1 w-full rounded-md border border-txt-3/80 bg-deep px-3 py-2.5 text-txt-1" />
+              </div>
+              <div>
+                <label for="pw-confirm" class="block font-semibold text-txt-1">Type it again</label>
+                <input id="pw-confirm" type="password" autocomplete="new-password" aria-describedby="pw-error" class="mt-1 w-full rounded-md border border-txt-3/80 bg-deep px-3 py-2.5 text-txt-1" />
+              </div>
+              <p id="pw-error" role="alert" class="min-h-[1.25rem] text-sm font-medium text-coral"></p>
+              <button type="submit" class="rounded-md bg-aqua px-5 py-2.5 font-semibold text-[#00232A]">Create password line</button>
+            </form>
+            <div id="pw-output" hidden class="mt-4 rounded-lg border border-mint/50 bg-deep p-4">
+              <h4 id="pw-output-title" tabindex="-1" class="font-semibold text-mint">Paste this into admin-auth.js:</h4>
+              <pre class="mt-2 overflow-x-auto whitespace-pre-wrap break-all font-mono text-xs text-txt-1"><code id="pw-code"></code></pre>
+              <button id="pw-copy" type="button" class="mt-3 rounded-md border border-linehi px-4 py-2 text-sm font-semibold text-txt-1 hover:border-aqua">Copy</button>
+            </div>
+          </div>
+
+          <div class="space-y-6">
+            <div class="rounded-2xl border border-line bg-panel p-6">
+              <h3 class="font-display text-xl font-bold text-txt-1">Demo data</h3>
+              <p class="mt-2 text-sm">Clear everything saved in this browser and bring back the sample entries.</p>
+              <div class="mt-4 flex flex-wrap gap-3">
+                <button id="reset-initiatives" type="button" class="rounded-md border border-coral/70 px-4 py-2 text-sm font-semibold text-coral hover:bg-coral/10">Reset initiatives</button>
+                <button id="reset-posts" type="button" class="rounded-md border border-coral/70 px-4 py-2 text-sm font-semibold text-coral hover:bg-coral/10">Reset lake stories</button>
+              </div>
+            </div>
+            <div class="rounded-2xl border border-line bg-panel p-6">
+              <h3 class="font-display text-xl font-bold text-txt-1">Security note</h3>
+              <p class="mt-2 text-sm">Without a server, the password check runs in the browser. It keeps visitors out of these screens, but it isn't strong security. Connecting an online login service (such as Firebase or Supabase) would make it secure and let you review everyone's submissions from any device.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <p id="admin-status" class="sr-only" role="status" aria-live="polite"></p>
+  </main>
+
+  <!-- ============================ SITE FOOTER ============================ -->
+  <footer class="relative border-t border-line bg-deep2 text-txt-2">
+    <div class="mx-auto grid max-w-6xl gap-10 px-4 py-16 sm:px-6 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
+      <div>
+        <p class="flex items-center gap-2 font-display text-xl font-bold text-txt-1">
+          <svg aria-hidden="true" class="h-7 w-7" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="13" r="12" stroke="#38E4F0" stroke-width="1.4" /><path d="M4 15c2-2 4-2 6 0s4 2 6 0 4-2 6 0" stroke="#3CE8A0" stroke-width="1.4" /></svg>
+          Lake Sentry
+        </p>
+        <p class="mt-3 text-sm leading-relaxed">A student-led environmental project combining research, engineering and awareness to reduce floating waste in Hyderabad's urban lakes.</p>
+      </div>
+      <nav aria-label="Footer">
+        <h2 class="font-mono text-xs uppercase tracking-wider text-txt-3">Explore</h2>
+        <ul class="mt-4 space-y-2 text-sm">
+          <li><a href="index.html" class="hover:text-aqua">Home</a></li>
+          <li><a href="about.html" class="hover:text-aqua">About the project</a></li>
+          <li><a href="about.html#v1" class="hover:text-aqua">Prototype V1</a></li>
+          <li><a href="app.html" class="hover:text-aqua">Lake Explorer App</a></li>
+        </ul>
+      </nav>
+      <div>
+        <h2 class="font-mono text-xs uppercase tracking-wider text-txt-3">Participate</h2>
+        <ul class="mt-4 space-y-2 text-sm">
+          <li><a href="https://docs.google.com/forms/d/e/1FAIpQLScOvBmpAHLoiJ6ZfsDkbI8g9bO4nfaFDodWxb_4oyn3Qfj4OQ/viewform?usp=header" target="_blank" rel="noopener noreferrer" class="hover:text-aqua">Take the survey ↗<span class="sr-only"> (opens in a new tab)</span></a></li>
+          <li><a href="app.html#stories" class="hover:text-aqua">Share a lake story</a></li>
+          <li><a href="app.html#initiatives" class="hover:text-aqua">Submit an initiative</a></li>
+          <li><a href="about.html#sdgs" class="hover:text-aqua">UN SDGs</a></li>
+          <li><a href="get-involved.html#partners" class="hover:text-aqua">Partner with us</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2 class="font-mono text-xs uppercase tracking-wider text-txt-3">Connect</h2>
+        <!-- TODO: replace these with your real Instagram / LinkedIn links when ready -->
+        <ul class="mt-4 space-y-2 text-sm">
+          <li>Instagram (link coming soon)</li>
+          <li>LinkedIn (link coming soon)</li>
+          <li>LakeSentry.in</li>
+        </ul>
+      </div>
+    </div>
+    <div class="border-t border-line px-4 py-6 text-center text-sm text-txt-3">© <span data-year>2026</span> Lake Sentry · Hyderabad, India · Keystone International School</div>
+  </footer>
+
+  <script src="site.js"></script>
+  <script src="admin-auth.js"></script>
+  <script src="lakes-data.js"></script>
+  <script src="store.js"></script>
+  <script src="cards.js"></script>
+  <script src="tabs.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>
