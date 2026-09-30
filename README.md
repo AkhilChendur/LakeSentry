@@ -16,7 +16,7 @@ Vercel is connected to the repo, so it redeploys automatically after each commit
 |---|---|---|
 | `index.html` | Home | An interactive lake: ripples follow your cursor, trash floats, fish swim away from you, lily pads and reeds sway, and a mini Lake Sentry robot collects trash. Plus the Prevent/Remove/Connect plan, count-up statistics and the awareness funnel |
 | `about.html` | About | What it does, the problem, the research (Hussain Sagar timeline, interview notes), an interactive V1 diagram, the engineering iteration, V2, the awareness campaign, the LakeSentry.in platform, stakeholders, impact targets, risks, feasibility, SDGs, the team and sources |
-| `app.html` | Lake Explorer App | A lake map with lake pages, a V1 robot simulator, and the Submit → Review → Approve → Publish initiative network |
+| `app.html` | Lake Explorer App | A lake map with lake pages, a V1 robot simulator, the Submit → Review → Approve → Publish initiative network, and **Lake stories**, where visitors share posts and photos about a lake |
 | `get-involved.html` | Get involved | “Answer the survey” button (opens the Google Form), animated survey results (headline and detailed), feedback themes, six actions and partner information |
 
 ## Files
@@ -29,7 +29,7 @@ Vercel is connected to the repo, so it redeploys automatically after each commit
 | `lake-hero.js` | The home page lake animation |
 | `about.js` | The interactive V1 diagram |
 | `lakes-data.js` | **All lake information.** Edit this to add lakes, research, field notes and photos |
-| `lake-map.js`, `bot-sim.js`, `initiatives.js` | The three App-page tools |
+| `lake-map.js`, `bot-sim.js`, `initiatives.js`, `posts.js` | The four App-page tools |
 | `v1-prototype.png`, `the-rollers.png` | Photos of the V1 prototype and “The Rollers” |
 | `placeholder.svg`, `favicon.svg` | The image placeholder and the browser-tab icon |
 
@@ -66,4 +66,4 @@ Search the files for `TODO`:
 
 ## Note on the demo data
 
-The initiative network saves submissions in the visitor's browser (`localStorage`), so it works without a server. Use **Reset demo data** on the App page to start again.
+The initiative network and Lake stories save submissions (including photos) in the visitor's own browser (`localStorage`), so they work without a server. That means each visitor only sees their own posts. Photos are shrunk to at most 1000 px before saving. To let everyone see everyone's posts, the site needs a small online database. In `posts.js`, only the `load()` and `save()` functions would change.

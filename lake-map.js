@@ -268,6 +268,7 @@
     sections.appendChild(section('Research', lake.research));
     sections.appendChild(section('Field observations', lake.observations));
     sections.appendChild(section('Community initiatives', initiativesList(lake)));
+    sections.appendChild(section('Lake stories from visitors', storiesList(lake)));
     sections.appendChild(section('Lake Sentry perspective', lake.perspective));
 
     body.append(area, title, badges, sections);
@@ -307,6 +308,55 @@
     return wrap;
   }
 
+  // Approved visitor posts for this lake come from posts.js.
+  function storiesList(lake) {
+    const wrap = document.createElement('div');
+    const posts = (window.LakeSentryPosts && window.LakeSentryPosts.approvedFor(lake.id)) || [];
+    const p = document.createElement('p');
+    p.className = 'mt-1';
+    p.textContent = posts.length
+      ? posts.length + (posts.length === 1 ? ' published story' : ' published stories') + ' about this lake.'
+      : 'No stories about this lake yet.';
+    wrap.appendChild(p);
+
+    // Up to 4 photo thumbnails from those posts.
+    const photos = [];
+    posts.forEach(function (post) { post.photos.forEach(function (ph) { photos.push(ph); }); });
+    if (photos.length) {
+      const grid = document.createElement('div');
+      grid.className = 'mt-2 grid grid-cols-4 gap-2';
+      photos.slice(0, 4).forEach(function (ph) {
+        const img = document.createElement('img');
+        img.src = ph.src;
+        img.alt = ph.alt;
+        img.className = 'aspect-square w-full rounded-md object-cover';
+        grid.appendChild(img);
+      });
+      wrap.appendChild(grid);
+    }
+
+    const links = document.createElement('p');
+    links.className = 'mt-2 flex flex-wrap gap-x-5 gap-y-1';
+    [[posts.length ? 'Read the stories' : 'Share the first story', 'post-feed-title'], ['Write a post about ' + lake.name, 'post-title']].forEach(function (l, i) {
+      if (i === 0 && !posts.length) return; // "write a post" link is enough
+      const a = document.createElement('a');
+      a.href = '#stories';
+      a.className = 'inline-flex font-semibold text-aqua underline underline-offset-4 hover:text-mint';
+      a.textContent = l[0];
+      a.addEventListener('click', function (e) {
+        e.preventDefault();
+        // Filter the story feed to this lake and pre-select it in the form.
+        document.dispatchEvent(new CustomEvent('lakesentry:show-posts', { detail: { lake: lake.id } }));
+        const target = document.getElementById(l[1]);
+        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        target.focus({ preventScroll: true });
+      });
+      links.appendChild(a);
+    });
+    wrap.appendChild(links);
+    return wrap;
+  }
+
   /* ---------- 5. Selecting a lake ---------- */
   function selectLake(id) {
     const lake = lakes.find(function (l) { return l.id === id; });
@@ -321,6 +371,9 @@
   }
 
   // Re-draw the open lake page when initiatives are approved/rejected.
+  document.addEventListener('lakesentry:posts-changed', function () {
+    if (selectedId) renderDetail(lakes.find(function (l) { return l.id === selectedId; }));
+  });
   document.addEventListener('lakesentry:initiatives-changed', function () {
     if (selectedId) renderDetail(lakes.find(function (l) { return l.id === selectedId; }));
   });
