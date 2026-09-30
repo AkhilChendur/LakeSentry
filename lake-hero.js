@@ -50,7 +50,9 @@
     cursorStrength: 7,         // ripple size from moving the cursor
     splashStrength: 60,        // ripple size from a click / tap
     rainEveryMs: reduceMotion ? [5000, 9000] : [500, 1400], // gap between ambient raindrops
-    trashCount: isSmallScreen ? 9 : 16,
+    trashCount: isSmallScreen ? 14 : 26,
+    // Trash gathers in an oval in the middle of the lake (fractions of the width/height).
+    trashZone: { x: window.innerWidth >= 1024 ? 0.62 : 0.5, y: 0.55, rx: 0.24, ry: 0.3 },
     botSpeed: reduceMotion ? 0.5 : 0.85, // pixels per frame
     fishCount: isSmallScreen ? 3 : 5,
   };
@@ -327,13 +329,25 @@
   function pick(list) { return list[Math.floor(Math.random() * list.length)]; }
 
   // Create one piece of trash. `fromEdge` = float in from the left edge.
+  // A random spot inside the middle "trash zone" (more pieces near its centre).
+  function spotInZone() {
+    const z = SETTINGS.trashZone;
+    const a = rand(0, Math.PI * 2);
+    const r = Math.sqrt(Math.random()); // spreads pieces evenly over the oval
+    return { x: W * (z.x + Math.cos(a) * z.rx * r), y: H * (z.y + Math.sin(a) * z.ry * r) };
+  }
+
   function makeTrash(fromEdge) {
     const type = pick(TRASH_TYPES);
+    // New pieces either start in the middle, or float in from the left or
+    // right edge (they then drift toward the middle on their own).
+    const fromLeft = Math.random() < 0.5;
+    const start = fromEdge ? { x: fromLeft ? -50 : W + 50, y: rand(H * 0.3, H * 0.8) } : spotInZone();
     return {
       type: type,
-      x: fromEdge ? -50 : rand(0, W),
-      y: rand(H * 0.12, H * 0.94),
-      vx: rand(0.05, 0.2),
+      x: start.x,
+      y: start.y,
+      vx: fromEdge ? (fromLeft ? 0.3 : -0.3) : rand(-0.08, 0.08),
       vy: rand(-0.05, 0.05),
       angle: rand(0, Math.PI * 2),
       spin: rand(-0.004, 0.004),
@@ -344,11 +358,11 @@
     };
   }
 
-  // The lake "current" — a slow drift to the right that changes over time.
+  // The lake "current": a slow, gentle swirl that changes over time.
   function current(time) {
     return {
-      x: 0.12 + Math.sin(time * 0.00008) * 0.06,
-      y: Math.sin(time * 0.00011 + 1.3) * 0.05,
+      x: Math.sin(time * 0.00008) * 0.06,
+      y: Math.sin(time * 0.00011 + 1.3) * 0.04,
     };
   }
 
@@ -361,6 +375,16 @@
     // Water drag slows everything down again.
     p.vx *= Math.pow(0.985, dt);
     p.vy *= Math.pow(0.985, dt);
+    // Keep the trash in the middle of the lake: once a piece drifts
+    // outside the middle oval, it's gently pulled back toward the centre.
+    const z = SETTINGS.trashZone;
+    const dx = (p.x - W * z.x) / (W * z.rx);
+    const dy = (p.y - H * z.y) / (H * z.ry);
+    const outside = Math.sqrt(dx * dx + dy * dy) - 1;
+    if (outside > 0) {
+      p.vx -= dx * outside * 0.0035 * dt;
+      p.vy -= dy * outside * 0.0035 * dt;
+    }
     p.x += p.vx * dt;
     p.y += p.vy * dt;
     // Waves also make pieces twist a little.
@@ -368,9 +392,8 @@
     p.spin *= Math.pow(0.99, dt);
     p.angle += p.spin * dt;
 
-    // Floated off the edge? Wrap around to the other side.
-    if (p.x > W + 60) { p.x = -55; p.y = rand(H * 0.12, H * 0.94); }
-    if (p.x < -70) p.x = W + 50;
+    // Pushed right off the edge by a big splash? Put it back in the middle.
+    if (p.x > W + 80 || p.x < -80) { const s = spotInZone(); p.x = s.x; p.y = s.y; }
     if (p.y < H * 0.06) p.vy += 0.02 * dt;
     if (p.y > H - 10) p.vy -= 0.02 * dt;
   }

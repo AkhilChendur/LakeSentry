@@ -17,7 +17,7 @@ Vercel is connected to the repo, so it redeploys automatically after each commit
 | `index.html` | Home | An interactive lake: ripples follow your cursor, trash floats, fish swim away from you, lily pads and reeds sway, and a mini Lake Sentry robot collects trash. Plus the Prevent/Remove/Connect plan, count-up statistics and the awareness funnel |
 | `about.html` | About | What it does, the problem, the research (Hussain Sagar timeline, interview notes), an interactive V1 diagram, the engineering iteration, V2, the awareness campaign, the LakeSentry.in platform, stakeholders, impact targets, risks, feasibility, SDGs, the team and sources |
 | `app.html` | Lake Explorer App | A lake map with lake pages, a V1 robot simulator, and the Submit → Review → Approve → Publish initiative network |
-| `get-involved.html` | Get involved | Survey QR code, animated survey results (headline and detailed), feedback themes, six actions and partner information |
+| `get-involved.html` | Get involved | “Answer the survey” button (opens the Google Form), animated survey results (headline and detailed), feedback themes, six actions and partner information |
 
 ## Files
 
@@ -30,7 +30,7 @@ Vercel is connected to the repo, so it redeploys automatically after each commit
 | `about.js` | The interactive V1 diagram |
 | `lakes-data.js` | **All lake information.** Edit this to add lakes, research, field notes and photos |
 | `lake-map.js`, `bot-sim.js`, `initiatives.js` | The three App-page tools |
-| `v1-prototype.png`, `the-rollers.png`, `survey-qr.png` | Photos and the survey QR code |
+| `v1-prototype.png`, `the-rollers.png` | Photos of the V1 prototype and “The Rollers” |
 | `placeholder.svg`, `favicon.svg` | The image placeholder and the browser-tab icon |
 
 ## Adding your own photos
@@ -43,11 +43,14 @@ Every spot waiting for a photo uses `placeholder.svg`, with an `<!-- IMAGE PLACE
 
 Lake photos are set in `lakes-data.js` through each lake's `photo` and `photoAlt` fields.
 
+## Changing the survey link
+
+The survey opens a Google Form. To use a different form, search the `.html` files for `docs.google.com/forms` and replace every link.
+
 ## Things still to fill in
 
 Search the files for `TODO`:
 
-- the direct survey link (`get-involved.html`)
 - Instagram and LinkedIn links (the footer on every page)
 - a partner contact email (`get-involved.html`)
 - field notes and research for each lake (`lakes-data.js`)
