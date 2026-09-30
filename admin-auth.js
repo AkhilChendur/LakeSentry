@@ -126,7 +126,7 @@
       '    <button type="button" data-show aria-pressed="false" class="rounded-md border border-linehi px-3 text-sm font-semibold text-txt-1 hover:border-aqua">Show</button>' +
       '  </div>' +
       '  <p id="admin-login-error" role="alert" class="mt-2 min-h-[1.25rem] text-sm font-medium text-coral"></p>' +
-      '  <button type="submit" class="mt-3 w-full rounded-md bg-aqua px-5 py-3 font-semibold text-[#00232A] transition hover:-translate-y-0.5">Log in</button>' +
+      '  <button type="submit" class="mt-3 w-full rounded-md bg-aqua px-5 py-3 font-semibold text-onaccent transition hover:-translate-y-0.5">Log in</button>' +
       '</form>';
     document.body.appendChild(dialog);
 

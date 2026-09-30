@@ -4,7 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Get Involved — Lake Sentry</title>
-  <meta name="description" content="Take the Lake Sentry survey, see what Hyderabad residents told us, and find ways to help keep urban lakes clean." />
+  <meta name="description" content="Take the Lake Sentry survey and find ways to help keep Hyderabad's urban lakes clean." />
+  <!-- How the page looks when the link is shared (WhatsApp, LinkedIn, etc.) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Get Involved — Lake Sentry" />
+  <meta property="og:description" content="Take the Lake Sentry survey and find ways to help keep Hyderabad's urban lakes clean." />
+  <meta property="og:image" content="v1-prototype.png" />
+  <meta name="theme-color" content="#040713" />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
 
   <!-- Fonts: Space Grotesk (headings), Inter (body text), IBM Plex Mono (labels) -->
@@ -46,36 +52,44 @@
         </a>
       </div>
 
-      <!-- Menu button — only shown on small screens -->
-      <button id="nav-toggle" type="button" class="inline-flex items-center gap-2 rounded-md border border-linehi px-3 py-2 text-sm font-medium text-txt-1 md:hidden" aria-expanded="false" aria-controls="nav-menu">
-        <svg aria-hidden="true" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round" /></svg>
-        <span data-label class="sr-only sm:not-sr-only">Open menu</span>
-      </button>
+      <div class="flex items-center gap-2">
+        <!-- Light / dark mode switch (site.js) -->
+        <button id="theme-toggle" type="button" class="inline-flex items-center gap-1.5 rounded-md border border-linehi px-2.5 py-2 text-sm font-medium text-txt-1 transition hover:border-aqua hover:text-aqua md:order-last md:ml-2">
+          <svg data-icon-sun aria-hidden="true" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0V3a1 1 0 0 1 1-1Zm4 8a4 4 0 1 1-8 0 4 4 0 0 1 8 0Zm-.46 4.95.7.7a1 1 0 0 0 1.42-1.41l-.71-.71a1 1 0 0 0-1.41 1.42ZM16 10a1 1 0 0 1 1-1h1a1 1 0 1 1 0 2h-1a1 1 0 0 1-1-1Zm-.35-5.66a1 1 0 0 0-1.41-1.41l-.71.7a1 1 0 0 0 1.42 1.42l.7-.71ZM10 16a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0v-1a1 1 0 0 1 1-1ZM4.34 14.95a1 1 0 0 0 1.41 1.41l.71-.7a1 1 0 0 0-1.42-1.42l-.7.71ZM2 10a1 1 0 0 1 1-1h1a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm3.05-6.07a1 1 0 0 0-1.41 1.41l.7.71a1 1 0 0 0 1.42-1.42l-.71-.7Z"/></svg>
+          <svg data-icon-moon aria-hidden="true" class="hidden h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M17.3 13.35A8 8 0 0 1 6.65 2.7a8 8 0 1 0 10.65 10.65Z"/></svg>
+          <span data-theme-label class="sr-only lg:not-sr-only">Light mode</span>
+        </button>
+        <!-- Menu button — only shown on small screens -->
+        <button id="nav-toggle" type="button" class="inline-flex items-center gap-2 rounded-md border border-linehi px-3 py-2 text-sm font-medium text-txt-1 md:hidden" aria-expanded="false" aria-controls="nav-menu">
+          <svg aria-hidden="true" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round" /></svg>
+          <span data-label class="sr-only sm:not-sr-only">Open menu</span>
+        </button>
 
-      <ul id="nav-menu" class="absolute left-0 right-0 top-full hidden flex-col gap-1 border-b border-line bg-deep px-4 pb-4 md:static md:flex md:flex-row md:items-center md:gap-1 md:border-0 md:bg-transparent md:p-0">
-        <li><a href="index.html" class="relative block rounded-md px-3 py-2 text-txt-2 transition-colors hover:text-txt-1 md:after:absolute md:after:bottom-1 md:after:left-3 md:after:h-0.5 md:after:w-0 md:after:rounded md:after:bg-aqua md:after:transition-all md:hover:after:w-[calc(100%-1.5rem)]">Home</a></li>
-        <li><a href="about.html" class="relative block rounded-md px-3 py-2 text-txt-2 transition-colors hover:text-txt-1 md:after:absolute md:after:bottom-1 md:after:left-3 md:after:h-0.5 md:after:w-0 md:after:rounded md:after:bg-aqua md:after:transition-all md:hover:after:w-[calc(100%-1.5rem)]">About</a></li>
-        <li><a href="app.html" class="relative block rounded-md px-3 py-2 text-txt-2 transition-colors hover:text-txt-1 md:after:absolute md:after:bottom-1 md:after:left-3 md:after:h-0.5 md:after:w-0 md:after:rounded md:after:bg-aqua md:after:transition-all md:hover:after:w-[calc(100%-1.5rem)]">Lake Explorer App</a></li>
-        <li><a href="get-involved.html" aria-current="page" class="mt-2 block rounded-md bg-aqua px-4 py-2 font-semibold text-[#00232A] transition hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(56,228,240,.3)] md:ml-3 md:mt-0 ring-2 ring-txt-1 ring-offset-2 ring-offset-ink">Get involved</a></li>
-      </ul>
+        <ul id="nav-menu" class="absolute left-0 right-0 top-full hidden flex-col gap-1 border-b border-line bg-deep px-4 pb-4 md:static md:flex md:flex-row md:items-center md:gap-1 md:border-0 md:bg-transparent md:p-0">
+          <li><a href="index.html" class="relative block rounded-md px-3 py-2 text-txt-2 transition-colors hover:text-txt-1 md:after:absolute md:after:bottom-1 md:after:left-3 md:after:h-0.5 md:after:w-0 md:after:rounded md:after:bg-aqua md:after:transition-all md:hover:after:w-[calc(100%-1.5rem)]">Home</a></li>
+          <li><a href="about.html" class="relative block rounded-md px-3 py-2 text-txt-2 transition-colors hover:text-txt-1 md:after:absolute md:after:bottom-1 md:after:left-3 md:after:h-0.5 md:after:w-0 md:after:rounded md:after:bg-aqua md:after:transition-all md:hover:after:w-[calc(100%-1.5rem)]">About</a></li>
+          <li><a href="app.html" class="relative block rounded-md px-3 py-2 text-txt-2 transition-colors hover:text-txt-1 md:after:absolute md:after:bottom-1 md:after:left-3 md:after:h-0.5 md:after:w-0 md:after:rounded md:after:bg-aqua md:after:transition-all md:hover:after:w-[calc(100%-1.5rem)]">Lake Explorer App</a></li>
+          <li><a href="get-involved.html" aria-current="page" class="mt-2 block rounded-md bg-aqua px-4 py-2 font-semibold text-onaccent transition hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(56,228,240,.3)] md:ml-3 md:mt-0 ring-2 ring-txt-1 ring-offset-2 ring-offset-ink">Get involved</a></li>
+        </ul>
+      </div>
     </nav>
   </header>
 
   <main id="main">
 
     <!-- ============================ PAGE INTRO ============================ -->
-    <section class="relative overflow-hidden bg-deep2 pb-32 pt-20" aria-labelledby="page-title" data-wave="#040713">
+    <section class="relative overflow-hidden bg-deep2 pb-32 pt-20" aria-labelledby="page-title" data-wave="ink">
       <div class="caustics" aria-hidden="true"></div>
       <div class="pointer-events-none absolute inset-0" data-bubbles="14" aria-hidden="true"></div>
       <div class="relative mx-auto max-w-6xl px-4 sm:px-6">
         <p class="eyebrow reveal !text-mint">Get involved</p>
         <h1 id="page-title" class="reveal mt-4 max-w-4xl font-display text-4xl font-bold leading-tight text-txt-1 sm:text-6xl">“Lake pollution is a problem.” <span class="gradient-text">So what can we do about it?</span></h1>
-        <p class="reveal mt-6 max-w-2xl text-lg">Most people already know lakes are polluted. Lake Sentry is about turning that awareness into action. Here's how you can help, and what people have told us so far.</p>
+        <p class="reveal mt-6 max-w-2xl text-lg">Most people already know lakes are polluted. Lake Sentry is about turning that awareness into action. Here's how you can help.</p>
       </div>
     </section>
 
     <!-- ============================ SURVEY ============================ -->
-    <section id="survey" class="relative bg-ink pb-32 pt-20" aria-labelledby="survey-title" data-wave="#0B1330">
+    <section id="survey" class="relative bg-ink pb-32 pt-20" aria-labelledby="survey-title" data-wave="deep">
       <div class="mx-auto grid max-w-6xl items-center gap-12 px-4 sm:px-6 md:grid-cols-[1fr_22rem]">
         <div>
           <p class="eyebrow reveal">Step one</p>
@@ -91,7 +105,7 @@
           <p class="mt-3 font-display text-xl font-bold text-txt-1">It only takes a few minutes</p>
           <p class="mt-1 text-sm text-txt-3">Opens the Google Form in a new tab.</p>
           <a href="https://docs.google.com/forms/d/e/1FAIpQLScOvBmpAHLoiJ6ZfsDkbI8g9bO4nfaFDodWxb_4oyn3Qfj4OQ/viewform?usp=header" target="_blank" rel="noopener noreferrer"
-             class="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-md bg-aqua px-6 py-3.5 font-semibold text-[#00232A] transition hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(56,228,240,.35)]">
+             class="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-md bg-aqua px-6 py-3.5 font-semibold text-onaccent transition hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(56,228,240,.35)]">
             Answer the survey
             <svg aria-hidden="true" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M11 3a1 1 0 1 0 0 2h2.6l-6.3 6.3a1 1 0 1 0 1.4 1.4L15 6.4V9a1 1 0 1 0 2 0V4a1 1 0 0 0-1-1h-5Z" /><path d="M5 5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-3a1 1 0 1 0-2 0v3H5V7h3a1 1 0 0 0 0-2H5Z" /></svg><span class="sr-only"> (opens in a new tab)</span>
           </a>
@@ -100,7 +114,8 @@
     </section>
 
     <!-- ============================ SURVEY RESULTS ============================ -->
-    <section id="results" class="relative bg-deep pb-32 pt-20" aria-labelledby="results-title" data-wave="#040713">
+    <!-- HIDDEN FOR NOW: waiting for the new survey results. Delete the word "hidden" below to show this again. -->
+    <section id="results" hidden class="relative bg-deep pb-32 pt-20" aria-labelledby="results-title" data-wave="ink">
       <div class="mx-auto max-w-6xl px-4 sm:px-6">
         <p class="eyebrow reveal">Primary research</p>
         <h2 id="results-title" class="reveal mt-4 font-display text-3xl font-bold text-txt-1 sm:text-5xl">What Hyderabad residents told us.</h2>
@@ -185,7 +200,7 @@
     </section>
 
     <!-- ============================ TAKE ACTION ============================ -->
-    <section id="act" class="relative overflow-hidden bg-ink pb-32 pt-20" aria-labelledby="act-title" data-wave="#0F1C42">
+    <section id="act" class="relative overflow-hidden bg-deep pb-32 pt-20" aria-labelledby="act-title" data-wave="deep2">
       <div class="pointer-events-none absolute inset-0" data-bubbles="10" aria-hidden="true"></div>
       <div class="relative mx-auto max-w-6xl px-4 sm:px-6">
         <p class="eyebrow reveal !text-mint">Take action</p>

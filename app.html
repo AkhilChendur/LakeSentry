@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Lake Explorer App — Lake Sentry</title>
   <meta name="description" content="Explore Hyderabad's lakes on an interactive map, drive a simulated Lake Sentry V1 robot, and try the initiative submission and review workflow." />
+  <!-- How the page looks when the link is shared (WhatsApp, LinkedIn, etc.) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Lake Explorer App — Lake Sentry" />
+  <meta property="og:description" content="Explore Hyderabad's lakes on an interactive map, drive a simulated Lake Sentry V1 robot, and try the initiative submission and review workflow." />
+  <meta property="og:image" content="v1-prototype.png" />
+  <meta name="theme-color" content="#040713" />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
 
   <!-- Fonts: Space Grotesk (headings), Inter (body text), IBM Plex Mono (labels) -->
@@ -46,18 +52,26 @@
         </a>
       </div>
 
-      <!-- Menu button — only shown on small screens -->
-      <button id="nav-toggle" type="button" class="inline-flex items-center gap-2 rounded-md border border-linehi px-3 py-2 text-sm font-medium text-txt-1 md:hidden" aria-expanded="false" aria-controls="nav-menu">
-        <svg aria-hidden="true" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round" /></svg>
-        <span data-label class="sr-only sm:not-sr-only">Open menu</span>
-      </button>
+      <div class="flex items-center gap-2">
+        <!-- Light / dark mode switch (site.js) -->
+        <button id="theme-toggle" type="button" class="inline-flex items-center gap-1.5 rounded-md border border-linehi px-2.5 py-2 text-sm font-medium text-txt-1 transition hover:border-aqua hover:text-aqua md:order-last md:ml-2">
+          <svg data-icon-sun aria-hidden="true" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0V3a1 1 0 0 1 1-1Zm4 8a4 4 0 1 1-8 0 4 4 0 0 1 8 0Zm-.46 4.95.7.7a1 1 0 0 0 1.42-1.41l-.71-.71a1 1 0 0 0-1.41 1.42ZM16 10a1 1 0 0 1 1-1h1a1 1 0 1 1 0 2h-1a1 1 0 0 1-1-1Zm-.35-5.66a1 1 0 0 0-1.41-1.41l-.71.7a1 1 0 0 0 1.42 1.42l.7-.71ZM10 16a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0v-1a1 1 0 0 1 1-1ZM4.34 14.95a1 1 0 0 0 1.41 1.41l.71-.7a1 1 0 0 0-1.42-1.42l-.7.71ZM2 10a1 1 0 0 1 1-1h1a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm3.05-6.07a1 1 0 0 0-1.41 1.41l.7.71a1 1 0 0 0 1.42-1.42l-.71-.7Z"/></svg>
+          <svg data-icon-moon aria-hidden="true" class="hidden h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M17.3 13.35A8 8 0 0 1 6.65 2.7a8 8 0 1 0 10.65 10.65Z"/></svg>
+          <span data-theme-label class="sr-only lg:not-sr-only">Light mode</span>
+        </button>
+        <!-- Menu button — only shown on small screens -->
+        <button id="nav-toggle" type="button" class="inline-flex items-center gap-2 rounded-md border border-linehi px-3 py-2 text-sm font-medium text-txt-1 md:hidden" aria-expanded="false" aria-controls="nav-menu">
+          <svg aria-hidden="true" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round" /></svg>
+          <span data-label class="sr-only sm:not-sr-only">Open menu</span>
+        </button>
 
-      <ul id="nav-menu" class="absolute left-0 right-0 top-full hidden flex-col gap-1 border-b border-line bg-deep px-4 pb-4 md:static md:flex md:flex-row md:items-center md:gap-1 md:border-0 md:bg-transparent md:p-0">
-        <li><a href="index.html" class="relative block rounded-md px-3 py-2 text-txt-2 transition-colors hover:text-txt-1 md:after:absolute md:after:bottom-1 md:after:left-3 md:after:h-0.5 md:after:w-0 md:after:rounded md:after:bg-aqua md:after:transition-all md:hover:after:w-[calc(100%-1.5rem)]">Home</a></li>
-        <li><a href="about.html" class="relative block rounded-md px-3 py-2 text-txt-2 transition-colors hover:text-txt-1 md:after:absolute md:after:bottom-1 md:after:left-3 md:after:h-0.5 md:after:w-0 md:after:rounded md:after:bg-aqua md:after:transition-all md:hover:after:w-[calc(100%-1.5rem)]">About</a></li>
-        <li><a href="app.html" aria-current="page" class="relative block rounded-md px-3 py-2 font-semibold text-txt-1 md:after:absolute md:after:inset-x-3 md:after:bottom-1 md:after:h-0.5 md:after:rounded md:after:bg-aqua">Lake Explorer App</a></li>
-        <li><a href="get-involved.html" class="mt-2 block rounded-md bg-aqua px-4 py-2 font-semibold text-[#00232A] transition hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(56,228,240,.3)] md:ml-3 md:mt-0">Get involved</a></li>
-      </ul>
+        <ul id="nav-menu" class="absolute left-0 right-0 top-full hidden flex-col gap-1 border-b border-line bg-deep px-4 pb-4 md:static md:flex md:flex-row md:items-center md:gap-1 md:border-0 md:bg-transparent md:p-0">
+          <li><a href="index.html" class="relative block rounded-md px-3 py-2 text-txt-2 transition-colors hover:text-txt-1 md:after:absolute md:after:bottom-1 md:after:left-3 md:after:h-0.5 md:after:w-0 md:after:rounded md:after:bg-aqua md:after:transition-all md:hover:after:w-[calc(100%-1.5rem)]">Home</a></li>
+          <li><a href="about.html" class="relative block rounded-md px-3 py-2 text-txt-2 transition-colors hover:text-txt-1 md:after:absolute md:after:bottom-1 md:after:left-3 md:after:h-0.5 md:after:w-0 md:after:rounded md:after:bg-aqua md:after:transition-all md:hover:after:w-[calc(100%-1.5rem)]">About</a></li>
+          <li><a href="app.html" aria-current="page" class="relative block rounded-md px-3 py-2 font-semibold text-txt-1 md:after:absolute md:after:inset-x-3 md:after:bottom-1 md:after:h-0.5 md:after:rounded md:after:bg-aqua">Lake Explorer App</a></li>
+          <li><a href="get-involved.html" class="mt-2 block rounded-md bg-aqua px-4 py-2 font-semibold text-onaccent transition hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(56,228,240,.3)] md:ml-3 md:mt-0">Get involved</a></li>
+        </ul>
+      </div>
     </nav>
   </header>
 
@@ -79,10 +93,10 @@
          Tab logic: tabs.js. The bar sticks under the header while scrolling. -->
     <div class="sticky top-[var(--header-h,64px)] z-40 border-b border-line bg-ink/90 backdrop-blur-lg">
       <div role="tablist" data-tabs aria-label="Lake Explorer tools" class="mx-auto grid max-w-6xl grid-cols-4 gap-1.5 px-3 py-2.5 sm:flex sm:gap-2 sm:overflow-x-auto sm:px-6 sm:py-3 [scrollbar-width:none]">
-        <button type="button" role="tab" id="tab-stories" aria-controls="stories" aria-selected="true" class="relative flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-xl border border-line px-1 py-2 text-xs font-semibold text-txt-2 transition hover:border-aqua hover:text-txt-1 aria-selected:border-aqua aria-selected:bg-aqua aria-selected:text-[#00232A] sm:shrink-0 sm:flex-row sm:gap-2 sm:rounded-full sm:px-4 sm:py-2.5 sm:text-base"><span aria-hidden="true">📸</span><span class="sm:hidden">Stories</span><span class="hidden sm:inline">Lake stories</span></button>
-        <button type="button" role="tab" id="tab-initiatives" aria-controls="initiatives" aria-selected="false" class="relative flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-xl border border-line px-1 py-2 text-xs font-semibold text-txt-2 transition hover:border-aqua hover:text-txt-1 aria-selected:border-aqua aria-selected:bg-aqua aria-selected:text-[#00232A] sm:shrink-0 sm:flex-row sm:gap-2 sm:rounded-full sm:px-4 sm:py-2.5 sm:text-base"><span aria-hidden="true">🤝</span>Initiatives</button>
-        <button type="button" role="tab" id="tab-map" aria-controls="map" aria-selected="false" class="relative flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-xl border border-line px-1 py-2 text-xs font-semibold text-txt-2 transition hover:border-aqua hover:text-txt-1 aria-selected:border-aqua aria-selected:bg-aqua aria-selected:text-[#00232A] sm:shrink-0 sm:flex-row sm:gap-2 sm:rounded-full sm:px-4 sm:py-2.5 sm:text-base"><span aria-hidden="true">🗺️</span><span class="sm:hidden">Map</span><span class="hidden sm:inline">Lake map</span></button>
-        <button type="button" role="tab" id="tab-simulator" aria-controls="simulator" aria-selected="false" class="relative flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-xl border border-line px-1 py-2 text-xs font-semibold text-txt-2 transition hover:border-aqua hover:text-txt-1 aria-selected:border-aqua aria-selected:bg-aqua aria-selected:text-[#00232A] sm:shrink-0 sm:flex-row sm:gap-2 sm:rounded-full sm:px-4 sm:py-2.5 sm:text-base"><span aria-hidden="true">🤖</span><span class="sm:hidden">Simulator</span><span class="hidden sm:inline">V1 simulator</span></button>
+        <button type="button" role="tab" id="tab-stories" aria-controls="stories" aria-selected="true" class="relative flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-xl border border-line px-1 py-2 text-xs font-semibold text-txt-2 transition hover:border-aqua hover:text-txt-1 aria-selected:border-aqua aria-selected:bg-aqua aria-selected:text-onaccent sm:shrink-0 sm:flex-row sm:gap-2 sm:rounded-full sm:px-4 sm:py-2.5 sm:text-base"><span aria-hidden="true">📸</span><span class="sm:hidden">Stories</span><span class="hidden sm:inline">Lake stories</span></button>
+        <button type="button" role="tab" id="tab-initiatives" aria-controls="initiatives" aria-selected="false" class="relative flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-xl border border-line px-1 py-2 text-xs font-semibold text-txt-2 transition hover:border-aqua hover:text-txt-1 aria-selected:border-aqua aria-selected:bg-aqua aria-selected:text-onaccent sm:shrink-0 sm:flex-row sm:gap-2 sm:rounded-full sm:px-4 sm:py-2.5 sm:text-base"><span aria-hidden="true">🤝</span>Initiatives</button>
+        <button type="button" role="tab" id="tab-map" aria-controls="map" aria-selected="false" class="relative flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-xl border border-line px-1 py-2 text-xs font-semibold text-txt-2 transition hover:border-aqua hover:text-txt-1 aria-selected:border-aqua aria-selected:bg-aqua aria-selected:text-onaccent sm:shrink-0 sm:flex-row sm:gap-2 sm:rounded-full sm:px-4 sm:py-2.5 sm:text-base"><span aria-hidden="true">🗺️</span><span class="sm:hidden">Map</span><span class="hidden sm:inline">Lake map</span></button>
+        <button type="button" role="tab" id="tab-simulator" aria-controls="simulator" aria-selected="false" class="relative flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-xl border border-line px-1 py-2 text-xs font-semibold text-txt-2 transition hover:border-aqua hover:text-txt-1 aria-selected:border-aqua aria-selected:bg-aqua aria-selected:text-onaccent sm:shrink-0 sm:flex-row sm:gap-2 sm:rounded-full sm:px-4 sm:py-2.5 sm:text-base"><span aria-hidden="true">🤖</span><span class="sm:hidden">Simulator</span><span class="hidden sm:inline">V1 simulator</span></button>
       </div>
     </div>
 
@@ -144,7 +158,7 @@
                 <label for="post-photos" class="block font-semibold text-txt-1">Photos <span class="font-normal text-txt-3">(optional, up to 3)</span></label>
                 <p id="post-photos-hint" class="text-sm text-txt-3">JPG or PNG. Large photos are shrunk automatically.</p>
                 <input id="post-photos" type="file" accept="image/*" multiple aria-describedby="post-photos-hint post-photo-count"
-                       class="mt-2 block w-full text-sm text-txt-2 file:mr-4 file:cursor-pointer file:rounded-md file:border-0 file:bg-aqua file:px-4 file:py-2.5 file:font-semibold file:text-[#00232A] hover:file:-translate-y-0.5" />
+                       class="mt-2 block w-full text-sm text-txt-2 file:mr-4 file:cursor-pointer file:rounded-md file:border-0 file:bg-aqua file:px-4 file:py-2.5 file:font-semibold file:text-onaccent hover:file:-translate-y-0.5" />
                 <p id="post-photo-count" class="mt-2 font-mono text-xs text-txt-3" aria-live="polite">0 of 3 photos added</p>
                 <ul id="post-previews" class="mt-3 space-y-3" aria-label="Photos you've added"></ul>
               </div>
@@ -164,7 +178,7 @@
                 <p id="post-consent-error" hidden class="mt-1 text-sm font-medium text-coral"></p>
               </div>
 
-              <button type="submit" class="rounded-md bg-aqua px-6 py-3 font-semibold text-[#00232A] transition hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(56,228,240,.35)]">Submit post for review</button>
+              <button type="submit" class="rounded-md bg-aqua px-6 py-3 font-semibold text-onaccent transition hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(56,228,240,.35)]">Submit post for review</button>
             </form>
           </div>
 
@@ -277,7 +291,7 @@
               <!-- PHOTO UPLOAD PLACEHOLDER: uploads need a real server, so this is a note for now -->
               <p class="rounded-lg border border-sun/40 bg-sun/10 px-4 py-3 text-sm">📷 Photo uploads will be available on the live LakeSentry.in site.</p>
 
-              <button type="submit" class="rounded-md bg-aqua px-6 py-3 font-semibold text-[#00232A] transition hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(56,228,240,.35)]">Submit for review</button>
+              <button type="submit" class="rounded-md bg-aqua px-6 py-3 font-semibold text-onaccent transition hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(56,228,240,.35)]">Submit for review</button>
             </form>
           </div>
 
@@ -343,10 +357,10 @@
 
         <!-- The four steps of a clean-up run; the current one lights up -->
         <ol id="sim-phases" class="mt-8 grid grid-cols-2 gap-2 text-sm sm:grid-cols-4" aria-label="Clean-up run steps">
-          <li data-phase="aim" class="rounded-lg border border-line bg-panel px-4 py-3 transition aria-[current=step]:border-aqua aria-[current=step]:bg-aqua aria-[current=step]:text-[#00232A]"><strong class="font-mono">01 · Aim</strong><span class="block">Steer toward trash</span></li>
-          <li data-phase="scoop" class="rounded-lg border border-line bg-panel px-4 py-3 transition aria-[current=step]:border-aqua aria-[current=step]:bg-aqua aria-[current=step]:text-[#00232A]"><strong class="font-mono">02 · Scoop</strong><span class="block">Conveyor lifts it</span></li>
-          <li data-phase="return" class="rounded-lg border border-line bg-panel px-4 py-3 transition aria-[current=step]:border-aqua aria-[current=step]:bg-aqua aria-[current=step]:text-[#00232A]"><strong class="font-mono">03 · Return</strong><span class="block">Head to the bank</span></li>
-          <li data-phase="record" class="rounded-lg border border-line bg-panel px-4 py-3 transition aria-[current=step]:border-aqua aria-[current=step]:bg-aqua aria-[current=step]:text-[#00232A]"><strong class="font-mono">04 · Record</strong><span class="block">Weigh &amp; log</span></li>
+          <li data-phase="aim" class="rounded-lg border border-line bg-panel px-4 py-3 transition aria-[current=step]:border-aqua aria-[current=step]:bg-aqua aria-[current=step]:text-onaccent"><strong class="font-mono">01 · Aim</strong><span class="block">Steer toward trash</span></li>
+          <li data-phase="scoop" class="rounded-lg border border-line bg-panel px-4 py-3 transition aria-[current=step]:border-aqua aria-[current=step]:bg-aqua aria-[current=step]:text-onaccent"><strong class="font-mono">02 · Scoop</strong><span class="block">Conveyor lifts it</span></li>
+          <li data-phase="return" class="rounded-lg border border-line bg-panel px-4 py-3 transition aria-[current=step]:border-aqua aria-[current=step]:bg-aqua aria-[current=step]:text-onaccent"><strong class="font-mono">03 · Return</strong><span class="block">Head to the bank</span></li>
+          <li data-phase="record" class="rounded-lg border border-line bg-panel px-4 py-3 transition aria-[current=step]:border-aqua aria-[current=step]:bg-aqua aria-[current=step]:text-onaccent"><strong class="font-mono">04 · Record</strong><span class="block">Weigh &amp; log</span></li>
         </ol>
 
         <div class="mt-6 grid gap-6 lg:grid-cols-[1fr_19rem]">
@@ -357,7 +371,7 @@
               <canvas id="sim-canvas" width="960" height="600" class="block h-auto w-full" aria-hidden="true"></canvas>
               <div id="sim-overlay" class="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-ink/70 p-6 text-center backdrop-blur-[2px]">
                 <p class="max-w-md text-lg text-txt-1">Collect floating trash, then bring it back to the bank.</p>
-                <button type="button" class="rounded-md bg-aqua px-7 py-3.5 text-lg font-semibold text-[#00232A] transition hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(56,228,240,.35)]">▶ Start simulation</button>
+                <button type="button" class="rounded-md bg-aqua px-7 py-3.5 text-lg font-semibold text-onaccent transition hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(56,228,240,.35)]">▶ Start simulation</button>
               </div>
             </div>
             <p id="sim-help" class="mt-3 text-sm">
@@ -369,18 +383,18 @@
 
             <div class="mt-4 flex flex-wrap items-center justify-between gap-4">
               <div class="flex flex-wrap gap-2">
-                <button id="sim-start" type="button" class="rounded-md bg-aqua px-5 py-2.5 font-semibold text-[#00232A] transition hover:-translate-y-0.5">Start simulation</button>
+                <button id="sim-start" type="button" class="rounded-md bg-aqua px-5 py-2.5 font-semibold text-onaccent transition hover:-translate-y-0.5">Start simulation</button>
                 <button id="sim-reset" type="button" class="rounded-md border border-linehi px-5 py-2.5 font-semibold text-txt-1 transition hover:border-aqua hover:text-aqua">Reset</button>
                 <button id="sim-tow" type="button" class="rounded-md border border-linehi px-5 py-2.5 font-semibold text-txt-1 transition hover:border-aqua hover:text-aqua">Tow back to bank</button>
               </div>
               <!-- On-screen driving pad: hold a button to drive -->
               <div class="grid select-none grid-cols-3 gap-1.5" role="group" aria-label="Driving controls (hold to drive)">
                 <span></span>
-                <button type="button" data-drive="fwd" aria-label="Forward" class="flex h-12 w-12 touch-none items-center justify-center rounded-lg border border-linehi bg-panel2 text-aqua transition hover:border-aqua active:bg-aqua active:text-[#00232A]"><svg aria-hidden="true" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path d="M10 4l6 8H4z" /></svg></button>
+                <button type="button" data-drive="fwd" aria-label="Forward" class="flex h-12 w-12 touch-none items-center justify-center rounded-lg border border-linehi bg-panel2 text-aqua transition hover:border-aqua active:bg-aqua active:text-onaccent"><svg aria-hidden="true" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path d="M10 4l6 8H4z" /></svg></button>
                 <span></span>
-                <button type="button" data-drive="left" aria-label="Turn left" class="flex h-12 w-12 touch-none items-center justify-center rounded-lg border border-linehi bg-panel2 text-aqua transition hover:border-aqua active:bg-aqua active:text-[#00232A]"><svg aria-hidden="true" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path d="M4 10l8-6v12z" /></svg></button>
-                <button type="button" data-drive="back" aria-label="Reverse" class="flex h-12 w-12 touch-none items-center justify-center rounded-lg border border-linehi bg-panel2 text-aqua transition hover:border-aqua active:bg-aqua active:text-[#00232A]"><svg aria-hidden="true" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path d="M10 16l6-8H4z" /></svg></button>
-                <button type="button" data-drive="right" aria-label="Turn right" class="flex h-12 w-12 touch-none items-center justify-center rounded-lg border border-linehi bg-panel2 text-aqua transition hover:border-aqua active:bg-aqua active:text-[#00232A]"><svg aria-hidden="true" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path d="M16 10l-8-6v12z" /></svg></button>
+                <button type="button" data-drive="left" aria-label="Turn left" class="flex h-12 w-12 touch-none items-center justify-center rounded-lg border border-linehi bg-panel2 text-aqua transition hover:border-aqua active:bg-aqua active:text-onaccent"><svg aria-hidden="true" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path d="M4 10l8-6v12z" /></svg></button>
+                <button type="button" data-drive="back" aria-label="Reverse" class="flex h-12 w-12 touch-none items-center justify-center rounded-lg border border-linehi bg-panel2 text-aqua transition hover:border-aqua active:bg-aqua active:text-onaccent"><svg aria-hidden="true" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path d="M10 16l6-8H4z" /></svg></button>
+                <button type="button" data-drive="right" aria-label="Turn right" class="flex h-12 w-12 touch-none items-center justify-center rounded-lg border border-linehi bg-panel2 text-aqua transition hover:border-aqua active:bg-aqua active:text-onaccent"><svg aria-hidden="true" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path d="M16 10l-8-6v12z" /></svg></button>
               </div>
             </div>
           </div>

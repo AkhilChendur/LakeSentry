@@ -5,9 +5,11 @@
    2. Footer year
    3. Scroll progress bar
    4. Reveal-on-scroll, animated number counters and survey bars
-   5. Animated waves between sections   (<div data-wave="#0B1330">)
+   5. Animated waves between sections   (<div data-wave="deep">, the
+      value is the theme colour of the NEXT section: ink, deep or deep2)
    6. Rising bubbles                    (<div data-bubbles="12">)
    7. Ripple rings where you click
+   8. Light / dark mode toggle         (the ☀/🌙 button in the header)
    Everything decorative switches off if the visitor's device asks
    for reduced motion.
    ===================================================================== */
@@ -154,13 +156,14 @@
     return d + ' V80 H0 Z';
   }
   document.querySelectorAll('[data-wave]').forEach(function (host) {
-    const colour = host.dataset.wave;
+    // The colour follows the theme, e.g. "deep" -> rgb(var(--deep))
+    const colour = 'rgb(var(--' + host.dataset.wave + '))';
     const div = document.createElement('div');
     div.className = 'wave-divider';
     div.setAttribute('aria-hidden', 'true');
     div.innerHTML =
-      '<svg class="wave-back" viewBox="0 0 2880 80" preserveAspectRatio="none"><path fill="' + colour + '" d="' + wavePath(18, 0) + '"/></svg>' +
-      '<svg class="wave-front" viewBox="0 0 2880 80" preserveAspectRatio="none"><path fill="' + colour + '" d="' + wavePath(12, 14) + '"/></svg>';
+      '<svg class="wave-back" viewBox="0 0 2880 80" preserveAspectRatio="none"><path style="fill:' + colour + '" d="' + wavePath(18, 0) + '"/></svg>' +
+      '<svg class="wave-front" viewBox="0 0 2880 80" preserveAspectRatio="none"><path style="fill:' + colour + '" d="' + wavePath(12, 14) + '"/></svg>';
     host.appendChild(div);
   });
 
@@ -197,5 +200,33 @@
         setTimeout(function () { r.remove(); }, 1200);
       });
     });
+  }
+  /* ---------- 8. Light / dark mode ----------
+     tailwind-config.js already applied the saved theme before the page
+     was drawn. This wires up the header button and remembers the choice. */
+  const themeBtn = document.getElementById('theme-toggle');
+  function currentTheme() { return document.documentElement.dataset.theme === 'light' ? 'light' : 'dark'; }
+  function updateThemeButton() {
+    if (!themeBtn) return;
+    const light = currentTheme() === 'light';
+    // The button says what it will switch TO.
+    themeBtn.querySelector('[data-theme-label]').textContent = light ? 'Dark mode' : 'Light mode';
+    themeBtn.querySelector('[data-icon-sun]').classList.toggle('hidden', light);
+    themeBtn.querySelector('[data-icon-moon]').classList.toggle('hidden', !light);
+  }
+  if (themeBtn) {
+    themeBtn.addEventListener('click', function () {
+      const next = currentTheme() === 'light' ? 'dark' : 'light';
+      const root = document.documentElement;
+      if (!reduceMotion) {
+        root.classList.add('theme-fade');
+        setTimeout(function () { root.classList.remove('theme-fade'); }, 450);
+      }
+      root.dataset.theme = next;
+      try { localStorage.setItem('lakeSentry.theme', next); } catch (e) { /* storage blocked */ }
+      updateThemeButton();
+      document.dispatchEvent(new CustomEvent('lakesentry:theme-changed', { detail: { theme: next } }));
+    });
+    updateThemeButton();
   }
 })();

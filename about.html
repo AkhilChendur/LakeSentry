@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>About — Lake Sentry</title>
   <meta name="description" content="What Lake Sentry does, the floating-waste problem it tackles in Hyderabad's lakes, how the V1 robot works, and who the project is for." />
+  <!-- How the page looks when the link is shared (WhatsApp, LinkedIn, etc.) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="About — Lake Sentry" />
+  <meta property="og:description" content="What Lake Sentry does, the floating-waste problem it tackles in Hyderabad's lakes, how the V1 robot works, and who the project is for." />
+  <meta property="og:image" content="v1-prototype.png" />
+  <meta name="theme-color" content="#040713" />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
 
   <!-- Fonts: Space Grotesk (headings), Inter (body text), IBM Plex Mono (labels) -->
@@ -46,25 +52,33 @@
         </a>
       </div>
 
-      <!-- Menu button — only shown on small screens -->
-      <button id="nav-toggle" type="button" class="inline-flex items-center gap-2 rounded-md border border-linehi px-3 py-2 text-sm font-medium text-txt-1 md:hidden" aria-expanded="false" aria-controls="nav-menu">
-        <svg aria-hidden="true" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round" /></svg>
-        <span data-label class="sr-only sm:not-sr-only">Open menu</span>
-      </button>
+      <div class="flex items-center gap-2">
+        <!-- Light / dark mode switch (site.js) -->
+        <button id="theme-toggle" type="button" class="inline-flex items-center gap-1.5 rounded-md border border-linehi px-2.5 py-2 text-sm font-medium text-txt-1 transition hover:border-aqua hover:text-aqua md:order-last md:ml-2">
+          <svg data-icon-sun aria-hidden="true" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0V3a1 1 0 0 1 1-1Zm4 8a4 4 0 1 1-8 0 4 4 0 0 1 8 0Zm-.46 4.95.7.7a1 1 0 0 0 1.42-1.41l-.71-.71a1 1 0 0 0-1.41 1.42ZM16 10a1 1 0 0 1 1-1h1a1 1 0 1 1 0 2h-1a1 1 0 0 1-1-1Zm-.35-5.66a1 1 0 0 0-1.41-1.41l-.71.7a1 1 0 0 0 1.42 1.42l.7-.71ZM10 16a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0v-1a1 1 0 0 1 1-1ZM4.34 14.95a1 1 0 0 0 1.41 1.41l.71-.7a1 1 0 0 0-1.42-1.42l-.7.71ZM2 10a1 1 0 0 1 1-1h1a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm3.05-6.07a1 1 0 0 0-1.41 1.41l.7.71a1 1 0 0 0 1.42-1.42l-.71-.7Z"/></svg>
+          <svg data-icon-moon aria-hidden="true" class="hidden h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M17.3 13.35A8 8 0 0 1 6.65 2.7a8 8 0 1 0 10.65 10.65Z"/></svg>
+          <span data-theme-label class="sr-only lg:not-sr-only">Light mode</span>
+        </button>
+        <!-- Menu button — only shown on small screens -->
+        <button id="nav-toggle" type="button" class="inline-flex items-center gap-2 rounded-md border border-linehi px-3 py-2 text-sm font-medium text-txt-1 md:hidden" aria-expanded="false" aria-controls="nav-menu">
+          <svg aria-hidden="true" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round" /></svg>
+          <span data-label class="sr-only sm:not-sr-only">Open menu</span>
+        </button>
 
-      <ul id="nav-menu" class="absolute left-0 right-0 top-full hidden flex-col gap-1 border-b border-line bg-deep px-4 pb-4 md:static md:flex md:flex-row md:items-center md:gap-1 md:border-0 md:bg-transparent md:p-0">
-        <li><a href="index.html" class="relative block rounded-md px-3 py-2 text-txt-2 transition-colors hover:text-txt-1 md:after:absolute md:after:bottom-1 md:after:left-3 md:after:h-0.5 md:after:w-0 md:after:rounded md:after:bg-aqua md:after:transition-all md:hover:after:w-[calc(100%-1.5rem)]">Home</a></li>
-        <li><a href="about.html" aria-current="page" class="relative block rounded-md px-3 py-2 font-semibold text-txt-1 md:after:absolute md:after:inset-x-3 md:after:bottom-1 md:after:h-0.5 md:after:rounded md:after:bg-aqua">About</a></li>
-        <li><a href="app.html" class="relative block rounded-md px-3 py-2 text-txt-2 transition-colors hover:text-txt-1 md:after:absolute md:after:bottom-1 md:after:left-3 md:after:h-0.5 md:after:w-0 md:after:rounded md:after:bg-aqua md:after:transition-all md:hover:after:w-[calc(100%-1.5rem)]">Lake Explorer App</a></li>
-        <li><a href="get-involved.html" class="mt-2 block rounded-md bg-aqua px-4 py-2 font-semibold text-[#00232A] transition hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(56,228,240,.3)] md:ml-3 md:mt-0">Get involved</a></li>
-      </ul>
+        <ul id="nav-menu" class="absolute left-0 right-0 top-full hidden flex-col gap-1 border-b border-line bg-deep px-4 pb-4 md:static md:flex md:flex-row md:items-center md:gap-1 md:border-0 md:bg-transparent md:p-0">
+          <li><a href="index.html" class="relative block rounded-md px-3 py-2 text-txt-2 transition-colors hover:text-txt-1 md:after:absolute md:after:bottom-1 md:after:left-3 md:after:h-0.5 md:after:w-0 md:after:rounded md:after:bg-aqua md:after:transition-all md:hover:after:w-[calc(100%-1.5rem)]">Home</a></li>
+          <li><a href="about.html" aria-current="page" class="relative block rounded-md px-3 py-2 font-semibold text-txt-1 md:after:absolute md:after:inset-x-3 md:after:bottom-1 md:after:h-0.5 md:after:rounded md:after:bg-aqua">About</a></li>
+          <li><a href="app.html" class="relative block rounded-md px-3 py-2 text-txt-2 transition-colors hover:text-txt-1 md:after:absolute md:after:bottom-1 md:after:left-3 md:after:h-0.5 md:after:w-0 md:after:rounded md:after:bg-aqua md:after:transition-all md:hover:after:w-[calc(100%-1.5rem)]">Lake Explorer App</a></li>
+          <li><a href="get-involved.html" class="mt-2 block rounded-md bg-aqua px-4 py-2 font-semibold text-onaccent transition hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(56,228,240,.3)] md:ml-3 md:mt-0">Get involved</a></li>
+        </ul>
+      </div>
     </nav>
   </header>
 
   <main id="main">
 
     <!-- ============================ PAGE INTRO ============================ -->
-    <section class="relative overflow-hidden bg-deep2 pb-32 pt-20" aria-labelledby="page-title" data-wave="#040713">
+    <section class="relative overflow-hidden bg-deep2 pb-32 pt-20" aria-labelledby="page-title" data-wave="ink">
       <div class="caustics" aria-hidden="true"></div>
       <div class="pointer-events-none absolute inset-0" data-bubbles="12" aria-hidden="true"></div>
       <div class="relative mx-auto max-w-6xl px-4 sm:px-6">
@@ -80,7 +94,7 @@
           <ul class="mt-3 flex flex-wrap gap-2 text-sm">
             <li><a href="#what" class="inline-block rounded-full border border-line bg-panel/60 px-4 py-2 transition hover:border-aqua hover:text-aqua">What it does</a></li>
             <li><a href="#problem" class="inline-block rounded-full border border-line bg-panel/60 px-4 py-2 transition hover:border-aqua hover:text-aqua">The problem</a></li>
-            <li><a href="#research" class="inline-block rounded-full border border-line bg-panel/60 px-4 py-2 transition hover:border-aqua hover:text-aqua">Research</a></li>
+            <!-- <li><a href="#research" class="inline-block rounded-full border border-line bg-panel/60 px-4 py-2 transition hover:border-aqua hover:text-aqua">Research</a></li>  (research section is hidden for now) -->
             <li><a href="#v1" class="inline-block rounded-full border border-line bg-panel/60 px-4 py-2 transition hover:border-aqua hover:text-aqua">Lake Sentry V1</a></li>
             <li><a href="#v2" class="inline-block rounded-full border border-line bg-panel/60 px-4 py-2 transition hover:border-aqua hover:text-aqua">Toward V2</a></li>
             <li><a href="#awareness" class="inline-block rounded-full border border-line bg-panel/60 px-4 py-2 transition hover:border-aqua hover:text-aqua">Awareness</a></li>
@@ -95,7 +109,7 @@
     </section>
 
     <!-- ============================ 1. WHAT IT DOES ============================ -->
-    <section id="what" class="relative bg-ink pb-32 pt-20" aria-labelledby="what-title" data-wave="#0B1330">
+    <section id="what" class="relative bg-ink pb-32 pt-20" aria-labelledby="what-title" data-wave="deep">
       <div class="mx-auto max-w-6xl px-4 sm:px-6">
         <p class="eyebrow reveal">What it does</p>
         <h2 id="what-title" class="reveal mt-4 max-w-3xl font-display text-3xl font-bold leading-tight text-txt-1 sm:text-5xl">Removing what's already there. Preventing what's next.</h2>
@@ -141,7 +155,7 @@
     </section>
 
     <!-- ============================ 2. THE PROBLEM ============================ -->
-    <section id="problem" class="relative bg-deep pb-32 pt-20" aria-labelledby="problem-title" data-wave="#040713">
+    <section id="problem" class="relative bg-deep pb-32 pt-20" aria-labelledby="problem-title" data-wave="deep2">
       <div class="mx-auto max-w-6xl px-4 sm:px-6">
         <p class="eyebrow reveal !text-coral">The problem</p>
         <h2 id="problem-title" class="reveal mt-4 max-w-3xl font-display text-3xl font-bold leading-tight text-txt-1 sm:text-5xl">Floating waste is quietly reshaping urban lakes.</h2>
@@ -213,7 +227,8 @@
     </section>
 
     <!-- ============================ 3. MOTIVATION & RESEARCH ============================ -->
-    <section id="research" class="relative overflow-hidden bg-ink pb-32 pt-20" aria-labelledby="research-title" data-wave="#0F1C42">
+    <!-- HIDDEN FOR NOW: waiting for the new survey results. Delete the word "hidden" below to show this again. -->
+    <section id="research" hidden class="relative overflow-hidden bg-ink pb-32 pt-20" aria-labelledby="research-title" data-wave="deep2">
       <div class="caustics" aria-hidden="true"></div>
       <div class="relative mx-auto max-w-6xl px-4 sm:px-6">
         <p class="eyebrow reveal">Motivation &amp; research</p>
@@ -285,7 +300,7 @@
     </section>
 
     <!-- ============================ 4. LAKE SENTRY V1 ============================ -->
-    <section id="v1" class="relative bg-deep2 pb-32 pt-20" aria-labelledby="v1-title" data-wave="#040713">
+    <section id="v1" class="relative bg-deep2 pb-32 pt-20" aria-labelledby="v1-title" data-wave="ink">
       <div class="mx-auto max-w-6xl px-4 sm:px-6">
         <p class="eyebrow reveal">Remove · the physical solution</p>
         <h2 id="v1-title" class="reveal mt-4 max-w-3xl font-display text-3xl font-bold leading-tight text-txt-1 sm:text-5xl">Lake Sentry V1: the working proof-of-concept.</h2>
@@ -296,7 +311,7 @@
           <h3 class="font-display text-2xl font-bold text-txt-1">Explore the prototype</h3>
           <p class="mt-1 text-sm text-txt-3">Choose a part to see how it works.</p>
           <div class="mt-6 grid items-center gap-8 lg:grid-cols-[1.3fr_1fr]">
-            <svg id="v1-diagram" viewBox="0 0 600 300" class="h-auto w-full" role="img" aria-labelledby="v1-diagram-title">
+            <svg id="v1-diagram" viewBox="0 0 600 300" class="h-auto w-full rounded-xl bg-[#0F1C42] p-2" role="img" aria-labelledby="v1-diagram-title">
               <title id="v1-diagram-title">Side-view diagram of Lake Sentry V1: paddle wheels at the back, a pipe frame on floats, a mesh storage basket in the middle, and a slanted conveyor at the front dipping into the water.</title>
               <defs>
                 <pattern id="mesh" width="8" height="8" patternUnits="userSpaceOnUse"><path d="M0 0L8 8M8 0L0 8" stroke="#38E4F0" stroke-width=".8" opacity=".6"/></pattern>
@@ -365,7 +380,7 @@
               <li class="glow-card rounded-xl border border-line bg-panel p-5"><span class="block font-mono text-sm text-aqua">03 · Return</span>The bot is piloted back to the lake bank.</li>
               <li class="glow-card rounded-xl border border-line bg-panel p-5"><span class="block font-mono text-sm text-aqua">04 · Record</span>Trash is weighed, photographed and timed for impact metrics.</li>
             </ol>
-            <a href="app.html#simulator" class="mt-6 inline-flex items-center gap-2 rounded-md bg-aqua px-5 py-3 font-semibold text-[#00232A] transition hover:-translate-y-0.5">Drive V1 in the simulator →</a>
+            <a href="app.html#simulator" class="mt-6 inline-flex items-center gap-2 rounded-md bg-aqua px-5 py-3 font-semibold text-onaccent transition hover:-translate-y-0.5">Drive V1 in the simulator →</a>
           </div>
         </div>
 
@@ -396,7 +411,7 @@
     </section>
 
     <!-- ============================ 5. TOWARD V2 ============================ -->
-    <section id="v2" class="relative bg-ink pb-32 pt-20" aria-labelledby="v2-title" data-wave="#0B1330">
+    <section id="v2" class="relative bg-ink pb-32 pt-20" aria-labelledby="v2-title" data-wave="deep">
       <div class="mx-auto max-w-6xl px-4 sm:px-6">
         <div class="reveal rounded-2xl border border-dashed border-sun/50 bg-sun/[.05] p-7 sm:p-10">
           <p class="eyebrow !text-sun">V1 → V2 · proposed, not finalised</p>
@@ -418,7 +433,7 @@
     </section>
 
     <!-- ============================ 6. AWARENESS ============================ -->
-    <section id="awareness" class="relative bg-deep pb-32 pt-20" aria-labelledby="awareness-title" data-wave="#040713">
+    <section id="awareness" class="relative bg-deep pb-32 pt-20" aria-labelledby="awareness-title" data-wave="ink">
       <div class="mx-auto grid max-w-6xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-2">
         <div>
           <p class="eyebrow reveal !text-mint">Prevent · the awareness solution</p>
@@ -439,7 +454,7 @@
     </section>
 
     <!-- ============================ 7. LAKESENTRY.IN PLATFORM ============================ -->
-    <section id="platform" class="relative overflow-hidden bg-ink pb-32 pt-20" aria-labelledby="platform-title" data-wave="#0F1C42">
+    <section id="platform" class="relative overflow-hidden bg-ink pb-32 pt-20" aria-labelledby="platform-title" data-wave="deep2">
       <div class="caustics" aria-hidden="true"></div>
       <div class="relative mx-auto max-w-6xl px-4 sm:px-6">
         <p class="eyebrow reveal !text-sun">Connect · LakeSentry.in</p>
@@ -486,7 +501,7 @@
     </section>
 
     <!-- ============================ 8. WHO IT'S FOR ============================ -->
-    <section id="who" class="relative bg-deep2 pb-32 pt-20" aria-labelledby="who-title" data-wave="#0B1330">
+    <section id="who" class="relative bg-deep2 pb-32 pt-20" aria-labelledby="who-title" data-wave="deep">
       <div class="mx-auto max-w-6xl px-4 sm:px-6">
         <p class="eyebrow reveal">Who it's for</p>
         <h2 id="who-title" class="reveal mt-4 max-w-3xl font-display text-3xl font-bold leading-tight text-txt-1 sm:text-5xl">Not a consumer product: a tool for the people who look after lakes.</h2>
@@ -503,7 +518,7 @@
     </section>
 
     <!-- ============================ 9. IMPACT, RISKS & FEASIBILITY ============================ -->
-    <section id="impact" class="relative bg-deep pb-32 pt-20" aria-labelledby="impact-title" data-wave="#040713">
+    <section id="impact" class="relative bg-deep pb-32 pt-20" aria-labelledby="impact-title" data-wave="ink">
       <div class="mx-auto max-w-6xl px-4 sm:px-6">
         <p class="eyebrow reveal">Impact &amp; planning ahead</p>
         <h2 id="impact-title" class="reveal mt-4 max-w-3xl font-display text-3xl font-bold leading-tight text-txt-1 sm:text-5xl">Expected impact, and how we'll measure it.</h2>
@@ -550,7 +565,8 @@
               <tr><th scope="row" class="px-5 py-4 font-semibold text-txt-1">Economic</th><td class="px-5 py-4">The prototype uses simple, accessible components. Costs haven't yet been formally compared with commercial systems.</td></tr>
               <tr><th scope="row" class="px-5 py-4 font-semibold text-txt-1">Operational</th><td class="px-5 py-4">Battery life, storage capacity and operator needs are still being measured through testing.</td></tr>
               <tr><th scope="row" class="px-5 py-4 font-semibold text-txt-1">Environmental</th><td class="px-5 py-4">Effects on aquatic organisms, material safety and disposal of collected waste need further evaluation.</td></tr>
-              <tr><th scope="row" class="px-5 py-4 font-semibold text-txt-1">Social</th><td class="px-5 py-4">Survey data shows strong public support for technological clean-up (80% of 40 respondents).</td></tr>
+              <!-- HIDDEN FOR NOW: waiting for the new survey results. Delete the word "hidden" below to show this again. -->
+              <tr hidden><th scope="row" class="px-5 py-4 font-semibold text-txt-1">Social</th><td class="px-5 py-4">Survey data shows strong public support for technological clean-up (80% of 40 respondents).</td></tr>
               <tr><th scope="row" class="px-5 py-4 font-semibold text-txt-1">Institutional</th><td class="px-5 py-4">Relevance to NGOs and government lake bodies is a hypothesis to test through outreach and pilots.</td></tr>
             </tbody>
           </table>
@@ -560,7 +576,7 @@
     </section>
 
     <!-- ============================ 10. SDGs ============================ -->
-    <section id="sdgs" class="relative bg-ink pb-32 pt-20" aria-labelledby="sdgs-title" data-wave="#0F1C42">
+    <section id="sdgs" class="relative bg-ink pb-32 pt-20" aria-labelledby="sdgs-title" data-wave="deep2">
       <div class="mx-auto max-w-6xl px-4 sm:px-6">
         <p class="eyebrow reveal">UN Sustainable Development Goals</p>
         <h2 id="sdgs-title" class="reveal mt-4 font-display text-3xl font-bold text-txt-1 sm:text-5xl">How Lake Sentry aligns with the SDGs.</h2>
@@ -598,7 +614,7 @@
     </section>
 
     <!-- ============================ 11. TEAM ============================ -->
-    <section id="team" class="relative bg-deep2 pb-32 pt-20" aria-labelledby="team-title" data-wave="#0B1330">
+    <section id="team" class="relative bg-deep2 pb-32 pt-20" aria-labelledby="team-title" data-wave="deep">
       <div class="mx-auto grid max-w-6xl items-center gap-10 px-4 sm:px-6 md:grid-cols-[18rem_1fr]">
         <!-- IMAGE PLACEHOLDER — replace with a team photo, e.g. team.jpg -->
         <figure class="reveal overflow-hidden rounded-2xl border border-line">
@@ -628,7 +644,7 @@
           <li>Hussain Sagar: <a href="https://en.wikipedia.org/wiki/Hussain_Sagar" class="text-aqua underline underline-offset-4 hover:text-mint">en.wikipedia.org/wiki/Hussain_Sagar</a></li>
           <li>Lake pollution overview: <a href="https://www.sciencedirect.com/topics/earth-and-planetary-sciences/lake-pollution" class="text-aqua underline underline-offset-4 hover:text-mint">ScienceDirect Topics: Lake Pollution</a></li>
           <li>Sunlight and lake ecology: <a href="http://weedersdigest.com/lake-and-pond-science/my-sun-drenched-shoreline-how-sunlight-shapes-your-lake-s-hidden-world/" class="text-aqua underline underline-offset-4 hover:text-mint">Weeders Digest</a></li>
-          <li>Lake Sentry public survey, 40 respondents (self-conducted), and interview with Vishal Raj.</li>
+          <!-- <li>Lake Sentry public survey (self-conducted), and interview with Vishal Raj.</li>  (hidden for now) -->
         </ol>
       </div>
     </section>

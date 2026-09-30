@@ -6,6 +6,12 @@
   <title>Admin Panel — Lake Sentry</title>
   <meta name="description" content="Lake Sentry team admin panel for reviewing initiatives and lake stories." />
   <meta name="robots" content="noindex" />
+  <!-- How the page looks when the link is shared (WhatsApp, LinkedIn, etc.) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Admin Panel — Lake Sentry" />
+  <meta property="og:description" content="Lake Sentry team admin panel for reviewing initiatives and lake stories." />
+  <meta property="og:image" content="v1-prototype.png" />
+  <meta name="theme-color" content="#040713" />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
 
   <!-- Fonts: Space Grotesk (headings), Inter (body text), IBM Plex Mono (labels) -->
@@ -47,18 +53,26 @@
         </a>
       </div>
 
-      <!-- Menu button — only shown on small screens -->
-      <button id="nav-toggle" type="button" class="inline-flex items-center gap-2 rounded-md border border-linehi px-3 py-2 text-sm font-medium text-txt-1 md:hidden" aria-expanded="false" aria-controls="nav-menu">
-        <svg aria-hidden="true" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round" /></svg>
-        <span data-label class="sr-only sm:not-sr-only">Open menu</span>
-      </button>
+      <div class="flex items-center gap-2">
+        <!-- Light / dark mode switch (site.js) -->
+        <button id="theme-toggle" type="button" class="inline-flex items-center gap-1.5 rounded-md border border-linehi px-2.5 py-2 text-sm font-medium text-txt-1 transition hover:border-aqua hover:text-aqua md:order-last md:ml-2">
+          <svg data-icon-sun aria-hidden="true" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0V3a1 1 0 0 1 1-1Zm4 8a4 4 0 1 1-8 0 4 4 0 0 1 8 0Zm-.46 4.95.7.7a1 1 0 0 0 1.42-1.41l-.71-.71a1 1 0 0 0-1.41 1.42ZM16 10a1 1 0 0 1 1-1h1a1 1 0 1 1 0 2h-1a1 1 0 0 1-1-1Zm-.35-5.66a1 1 0 0 0-1.41-1.41l-.71.7a1 1 0 0 0 1.42 1.42l.7-.71ZM10 16a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0v-1a1 1 0 0 1 1-1ZM4.34 14.95a1 1 0 0 0 1.41 1.41l.71-.7a1 1 0 0 0-1.42-1.42l-.7.71ZM2 10a1 1 0 0 1 1-1h1a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm3.05-6.07a1 1 0 0 0-1.41 1.41l.7.71a1 1 0 0 0 1.42-1.42l-.71-.7Z"/></svg>
+          <svg data-icon-moon aria-hidden="true" class="hidden h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M17.3 13.35A8 8 0 0 1 6.65 2.7a8 8 0 1 0 10.65 10.65Z"/></svg>
+          <span data-theme-label class="sr-only lg:not-sr-only">Light mode</span>
+        </button>
+        <!-- Menu button — only shown on small screens -->
+        <button id="nav-toggle" type="button" class="inline-flex items-center gap-2 rounded-md border border-linehi px-3 py-2 text-sm font-medium text-txt-1 md:hidden" aria-expanded="false" aria-controls="nav-menu">
+          <svg aria-hidden="true" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round" /></svg>
+          <span data-label class="sr-only sm:not-sr-only">Open menu</span>
+        </button>
 
-      <ul id="nav-menu" class="absolute left-0 right-0 top-full hidden flex-col gap-1 border-b border-line bg-deep px-4 pb-4 md:static md:flex md:flex-row md:items-center md:gap-1 md:border-0 md:bg-transparent md:p-0">
-        <li><a href="index.html" class="relative block rounded-md px-3 py-2 text-txt-2 transition-colors hover:text-txt-1 md:after:absolute md:after:bottom-1 md:after:left-3 md:after:h-0.5 md:after:w-0 md:after:rounded md:after:bg-aqua md:after:transition-all md:hover:after:w-[calc(100%-1.5rem)]">Home</a></li>
-        <li><a href="about.html" class="relative block rounded-md px-3 py-2 text-txt-2 transition-colors hover:text-txt-1 md:after:absolute md:after:bottom-1 md:after:left-3 md:after:h-0.5 md:after:w-0 md:after:rounded md:after:bg-aqua md:after:transition-all md:hover:after:w-[calc(100%-1.5rem)]">About</a></li>
-        <li><a href="app.html" class="relative block rounded-md px-3 py-2 text-txt-2 transition-colors hover:text-txt-1 md:after:absolute md:after:bottom-1 md:after:left-3 md:after:h-0.5 md:after:w-0 md:after:rounded md:after:bg-aqua md:after:transition-all md:hover:after:w-[calc(100%-1.5rem)]">Lake Explorer App</a></li>
-        <li><a href="get-involved.html" class="mt-2 block rounded-md bg-aqua px-4 py-2 font-semibold text-[#00232A] transition hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(56,228,240,.3)] md:ml-3 md:mt-0">Get involved</a></li>
-      </ul>
+        <ul id="nav-menu" class="absolute left-0 right-0 top-full hidden flex-col gap-1 border-b border-line bg-deep px-4 pb-4 md:static md:flex md:flex-row md:items-center md:gap-1 md:border-0 md:bg-transparent md:p-0">
+          <li><a href="index.html" class="relative block rounded-md px-3 py-2 text-txt-2 transition-colors hover:text-txt-1 md:after:absolute md:after:bottom-1 md:after:left-3 md:after:h-0.5 md:after:w-0 md:after:rounded md:after:bg-aqua md:after:transition-all md:hover:after:w-[calc(100%-1.5rem)]">Home</a></li>
+          <li><a href="about.html" class="relative block rounded-md px-3 py-2 text-txt-2 transition-colors hover:text-txt-1 md:after:absolute md:after:bottom-1 md:after:left-3 md:after:h-0.5 md:after:w-0 md:after:rounded md:after:bg-aqua md:after:transition-all md:hover:after:w-[calc(100%-1.5rem)]">About</a></li>
+          <li><a href="app.html" class="relative block rounded-md px-3 py-2 text-txt-2 transition-colors hover:text-txt-1 md:after:absolute md:after:bottom-1 md:after:left-3 md:after:h-0.5 md:after:w-0 md:after:rounded md:after:bg-aqua md:after:transition-all md:hover:after:w-[calc(100%-1.5rem)]">Lake Explorer App</a></li>
+          <li><a href="get-involved.html" class="mt-2 block rounded-md bg-aqua px-4 py-2 font-semibold text-onaccent transition hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(56,228,240,.3)] md:ml-3 md:mt-0">Get involved</a></li>
+        </ul>
+      </div>
     </nav>
   </header>
 
@@ -87,7 +101,7 @@
             <button id="admin-login-show" type="button" aria-pressed="false" class="rounded-md border border-linehi px-3 text-sm font-semibold text-txt-1 hover:border-aqua">Show</button>
           </div>
           <p id="admin-login-form-error" role="alert" class="mt-2 min-h-[1.25rem] text-sm font-medium text-coral"></p>
-          <button type="submit" class="mt-3 w-full rounded-md bg-aqua px-5 py-3 font-semibold text-[#00232A] transition hover:-translate-y-0.5">Log in</button>
+          <button type="submit" class="mt-3 w-full rounded-md bg-aqua px-5 py-3 font-semibold text-onaccent transition hover:-translate-y-0.5">Log in</button>
         </form>
       </div>
     </section>
@@ -98,10 +112,10 @@
         <div class="mx-auto flex max-w-6xl items-center gap-3 px-3 py-2.5 sm:px-6 sm:py-3">
           <h2 id="admin-panel-title" tabindex="-1" class="sr-only">Admin sections</h2>
           <div role="tablist" data-tabs aria-labelledby="admin-panel-title" class="grid flex-1 grid-cols-4 gap-1.5 sm:flex sm:gap-2 sm:overflow-x-auto [scrollbar-width:none]">
-            <button type="button" role="tab" id="tab-dashboard" aria-controls="dashboard" aria-selected="true" class="relative flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-xl border border-line px-1 py-2 text-xs font-semibold text-txt-2 transition hover:border-aqua hover:text-txt-1 aria-selected:border-aqua aria-selected:bg-aqua aria-selected:text-[#00232A] sm:shrink-0 sm:flex-row sm:gap-2 sm:rounded-full sm:px-4 sm:py-2.5 sm:text-base"><span aria-hidden="true">📊</span><span class="sm:hidden">Home</span><span class="hidden sm:inline">Dashboard</span></button>
-            <button type="button" role="tab" id="tab-review-initiatives" aria-controls="review-initiatives" aria-selected="false" class="relative flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-xl border border-line px-1 py-2 text-xs font-semibold text-txt-2 transition hover:border-aqua hover:text-txt-1 aria-selected:border-aqua aria-selected:bg-aqua aria-selected:text-[#00232A] sm:shrink-0 sm:flex-row sm:gap-2 sm:rounded-full sm:px-4 sm:py-2.5 sm:text-base"><span aria-hidden="true">🤝</span>Initiatives <span class="absolute -right-1 -top-1.5 rounded-full bg-sun px-1.5 py-0.5 font-mono text-[0.7rem] font-bold leading-none text-[#241600] sm:static sm:px-2 sm:text-xs" data-badge="initiatives" hidden>0</span></button>
-            <button type="button" role="tab" id="tab-review-stories" aria-controls="review-stories" aria-selected="false" class="relative flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-xl border border-line px-1 py-2 text-xs font-semibold text-txt-2 transition hover:border-aqua hover:text-txt-1 aria-selected:border-aqua aria-selected:bg-aqua aria-selected:text-[#00232A] sm:shrink-0 sm:flex-row sm:gap-2 sm:rounded-full sm:px-4 sm:py-2.5 sm:text-base"><span aria-hidden="true">📸</span><span class="sm:hidden">Stories</span><span class="hidden sm:inline">Lake stories</span> <span class="absolute -right-1 -top-1.5 rounded-full bg-sun px-1.5 py-0.5 font-mono text-[0.7rem] font-bold leading-none text-[#241600] sm:static sm:px-2 sm:text-xs" data-badge="posts" hidden>0</span></button>
-            <button type="button" role="tab" id="tab-settings" aria-controls="settings" aria-selected="false" class="relative flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-xl border border-line px-1 py-2 text-xs font-semibold text-txt-2 transition hover:border-aqua hover:text-txt-1 aria-selected:border-aqua aria-selected:bg-aqua aria-selected:text-[#00232A] sm:shrink-0 sm:flex-row sm:gap-2 sm:rounded-full sm:px-4 sm:py-2.5 sm:text-base"><span aria-hidden="true">⚙️</span>Settings</button>
+            <button type="button" role="tab" id="tab-dashboard" aria-controls="dashboard" aria-selected="true" class="relative flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-xl border border-line px-1 py-2 text-xs font-semibold text-txt-2 transition hover:border-aqua hover:text-txt-1 aria-selected:border-aqua aria-selected:bg-aqua aria-selected:text-onaccent sm:shrink-0 sm:flex-row sm:gap-2 sm:rounded-full sm:px-4 sm:py-2.5 sm:text-base"><span aria-hidden="true">📊</span><span class="sm:hidden">Home</span><span class="hidden sm:inline">Dashboard</span></button>
+            <button type="button" role="tab" id="tab-review-initiatives" aria-controls="review-initiatives" aria-selected="false" class="relative flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-xl border border-line px-1 py-2 text-xs font-semibold text-txt-2 transition hover:border-aqua hover:text-txt-1 aria-selected:border-aqua aria-selected:bg-aqua aria-selected:text-onaccent sm:shrink-0 sm:flex-row sm:gap-2 sm:rounded-full sm:px-4 sm:py-2.5 sm:text-base"><span aria-hidden="true">🤝</span>Initiatives <span class="absolute -right-1 -top-1.5 rounded-full bg-sun px-1.5 py-0.5 font-mono text-[0.7rem] font-bold leading-none text-onaccent sm:static sm:px-2 sm:text-xs" data-badge="initiatives" hidden>0</span></button>
+            <button type="button" role="tab" id="tab-review-stories" aria-controls="review-stories" aria-selected="false" class="relative flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-xl border border-line px-1 py-2 text-xs font-semibold text-txt-2 transition hover:border-aqua hover:text-txt-1 aria-selected:border-aqua aria-selected:bg-aqua aria-selected:text-onaccent sm:shrink-0 sm:flex-row sm:gap-2 sm:rounded-full sm:px-4 sm:py-2.5 sm:text-base"><span aria-hidden="true">📸</span><span class="sm:hidden">Stories</span><span class="hidden sm:inline">Lake stories</span> <span class="absolute -right-1 -top-1.5 rounded-full bg-sun px-1.5 py-0.5 font-mono text-[0.7rem] font-bold leading-none text-onaccent sm:static sm:px-2 sm:text-xs" data-badge="posts" hidden>0</span></button>
+            <button type="button" role="tab" id="tab-settings" aria-controls="settings" aria-selected="false" class="relative flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-xl border border-line px-1 py-2 text-xs font-semibold text-txt-2 transition hover:border-aqua hover:text-txt-1 aria-selected:border-aqua aria-selected:bg-aqua aria-selected:text-onaccent sm:shrink-0 sm:flex-row sm:gap-2 sm:rounded-full sm:px-4 sm:py-2.5 sm:text-base"><span aria-hidden="true">⚙️</span>Settings</button>
           </div>
           <button id="admin-logout" type="button" class="hidden shrink-0 rounded-md sm:block border border-linehi px-3 py-2 text-sm font-semibold text-txt-1 transition hover:border-coral hover:text-coral">Log out</button>
         </div>
@@ -120,7 +134,7 @@
             <div class="flex flex-col rounded-xl border border-line bg-panel p-5"><dt class="mt-1 text-sm text-txt-3">Rejected initiatives</dt><dd id="stat-init-rejected" class="order-first font-mono text-4xl font-semibold text-coral">0</dd></div>
           </dl>
           <div class="mt-6 flex flex-wrap gap-3">
-            <a href="#review-initiatives" class="rounded-md bg-aqua px-5 py-3 font-semibold text-[#00232A] transition hover:-translate-y-0.5">Review initiatives</a>
+            <a href="#review-initiatives" class="rounded-md bg-aqua px-5 py-3 font-semibold text-onaccent transition hover:-translate-y-0.5">Review initiatives</a>
             <a href="#review-stories" class="rounded-md border border-linehi px-5 py-3 font-semibold text-txt-1 transition hover:border-aqua hover:text-aqua">Review lake stories</a>
           </div>
           <p class="mt-8 rounded-lg border border-sun/40 bg-sun/[.06] px-4 py-3 text-sm">
@@ -183,7 +197,7 @@
                 <input id="pw-confirm" type="password" autocomplete="new-password" aria-describedby="pw-error" class="mt-1 w-full rounded-md border border-txt-3/80 bg-deep px-3 py-2.5 text-txt-1" />
               </div>
               <p id="pw-error" role="alert" class="min-h-[1.25rem] text-sm font-medium text-coral"></p>
-              <button type="submit" class="rounded-md bg-aqua px-5 py-2.5 font-semibold text-[#00232A]">Create password line</button>
+              <button type="submit" class="rounded-md bg-aqua px-5 py-2.5 font-semibold text-onaccent">Create password line</button>
             </form>
             <div id="pw-output" hidden class="mt-4 rounded-lg border border-mint/50 bg-deep p-4">
               <h4 id="pw-output-title" tabindex="-1" class="font-semibold text-mint">Paste this into admin-auth.js:</h4>

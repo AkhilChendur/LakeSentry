@@ -35,7 +35,16 @@ Vercel is connected to the repo, so it redeploys automatically after each commit
 | `store.js`, `cards.js` | Where submissions are saved, and how they're drawn (shared by the App page and admin panel) |
 | `admin-auth.js`, `admin.js` | The admin login (including the password) and the admin panel |
 | `v1-prototype.png`, `the-rollers.png` | Photos of the V1 prototype and “The Rollers” |
+| `404.html` | The page visitors see if a link is broken |
 | `placeholder.svg`, `favicon.svg` | The image placeholder and the browser-tab icon |
+
+## Light / dark mode
+
+The ☀/🌙 button in the header switches themes, and the site remembers each visitor's choice. Colours for both themes live at the top of `site.css`: change a colour there and it updates everywhere.
+
+## Hidden for now: survey results and research
+
+The survey results (Get Involved page), the research section (About page) and the survey statistics on the Home page are **hidden, not deleted**, while waiting for the new survey. Search the `.html` files for `HIDDEN FOR NOW`: deleting the word `hidden` on the line below each comment shows that part again.
 
 ## Admin login
 

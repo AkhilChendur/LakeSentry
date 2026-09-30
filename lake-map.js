@@ -88,23 +88,23 @@
 
     // Background, rivers and area names are decoration only.
     const bg = el('g', { 'aria-hidden': 'true' });
-    bg.appendChild(el('rect', { width: VIEW_W, height: VIEW_H, fill: '#0F1C42' }));
+    bg.appendChild(el('rect', { width: VIEW_W, height: VIEW_H, style: 'fill: rgb(var(--deep2))' }));
     // faint grid
-    for (let x = 50; x < VIEW_W; x += 50) bg.appendChild(el('line', { x1: x, y1: 0, x2: x, y2: VIEW_H, stroke: 'rgba(148,196,255,0.08)', 'stroke-width': 1 }));
-    for (let y = 50; y < VIEW_H; y += 50) bg.appendChild(el('line', { x1: 0, y1: y, x2: VIEW_W, y2: y, stroke: 'rgba(148,196,255,0.08)', 'stroke-width': 1 }));
+    for (let x = 50; x < VIEW_W; x += 50) bg.appendChild(el('line', { x1: x, y1: 0, x2: x, y2: VIEW_H, style: 'stroke: var(--line)', 'stroke-width': 1 }));
+    for (let y = 50; y < VIEW_H; y += 50) bg.appendChild(el('line', { x1: 0, y1: y, x2: VIEW_W, y2: y, style: 'stroke: var(--line)', 'stroke-width': 1 }));
     // Musi river (runs west -> east through the city) and the Esi river
     bg.appendChild(el('path', { d: 'M150 372 C230 360 260 330 330 335 S470 350 540 340 S650 330 700 345 S770 360 800 352', fill: 'none', stroke: '#1E5C94', 'stroke-width': 7, 'stroke-linecap': 'round' }));
     bg.appendChild(el('path', { d: 'M340 490 C380 440 430 400 470 350', fill: 'none', stroke: '#1E5C94', 'stroke-width': 5, 'stroke-linecap': 'round' }));
-    bg.appendChild(el('text', { x: 560, y: 368, fill: '#96A8CC', 'font-size': 14, 'font-style': 'italic' }, 'Musi river'));
+    bg.appendChild(el('text', { x: 560, y: 368, style: 'fill: rgb(var(--txt3))', 'font-size': 14, 'font-style': 'italic' }, 'Musi river'));
     // Area names
     [['Gachibowli', 230, 190], ['Kukatpally', 520, 118], ['Secunderabad', 690, 170], ['Old City', 640, 430]].forEach(function (a) {
-      bg.appendChild(el('text', { x: a[1], y: a[2], fill: '#96A8CC', 'font-size': 13, 'font-family': 'IBM Plex Mono, monospace', 'letter-spacing': '0.08em' }, a[0].toUpperCase()));
+      bg.appendChild(el('text', { x: a[1], y: a[2], style: 'fill: rgb(var(--txt3))', 'font-size': 13, 'font-family': 'IBM Plex Mono, monospace', 'letter-spacing': '0.08em' }, a[0].toUpperCase()));
     });
     // Compass
     const compass = el('g', { transform: 'translate(752 56)' });
-    compass.appendChild(el('circle', { r: 24, fill: '#131F42', stroke: '#38E4F0', 'stroke-width': 1.5 }));
-    compass.appendChild(el('path', { d: 'M0 -16 L7 6 L0 2 L-7 6 Z', fill: '#38E4F0' }));
-    compass.appendChild(el('text', { y: 18, 'text-anchor': 'middle', 'font-size': 11, 'font-weight': 700, fill: '#CDD8ED' }, 'N'));
+    compass.appendChild(el('circle', { r: 24, style: 'fill: rgb(var(--panel)); stroke: rgb(var(--aqua))', 'stroke-width': 1.5 }));
+    compass.appendChild(el('path', { d: 'M0 -16 L7 6 L0 2 L-7 6 Z', style: 'fill: rgb(var(--aqua))' }));
+    compass.appendChild(el('text', { y: 18, 'text-anchor': 'middle', 'font-size': 11, 'font-weight': 700, style: 'fill: rgb(var(--txt2))' }, 'N'));
     bg.appendChild(compass);
     svg.appendChild(bg);
 
@@ -129,7 +129,7 @@
       }));
       // Lakes with Lake Sentry field notes get a gently pulsing ring.
       if (lake.status === 'observed') {
-        g.appendChild(el('circle', { class: 'pulse-ring', cx: p.x, cy: p.y, r: 10 + lake.size * 10, fill: 'none', stroke: '#3CE8A0', 'stroke-width': 2, 'aria-hidden': 'true' }));
+        g.appendChild(el('circle', { class: 'pulse-ring', cx: p.x, cy: p.y, r: 10 + lake.size * 10, fill: 'none', style: 'stroke: rgb(var(--mint))', 'stroke-width': 2, 'aria-hidden': 'true' }));
       }
       // Label with a dark "halo" so it stays readable over anything.
       g.appendChild(el('text', {
@@ -139,8 +139,7 @@
         'text-anchor': 'middle',
         'font-size': 15,
         'font-weight': 600,
-        fill: '#FBFDFF',
-        stroke: '#040713',
+        style: 'fill: rgb(var(--txt1)); stroke: rgb(var(--ink))',
         'stroke-width': 4,
         'paint-order': 'stroke',
       }, lake.name.replace(/ \(.*\)/, '')));

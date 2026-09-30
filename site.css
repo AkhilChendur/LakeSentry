@@ -11,6 +11,65 @@
    ===================================================================== */
 
 /* ---------------------------------------------------------------------
+   0. THEME COLOURS (light / dark mode)
+   Each colour is stored as "R G B" numbers so Tailwind can add
+   transparency (e.g. bg-ink/80). tailwind-config.js maps class names
+   like `text-aqua` to these variables. To tweak a colour, change it
+   here — for both themes.
+   --------------------------------------------------------------------- */
+:root,
+[data-theme="dark"] {
+  color-scheme: dark;
+  --ink: 4 7 19;          /* #040713 page background */
+  --deep: 11 19 48;       /* #0B1330 */
+  --deep2: 15 28 66;      /* #0F1C42 */
+  --panel: 19 31 66;      /* #131F42 cards */
+  --panel2: 24 37 72;     /* #182548 */
+  --aqua: 56 228 240;     /* #38E4F0 */
+  --reef: 34 195 166;     /* #22C3A6 */
+  --mint: 60 232 160;     /* #3CE8A0 */
+  --sun: 255 193 99;      /* #FFC163 */
+  --coral: 255 122 138;   /* #FF7A8A */
+  --onaccent: 0 35 42;    /* dark text on bright buttons */
+  --txt1: 251 253 255;
+  --txt2: 205 216 237;
+  --txt3: 150 168 204;
+  --line: rgba(148, 196, 255, 0.16);
+  --linehi: rgba(148, 196, 255, 0.34);
+  --focus: #FDE047;       /* keyboard focus ring */
+  --headline-from: #FFFFFF; /* start/end colour of the shimmering headlines */
+  --glow: 56 228 240;     /* card hover glow */
+}
+[data-theme="light"] {
+  color-scheme: light;
+  --ink: 243 247 250;     /* #F3F7FA */
+  --deep: 232 240 246;    /* #E8F0F6 */
+  --deep2: 221 232 241;   /* #DDE8F1 */
+  --panel: 255 255 255;
+  --panel2: 255 255 255;
+  --aqua: 9 97 119;       /* #096177 — darker so text stays readable */
+  --reef: 13 112 101;     /* #0D7065 */
+  --mint: 8 112 74;       /* #08704A */
+  --sun: 134 64 4;        /* #864004 */
+  --coral: 180 22 58;     /* #B4163A */
+  --onaccent: 255 255 255; /* white text on the darker buttons */
+  --txt1: 11 19 48;
+  --txt2: 36 50 77;
+  --txt3: 74 88 116;
+  --line: rgba(15, 40, 80, 0.14);
+  --linehi: rgba(15, 40, 80, 0.3);
+  --focus: #0B1330;
+  --headline-from: #0B1330;
+  --glow: 9 97 119;
+}
+
+/* Smoothly fade colours when the theme changes */
+.theme-fade,
+.theme-fade * {
+  transition: background-color 0.35s ease, border-color 0.35s ease, color 0.35s ease !important;
+}
+
+/* ---------------------------------------------------------------------
    1. BASE
    --------------------------------------------------------------------- */
 html {
@@ -18,14 +77,14 @@ html {
   scroll-padding-top: 5.5rem; /* room for the sticky header when jumping to #anchors */
 }
 body {
-  background: #040713;
-  color: #CDD8ED;
+  background: rgb(var(--ink));
+  color: rgb(var(--txt2));
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
 ::selection {
-  background: #38E4F0;
-  color: #040713;
+  background: rgb(var(--aqua));
+  color: rgb(var(--ink));
 }
 
 /* Pages with a sticky tab bar need more room when jumping to #anchors */
@@ -45,7 +104,7 @@ html:has([data-tabs]) {
 /* Visible keyboard focus (WCAG 2.4.7): a thick bright-yellow ring that
    stands out against every dark background on the site. */
 :focus-visible {
-  outline: 3px solid #FDE047;
+  outline: 3px solid var(--focus);
   outline-offset: 3px;
   border-radius: 4px;
 }
@@ -63,6 +122,13 @@ html:has([data-tabs]) {
   border-radius: 0.5rem;
   transition: top 0.15s ease;
 }
+/* Anything on top of the (always blue) lake gets a two-tone ring —
+   dark inside, yellow outside — so it shows on light and dark alike. */
+#hero :focus-visible {
+  outline-color: #FDE047;
+  box-shadow: 0 0 0 3px #0B1330;
+}
+
 .skip-link:focus {
   top: 1rem;
 }
@@ -77,7 +143,7 @@ html:has([data-tabs]) {
   font-weight: 500;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #38E4F0;
+  color: rgb(var(--aqua));
 }
 .eyebrow::before {
   content: "";
@@ -106,7 +172,7 @@ html:has([data-tabs]) {
 
 /* Headline text with a slowly moving "light on water" gradient */
 .gradient-text {
-  background: linear-gradient(110deg, #FFFFFF 20%, #38E4F0 40%, #22C3A6 55%, #3CE8A0 70%, #FFFFFF 90%);
+  background: linear-gradient(110deg, var(--headline-from) 20%, rgb(var(--aqua)) 40%, rgb(var(--reef)) 55%, rgb(var(--mint)) 70%, var(--headline-from) 90%);
   background-size: 250% 100%;
   -webkit-background-clip: text;
   background-clip: text;
@@ -232,8 +298,8 @@ html:has([data-tabs]) {
 .glow-card:hover,
 .glow-card:focus-within {
   transform: translateY(-4px);
-  border-color: rgba(56, 228, 240, 0.55);
-  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.35), 0 0 0 6px rgba(56, 228, 240, 0.06);
+  border-color: rgb(var(--glow) / 0.55);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.25), 0 0 0 6px rgb(var(--glow) / 0.08);
 }
 
 /* Gentle bobbing, like something floating */
@@ -273,7 +339,7 @@ html:has([data-tabs]) {
 #v1-diagram .v1-part:hover,
 #v1-diagram .v1-part.is-active {
   opacity: 1;
-  filter: drop-shadow(0 0 8px rgba(56, 228, 240, 0.8));
+  filter: drop-shadow(0 0 8px rgb(var(--glow) / 0.8));
 }
 .v1-spin {
   animation: v1-spin 6s linear infinite;
@@ -303,7 +369,7 @@ html:has([data-tabs]) {
    3. APP PAGE PIECES
    --------------------------------------------------------------------- */
 .img-placeholder {
-  background: #131F42;
+  background: rgb(var(--panel));
 }
 
 .map-lake {
@@ -315,8 +381,8 @@ html:has([data-tabs]) {
 .map-lake:hover .lake-shape,
 .map-lake:focus-visible .lake-shape,
 .map-lake[aria-pressed="true"] .lake-shape {
-  fill: #38E4F0;
-  stroke: #FDE047;
+  fill: rgb(var(--aqua));
+  stroke: var(--focus);
   stroke-width: 3;
 }
 .map-lake:focus-visible {
@@ -364,6 +430,6 @@ html:has([data-tabs]) {
   font-size: 6rem;
   font-weight: 700;
   line-height: 1;
-  color: rgba(255, 255, 255, 0.04);
+  color: rgb(var(--txt1) / 0.05);
   pointer-events: none;
 }

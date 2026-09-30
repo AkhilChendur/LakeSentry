@@ -99,7 +99,7 @@
     };
     const del = b('Delete', 'border border-coral/70 text-coral hover:bg-coral/10', 'delete');
     if (item.status === 'pending') {
-      return [b('Approve', 'bg-mint text-[#00251A] hover:-translate-y-0.5', 'approved'),
+      return [b('Approve', 'bg-mint text-onaccent hover:-translate-y-0.5', 'approved'),
               b('Reject', 'border border-coral/70 text-coral hover:bg-coral/10', 'rejected')];
     }
     if (item.status === 'approved') return [b('Unpublish', 'border border-linehi text-txt-1 hover:border-sun hover:text-sun', 'pending'), del];

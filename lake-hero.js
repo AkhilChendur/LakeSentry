@@ -4,7 +4,7 @@
    What you see:
      1. A water surface drawn on a <canvas>. Moving the cursor (or a
         finger) across it creates ripples; clicking/tapping makes a
-        bigger splash. A few "raindrops" keep it gently moving.
+        gentle splash. Small natural ripples keep the water alive.
      2. Pieces of floating trash (bottles, bags, cans, wrappers...) that
         drift with the current and get pushed around by the ripples.
      3. A tiny Lake Sentry robot that cruises around collecting trash —
@@ -28,7 +28,7 @@
        is in normal HTML on top of it.
      - A "Pause animation" button stops all motion (WCAG 2.2.2).
      - If the visitor's system asks for reduced motion, the lake still
-       moves, but more calmly (no raindrops, slower robot).
+       moves, but more calmly (fewer ripples, slower robot).
    ===================================================================== */
 (function () {
   'use strict';
@@ -45,11 +45,13 @@
 
   /* ---------- Tunable settings — play with these! ---------- */
   const SETTINGS = {
-    damping: 0.974,            // 0.95 = ripples fade fast, 0.99 = ripples last ages
-    shade: 5.5,                // how strongly slopes are lit (bigger = more contrast)
-    cursorStrength: 7,         // ripple size from moving the cursor
-    splashStrength: 60,        // ripple size from a click / tap
-    rainEveryMs: reduceMotion ? [5000, 9000] : [500, 1400], // gap between ambient raindrops
+    damping: 0.968,            // 0.95 = ripples fade fast, 0.99 = ripples last ages
+    shade: 4.6,                // how strongly slopes are lit (bigger = more contrast)
+    cursorStrength: 2.4,       // ripple size from moving the cursor (kept gentle)
+    splashStrength: 26,        // ripple size from a click / tap
+    calmStartMs: 3000,         // cursor ripples fade in over the first 3 seconds
+    // Small natural ripples: a leaf, an insect or a fish touching the surface.
+    naturalEveryMs: reduceMotion ? [2500, 5000] : [350, 900],
     trashCount: isSmallScreen ? 14 : 26,
     // Trash gathers in an oval in the middle of the lake (fractions of the width/height).
     trashZone: { x: window.innerWidth >= 1024 ? 0.62 : 0.5, y: 0.55, rx: 0.24, ry: 0.3 },
@@ -451,7 +453,7 @@
         trash.splice(trash.indexOf(best), 1);
         collected += 1;
         if (counterEl) counterEl.textContent = String(collected);
-        disturb(best.x, best.y, 3, 18); // a little splash
+        disturb(best.x, best.y, 2.5, 7); // a little splash
         // A new piece drifts in from the edge a few seconds later —
         // just like in real life, the trash keeps coming. That's why
         // Lake Sentry pairs the robot with an awareness campaign!
@@ -469,7 +471,7 @@
     bot.wakeTimer += dt;
     if (bot.wakeTimer > 5) {
       bot.wakeTimer = 0;
-      disturb(bot.x - Math.cos(bot.angle) * 26, bot.y - Math.sin(bot.angle) * 26, 2, 5);
+      disturb(bot.x - Math.cos(bot.angle) * 26, bot.y - Math.sin(bot.angle) * 26, 1.6, 2.5);
     }
   }
 
@@ -535,8 +537,8 @@
       const d = Math.hypot(f.x - pointer.x, f.y - pointer.y);
       if (d < 140) {
         wanted = Math.atan2(f.y - pointer.y, f.x - pointer.x);
-        speed = f.speed * 4;
-        if (Math.random() < 0.04) disturb(f.x, f.y, 1.5, 6); // a little splash
+        speed = f.speed * 2.5;
+        if (Math.random() < 0.02) disturb(f.x, f.y, 1.3, 2.5); // a tiny swirl
       }
     }
     // Stay inside the lake: turn back toward the middle near the edges.
@@ -680,10 +682,15 @@
     }
     const dt = elapsed / 16.67; // 1.0 = one 60fps frame
 
-    // Ambient raindrops
+    // Small natural ripples here and there. Now and then one is
+    // followed by a second, fainter one nearby (like a skating insect).
     if (clock > nextRainAt) {
-      disturb(rand(0, W), rand(0, H), 1.6, rand(10, 22));
-      nextRainAt = clock + rand(SETTINGS.rainEveryMs[0], SETTINGS.rainEveryMs[1]);
+      const x = rand(0, W), y = rand(H * 0.1, H);
+      disturb(x, y, 1.3, rand(2.5, 6));
+      if (Math.random() < 0.3) {
+        setTimeout(function () { disturb(x + rand(-25, 25), y + rand(-15, 15), 1.1, rand(1.5, 3)); }, rand(150, 400));
+      }
+      nextRainAt = clock + rand(SETTINGS.naturalEveryMs[0], SETTINGS.naturalEveryMs[1]);
     }
 
     fish.forEach(function (f) { updateFish(f, dt); });
@@ -730,13 +737,15 @@
       // cursor movements still leave a continuous trail of ripples.
       const dist = Math.hypot(x - last.x, y - last.y);
       const n = Math.min(24, Math.ceil(dist / (cell * 2)));
-      const strength = SETTINGS.cursorStrength * Math.min(2.2, 0.6 + dist / 25);
+      // Faster movement = slightly bigger ripples, but capped so it stays mild.
+      // For the first few seconds after the page opens, ripples fade in.
+      const calm = Math.min(1, 0.25 + clock / SETTINGS.calmStartMs);
+      const strength = SETTINGS.cursorStrength * calm * Math.min(1.4, 0.7 + dist / 40);
       for (let k = 1; k <= n; k++) {
         disturb(last.x + ((x - last.x) * k) / n, last.y + ((y - last.y) * k) / n, 2.2, strength / Math.sqrt(n));
       }
     }
     last = { x: x, y: y };
-    pointer = { x: x, y: y };
   });
   hero.addEventListener('pointerleave', function () { last = null; pointer = null; });
   hero.addEventListener('pointerdown', function (e) {
@@ -744,7 +753,7 @@
     // Don't splash when the visitor is clicking a link or button.
     if (e.target.closest('a, button')) return;
     const rect = hero.getBoundingClientRect();
-    disturb(e.clientX - rect.left, e.clientY - rect.top, 4.5, SETTINGS.splashStrength);
+    disturb(e.clientX - rect.left, e.clientY - rect.top, 3.5, SETTINGS.splashStrength);
   });
 
   function setRunning(on) {
@@ -785,8 +794,8 @@
   for (let i = 0; i < (isSmallScreen ? 2 : 5); i++) lilies.push(makeLily(i));
   reeds = makeReeds();
 
-  // Pre-run a few raindrops so the still picture isn't a flat lake.
-  for (let i = 0; i < 6; i++) disturb(rand(0, W), rand(0, H), 2.5, 30);
+  // Pre-run a few small ripples so the still picture isn't a flat lake.
+  for (let i = 0; i < 10; i++) disturb(rand(0, W), rand(0, H), 1.4, rand(3, 6));
   for (let i = 0; i < 40; i++) stepWater();
 
   setRunning(true);
