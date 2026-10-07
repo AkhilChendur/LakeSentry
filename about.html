@@ -77,157 +77,39 @@
 
   <main id="main">
 
-    <!-- ============================ PAGE INTRO ============================ -->
-    <section class="relative overflow-hidden bg-deep2 pb-32 pt-20" aria-labelledby="page-title" data-wave="ink">
+    <!-- ============================ INTRO + THE THREE PARTS ============================ -->
+    <section class="relative overflow-hidden bg-deep2 pb-24 pt-14" aria-labelledby="page-title" data-wave="ink">
       <div class="caustics" aria-hidden="true"></div>
-      <div class="pointer-events-none absolute inset-0" data-bubbles="12" aria-hidden="true"></div>
+      <div class="pointer-events-none absolute inset-0" data-bubbles="10" aria-hidden="true"></div>
       <div class="relative mx-auto max-w-6xl px-4 sm:px-6">
-        <p class="eyebrow reveal">About the project</p>
-        <h1 id="page-title" class="reveal mt-4 max-w-4xl font-display text-4xl font-bold leading-tight text-txt-1 sm:text-6xl">Not just a lake-cleaning robot. <span class="gradient-text">A plan for cleaner lakes.</span></h1>
-        <p class="reveal mt-6 max-w-2xl text-lg">
-          Lake Sentry is an environmental technology and awareness project that reduces and manages floating waste in lakes, focusing on the urban lakes of Hyderabad. It combines research, engineering, awareness and community action.
-        </p>
-
-        <!-- On-page contents -->
-        <nav aria-label="On this page" class="reveal mt-10">
-          <h2 class="font-mono text-xs uppercase tracking-wider text-txt-3">On this page</h2>
-          <ul class="mt-3 flex flex-wrap gap-2 text-sm">
-            <li><a href="#what" class="inline-block rounded-full border border-line bg-panel/60 px-4 py-2 transition hover:border-aqua hover:text-aqua">What it does</a></li>
-            <li><a href="#problem" class="inline-block rounded-full border border-line bg-panel/60 px-4 py-2 transition hover:border-aqua hover:text-aqua">The problem</a></li>
-            <!-- <li><a href="#research" class="inline-block rounded-full border border-line bg-panel/60 px-4 py-2 transition hover:border-aqua hover:text-aqua">Research</a></li>  (research section is hidden for now) -->
-            <li><a href="#v1" class="inline-block rounded-full border border-line bg-panel/60 px-4 py-2 transition hover:border-aqua hover:text-aqua">Lake Sentry V1</a></li>
-            <li><a href="#v2" class="inline-block rounded-full border border-line bg-panel/60 px-4 py-2 transition hover:border-aqua hover:text-aqua">Toward V2</a></li>
-            <li><a href="#awareness" class="inline-block rounded-full border border-line bg-panel/60 px-4 py-2 transition hover:border-aqua hover:text-aqua">Awareness</a></li>
-            <li><a href="#platform" class="inline-block rounded-full border border-line bg-panel/60 px-4 py-2 transition hover:border-aqua hover:text-aqua">LakeSentry.in</a></li>
-            <li><a href="#who" class="inline-block rounded-full border border-line bg-panel/60 px-4 py-2 transition hover:border-aqua hover:text-aqua">Who it's for</a></li>
-            <li><a href="#impact" class="inline-block rounded-full border border-line bg-panel/60 px-4 py-2 transition hover:border-aqua hover:text-aqua">Impact &amp; risks</a></li>
-            <li><a href="#sdgs" class="inline-block rounded-full border border-line bg-panel/60 px-4 py-2 transition hover:border-aqua hover:text-aqua">UN SDGs</a></li>
-            <li><a href="#team" class="inline-block rounded-full border border-line bg-panel/60 px-4 py-2 transition hover:border-aqua hover:text-aqua">Team</a></li>
-          </ul>
-        </nav>
+        <p class="eyebrow reveal">About Lake Sentry</p>
+        <h1 id="page-title" class="reveal mt-4 max-w-4xl font-display text-4xl font-bold leading-tight text-txt-1 sm:text-6xl">A robot that cleans lakes. <span class="gradient-text">A campaign that keeps them clean.</span></h1>
+        <p class="reveal mt-5 max-w-2xl text-lg">Lake Sentry is a student-led project that removes floating trash from Hyderabad's urban lakes, and works to stop it getting there in the first place.</p>
+        <ul class="mt-10 grid gap-4 md:grid-cols-3">
+          <li class="reveal glow-card rounded-xl border border-line border-t-4 border-t-mint bg-panel p-5"><p class="font-mono text-xs uppercase tracking-wider text-mint">Prevent</p><p class="mt-1 font-display text-lg font-bold text-txt-1">Awareness campaign</p><p class="mt-1 text-sm">Educating people to dispose of waste responsibly.</p></li>
+          <li class="reveal glow-card rounded-xl border border-line border-t-4 border-t-aqua bg-panel p-5" style="--delay:.1s"><p class="font-mono text-xs uppercase tracking-wider text-aqua">Remove</p><p class="mt-1 font-display text-lg font-bold text-txt-1">Lake Sentry V1 robot</p><p class="mt-1 text-sm">A low-cost floating machine that scoops trash off the water.</p></li>
+          <li class="reveal glow-card rounded-xl border border-line border-t-4 border-t-sun bg-panel p-5" style="--delay:.2s"><p class="font-mono text-xs uppercase tracking-wider text-sun">Connect</p><p class="mt-1 font-display text-lg font-bold text-txt-1">LakeSentry.in</p><p class="mt-1 text-sm">Lake reports, community stories and a reviewed initiative network. <a href="app.html" class="font-semibold text-aqua underline underline-offset-4 hover:text-mint">Try it</a>.</p></li>
+        </ul>
       </div>
     </section>
 
-    <!-- ============================ 1. WHAT IT DOES ============================ -->
-    <section id="what" class="relative bg-ink pb-32 pt-20" aria-labelledby="what-title" data-wave="deep">
-      <div class="mx-auto max-w-6xl px-4 sm:px-6">
-        <p class="eyebrow reveal">What it does</p>
-        <h2 id="what-title" class="reveal mt-4 max-w-3xl font-display text-3xl font-bold leading-tight text-txt-1 sm:text-5xl">Removing what's already there. Preventing what's next.</h2>
-        <p class="reveal mt-5 max-w-prose">If waste keeps entering a lake, a clean-up machine only treats the symptom. So Lake Sentry grew into a <strong class="text-txt-1">dual-solution framework</strong>, connected by an online platform.</p>
-
-        <div class="mt-12 grid gap-px overflow-hidden rounded-xl border border-line bg-line md:grid-cols-3">
-          <article class="reveal relative overflow-hidden bg-deep p-8">
-            <span aria-hidden="true" class="absolute inset-x-0 top-0 h-1 bg-mint"></span>
-            <span aria-hidden="true" class="ghost-word" data-text="PREVENT"></span>
-            <p class="font-mono text-xs uppercase tracking-wider text-mint">Prevent · 📢</p>
-            <h3 class="mt-3 font-display text-2xl font-bold text-txt-1">Awareness campaign</h3>
-            <ul class="mt-4 space-y-2 text-sm">
-              <li>→ Educate people about lake pollution</li>
-              <li>→ Encourage responsible waste disposal</li>
-              <li>→ Point people to clean-up activities</li>
-            </ul>
-          </article>
-          <article class="reveal relative overflow-hidden bg-deep p-8" style="--delay:.1s">
-            <span aria-hidden="true" class="absolute inset-x-0 top-0 h-1 bg-aqua"></span>
-            <span aria-hidden="true" class="ghost-word" data-text="REMOVE"></span>
-            <p class="font-mono text-xs uppercase tracking-wider text-aqua">Remove · 🤖</p>
-            <h3 class="mt-3 font-display text-2xl font-bold text-txt-1">Lake Sentry V1 → V2</h3>
-            <ul class="mt-4 space-y-2 text-sm">
-              <li>→ Collect floating waste already in lakes</li>
-              <li>→ Affordable, locally buildable design</li>
-              <li>→ Improve with every version</li>
-            </ul>
-          </article>
-          <article class="reveal relative overflow-hidden bg-deep p-8" style="--delay:.2s">
-            <span aria-hidden="true" class="absolute inset-x-0 top-0 h-1 bg-sun"></span>
-            <span aria-hidden="true" class="ghost-word" data-text="CONNECT"></span>
-            <p class="font-mono text-xs uppercase tracking-wider text-sun">Connect · 🌐</p>
-            <h3 class="mt-3 font-display text-2xl font-bold text-txt-1">LakeSentry.in</h3>
-            <ul class="mt-4 space-y-2 text-sm">
-              <li>→ Research and lake information</li>
-              <li>→ Public participation and the survey</li>
-              <li>→ Community initiatives</li>
-            </ul>
-          </article>
-        </div>
-        <p class="reveal mt-6 text-center font-mono text-sm tracking-wide text-txt-3">PREVENT + REMOVE + CONNECT → CLEANER, BETTER-MAINTAINED LAKES</p>
-      </div>
-    </section>
-
-    <!-- ============================ 2. THE PROBLEM ============================ -->
-    <section id="problem" class="relative bg-deep pb-32 pt-20" aria-labelledby="problem-title" data-wave="deep2">
+    <!-- ============================ THE PROBLEM ============================ -->
+    <section id="problem" class="relative bg-ink pb-24 pt-14" aria-labelledby="problem-title" data-wave="deep">
       <div class="mx-auto max-w-6xl px-4 sm:px-6">
         <p class="eyebrow reveal !text-coral">The problem</p>
-        <h2 id="problem-title" class="reveal mt-4 max-w-3xl font-display text-3xl font-bold leading-tight text-txt-1 sm:text-5xl">Floating waste is quietly reshaping urban lakes.</h2>
-
-        <div class="mt-10 grid gap-12 lg:grid-cols-[1.2fr_1fr]">
-          <div>
-            <p class="reveal max-w-prose">
-              Lakes are important freshwater ecosystems that support aquatic organisms, surrounding habitats and the communities that depend on them. Many urban lakes are polluted by improperly disposed waste, plastic, sewage and more. Lakes across Hyderabad, including <strong class="text-txt-1">Rangadhamuni, Malkam Cheruvu and Film Nagar Lake</strong>, are polluted by floating trash and debris. Lake Sentry's primary focus is <strong class="text-txt-1">floating solid waste</strong>:
-            </p>
-            <ul class="reveal mt-6 flex flex-wrap gap-2 font-mono text-sm" aria-label="Types of floating waste">
-              <li class="rounded-md border border-aqua/30 bg-aqua/10 px-3 py-1.5 text-aqua">Plastic bottles</li>
-              <li class="rounded-md border border-aqua/30 bg-aqua/10 px-3 py-1.5 text-aqua">Plastic bags</li>
-              <li class="rounded-md border border-aqua/30 bg-aqua/10 px-3 py-1.5 text-aqua">Food wrappers &amp; packaging</li>
-              <li class="rounded-md border border-aqua/30 bg-aqua/10 px-3 py-1.5 text-aqua">Containers</li>
-              <li class="rounded-md border border-aqua/30 bg-aqua/10 px-3 py-1.5 text-aqua">Glass bottles</li>
-              <li class="rounded-md border border-aqua/30 bg-aqua/10 px-3 py-1.5 text-aqua">Miscellaneous debris</li>
-            </ul>
-
-            <h3 class="reveal mt-12 font-display text-2xl font-bold text-txt-1">Why it matters</h3>
-            <dl class="mt-5 grid gap-4 sm:grid-cols-2">
-              <div class="reveal glow-card rounded-xl border border-line bg-panel p-5">
-                <dt class="font-mono text-xs uppercase tracking-wider text-coral">[ Habitat + water ]</dt>
-                <dd class="mt-2"><strong class="block font-display text-lg text-txt-1">Ecosystems under pressure</strong>Accumulated waste degrades water quality and aquatic habitats, and interferes with aquatic organisms.</dd>
-              </div>
-              <div class="reveal glow-card rounded-xl border border-line bg-panel p-5" style="--delay:.1s">
-                <dt class="font-mono text-xs uppercase tracking-wider text-coral">[ Light ]</dt>
-                <dd class="mt-2"><strong class="block font-display text-lg text-txt-1">Blocks sunlight</strong>A surface layer of trash blocks the sunlight lakes need for photosynthesis, which shapes many of a lake's features.</dd>
-              </div>
-              <div class="reveal glow-card rounded-xl border border-line bg-panel p-5">
-                <dt class="font-mono text-xs uppercase tracking-wider text-coral">[ Health ]</dt>
-                <dd class="mt-2"><strong class="block font-display text-lg text-txt-1">Breeds mosquitoes</strong>Waste can obstruct water movement or drainage, creating stagnant water where mosquitoes breed.</dd>
-              </div>
-              <div class="reveal glow-card rounded-xl border border-line bg-panel p-5" style="--delay:.1s">
-                <dt class="font-mono text-xs uppercase tracking-wider text-coral">[ Community ]</dt>
-                <dd class="mt-2"><strong class="block font-display text-lg text-txt-1">A public nuisance</strong>Polluted lakes become a visual, environmental and public nuisance for people living nearby or visiting.</dd>
-              </div>
-            </dl>
-          </div>
-
-          <div class="space-y-6">
-            <!-- IMAGE PLACEHOLDER — replace src with your own field photo, e.g. field-visit-1.jpg -->
-            <figure class="reveal overflow-hidden rounded-2xl border border-line">
-              <img src="placeholder.svg" width="800" height="500" loading="lazy" class="img-placeholder h-auto w-full"
-                   alt="Placeholder for a field photo of floating trash collected along the edge of a Hyderabad lake." />
-              <figcaption class="bg-panel px-5 py-3 text-sm">Field photo: floating waste at a Hyderabad lake (photo to be added).</figcaption>
-            </figure>
-            <div class="reveal rounded-2xl border border-line bg-panel p-7">
-              <h3 class="font-display text-xl font-bold text-txt-1">The root cause: improper waste disposal</h3>
-              <ul class="mt-4 space-y-2">
-                <li class="flex gap-3"><span aria-hidden="true" class="text-coral">✕</span>Lack of proper infrastructure</li>
-                <li class="flex gap-3"><span aria-hidden="true" class="text-coral">✕</span>Lack of public awareness</li>
-                <li class="flex gap-3"><span aria-hidden="true" class="text-coral">✕</span>Lack of care for the consequences</li>
-              </ul>
-            </div>
-            <div class="reveal rounded-2xl border border-line bg-panel p-7">
-              <h3 class="font-display text-xl font-bold text-txt-1">Two sides of the problem</h3>
-              <ol class="mt-4 space-y-2">
-                <li><span class="font-mono text-aqua">1.</span> Waste that has already reached the lake needs to be <strong class="text-txt-1">removed</strong>.</li>
-                <li><span class="font-mono text-mint">2.</span> New waste needs to be <strong class="text-txt-1">prevented</strong> from reaching the lake.</li>
-              </ol>
-            </div>
-          </div>
-        </div>
-
-        <p class="reveal mt-10 rounded-r-lg border-l-4 border-sun bg-sun/10 px-5 py-4 text-sm">
-          <strong class="text-sun">What this project does not claim to solve:</strong> sewage discharge, industrial effluent and dissolved chemical contamination need separate regulatory and infrastructure solutions. Lake Sentry's scope is floating solid waste.
-        </p>
+        <h2 id="problem-title" class="reveal mt-4 max-w-3xl font-display text-3xl font-bold leading-tight text-txt-1 sm:text-4xl">Floating trash is choking Hyderabad's lakes.</h2>
+        <p class="reveal mt-4 max-w-prose">Bottles, bags, wrappers, containers and glass collect on the surface of lakes such as Rangadhamuni, Malkam Cheruvu and Film Nagar Lake. The root cause is improper waste disposal: too little infrastructure, awareness and care.</p>
+        <ul class="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <li class="reveal rounded-xl border border-line bg-panel p-4"><span aria-hidden="true">🐟</span> <strong class="text-txt-1">Harms habitats</strong><span class="block text-sm">and degrades water quality</span></li>
+          <li class="reveal rounded-xl border border-line bg-panel p-4" style="--delay:.05s"><span aria-hidden="true">☀️</span> <strong class="text-txt-1">Blocks sunlight</strong><span class="block text-sm">that lakes need to thrive</span></li>
+          <li class="reveal rounded-xl border border-line bg-panel p-4" style="--delay:.1s"><span aria-hidden="true">🦟</span> <strong class="text-txt-1">Breeds mosquitoes</strong><span class="block text-sm">in stagnant, blocked water</span></li>
+          <li class="reveal rounded-xl border border-line bg-panel p-4" style="--delay:.15s"><span aria-hidden="true">🏘️</span> <strong class="text-txt-1">Spoils lakes</strong><span class="block text-sm">for the people living nearby</span></li>
+        </ul>
+        <p class="reveal mt-5 text-sm text-txt-3">Scope: floating solid waste. Sewage, industrial discharge and chemical pollution need separate solutions.</p>
       </div>
     </section>
 
-    <!-- ============================ 3. MOTIVATION & RESEARCH ============================ -->
-    <!-- HIDDEN FOR NOW: waiting for the new survey results. Delete the word "hidden" below to show this again. -->
+<!-- HIDDEN FOR NOW: waiting for the new survey results. Delete the word "hidden" below to show this again. -->
     <section id="research" hidden class="relative overflow-hidden bg-ink pb-32 pt-20" aria-labelledby="research-title" data-wave="deep2">
       <div class="caustics" aria-hidden="true"></div>
       <div class="relative mx-auto max-w-6xl px-4 sm:px-6">
@@ -299,15 +181,22 @@
       </div>
     </section>
 
-    <!-- ============================ 4. LAKE SENTRY V1 ============================ -->
-    <section id="v1" class="relative bg-deep2 pb-32 pt-20" aria-labelledby="v1-title" data-wave="ink">
+    <!-- ============================ LAKE SENTRY V1 ============================ -->
+    <section id="v1" class="relative bg-deep pb-24 pt-14" aria-labelledby="v1-title" data-wave="ink">
       <div class="mx-auto max-w-6xl px-4 sm:px-6">
         <p class="eyebrow reveal">Remove · the physical solution</p>
-        <h2 id="v1-title" class="reveal mt-4 max-w-3xl font-display text-3xl font-bold leading-tight text-txt-1 sm:text-5xl">Lake Sentry V1: the working proof-of-concept.</h2>
-        <p class="reveal mt-5 max-w-prose">V1 is a remote-controlled floating machine that collects debris from a lake's surface. It deliberately uses a simple, affordable design rather than expensive or complex technology.</p>
+        <h2 id="v1-title" class="reveal mt-4 max-w-3xl font-display text-3xl font-bold leading-tight text-txt-1 sm:text-4xl">Lake Sentry V1: a working prototype.</h2>
+        <p class="reveal mt-4 max-w-prose">A remote-controlled floating machine built from CPVC pipe, thermocol floats and a mesh conveyor. Simple, affordable and locally buildable.</p>
 
-        <!-- Interactive V1 diagram (about.js). Buttons are the keyboard-accessible way to explore it. -->
-        <div class="reveal mt-12 rounded-2xl border border-line bg-panel p-5 sm:p-8" style="background-image:repeating-linear-gradient(0deg,rgba(56,228,240,.05) 0 1px,transparent 1px 34px),repeating-linear-gradient(90deg,rgba(56,228,240,.05) 0 1px,transparent 1px 34px)">
+        <ol class="mt-6 grid grid-cols-2 gap-3 text-sm sm:grid-cols-4" aria-label="How a clean-up run works">
+          <li class="reveal rounded-xl border border-line bg-panel p-4"><span class="block font-mono text-xs text-aqua">01 · Aim</span>Steer toward floating trash.</li>
+          <li class="reveal rounded-xl border border-line bg-panel p-4" style="--delay:.05s"><span class="block font-mono text-xs text-aqua">02 · Scoop</span>The mesh conveyor lifts it aboard.</li>
+          <li class="reveal rounded-xl border border-line bg-panel p-4" style="--delay:.1s"><span class="block font-mono text-xs text-aqua">03 · Return</span>Pilot back to the bank.</li>
+          <li class="reveal rounded-xl border border-line bg-panel p-4" style="--delay:.15s"><span class="block font-mono text-xs text-aqua">04 · Record</span>Weigh, photograph and time it.</li>
+        </ol>
+
+<!-- Interactive V1 diagram (about.js). Buttons are the keyboard-accessible way to explore it. -->
+        <div class="reveal mt-8 rounded-2xl border border-line bg-panel p-5 sm:p-8" style="background-image:repeating-linear-gradient(0deg,rgba(56,228,240,.05) 0 1px,transparent 1px 34px),repeating-linear-gradient(90deg,rgba(56,228,240,.05) 0 1px,transparent 1px 34px)">
           <h3 class="font-display text-2xl font-bold text-txt-1">Explore the prototype</h3>
           <p class="mt-1 text-sm text-txt-3">Choose a part to see how it works.</p>
           <div class="mt-6 grid items-center gap-8 lg:grid-cols-[1.3fr_1fr]">
@@ -366,84 +255,46 @@
           </div>
         </div>
 
-        <div class="mt-14 grid items-start gap-10 lg:grid-cols-2">
-          <figure class="reveal overflow-hidden rounded-2xl border border-linehi bg-white">
-            <img src="v1-prototype.png" width="920" height="690" loading="lazy" class="h-auto w-full"
-                 alt="Lake Sentry V1 prototype on a table: a white CPVC pipe frame resting on white thermocol floats, a slanted mesh conveyor ramp on the right, a mesh storage area in the middle and two four-bladed paddle wheels on the left." />
-            <figcaption class="border-t border-line bg-panel px-5 py-3 text-sm">The real V1. The conveyor ramp (right) lifts trash into storage; the paddle wheels (left) move the machine.</figcaption>
-          </figure>
+        <div class="mt-8 grid items-center gap-6 lg:grid-cols-[1.1fr_1fr]">
+          <div class="grid gap-4 sm:grid-cols-2">
+            <figure class="reveal overflow-hidden rounded-2xl border border-linehi bg-white">
+              <img src="v1-prototype.png" width="920" height="690" loading="lazy" class="h-auto w-full"
+                   alt="Lake Sentry V1 prototype: a white CPVC pipe frame on white thermocol floats, a slanted mesh conveyor ramp on the right, a mesh storage area in the middle and two four-bladed paddle wheels on the left." />
+              <figcaption class="border-t border-line bg-panel px-4 py-2 text-sm">The real V1.</figcaption>
+            </figure>
+            <!-- IMAGE PLACEHOLDER: swap in a photo of V1 on the water, e.g. v1-water-test.jpg -->
+            <figure class="reveal overflow-hidden rounded-2xl border border-line" style="--delay:.1s">
+              <img src="placeholder.svg" width="800" height="500" loading="lazy" class="img-placeholder h-full w-full object-cover"
+                   alt="Placeholder for a photo of Lake Sentry V1 floating on a lake during a test run." />
+              <figcaption class="border-t border-line bg-panel px-4 py-2 text-sm">V1 on the water (photo to be added).</figcaption>
+            </figure>
+          </div>
           <div class="reveal">
-            <h3 class="font-display text-2xl font-bold text-txt-1">How a clean-up run works</h3>
-            <ol class="mt-5 grid gap-3 sm:grid-cols-2">
-              <li class="glow-card rounded-xl border border-line bg-panel p-5"><span class="block font-mono text-sm text-aqua">01 · Aim</span>The pilot steers the remote-controlled bot toward floating trash.</li>
-              <li class="glow-card rounded-xl border border-line bg-panel p-5"><span class="block font-mono text-sm text-aqua">02 · Scoop</span>A mesh conveyor belt lifts the trash aboard (light and medium loads).</li>
-              <li class="glow-card rounded-xl border border-line bg-panel p-5"><span class="block font-mono text-sm text-aqua">03 · Return</span>The bot is piloted back to the lake bank.</li>
-              <li class="glow-card rounded-xl border border-line bg-panel p-5"><span class="block font-mono text-sm text-aqua">04 · Record</span>Trash is weighed, photographed and timed for impact metrics.</li>
-            </ol>
-            <a href="app.html#simulator" class="mt-6 inline-flex items-center gap-2 rounded-md bg-aqua px-5 py-3 font-semibold text-onaccent transition hover:-translate-y-0.5">Drive V1 in the simulator →</a>
+            <p class="rounded-xl border-l-4 border-sun bg-sun/10 px-5 py-4 text-sm"><strong class="text-sun">A real engineering fix:</strong> the conveyor mesh slipped on its smooth rod and moved waste the wrong way. Adding friction points to the rod made it grip, and it now lifts waste reliably.</p>
+            <a href="app.html#simulator" class="mt-5 inline-flex items-center gap-2 rounded-md bg-aqua px-5 py-3 font-semibold text-onaccent transition hover:-translate-y-0.5">Drive V1 in the simulator →</a>
           </div>
         </div>
-
-        <!-- Engineering iteration -->
-        <div class="mt-16">
-          <p class="eyebrow reveal">Engineering iteration log</p>
-          <h3 class="reveal mt-3 font-display text-2xl font-bold text-txt-1 sm:text-3xl">Real problem-solving, not just theory.</h3>
-          <ol class="mt-6 grid gap-px overflow-hidden rounded-xl border border-line bg-line md:grid-cols-4">
-            <li class="reveal bg-panel p-6"><span class="font-mono text-xs uppercase tracking-wider text-coral">Problem</span><p class="mt-2 text-sm">The conveyor mesh slipped on its rotating rod, moving waste the wrong way instead of lifting it.</p></li>
-            <li class="reveal bg-panel p-6" style="--delay:.1s"><span class="font-mono text-xs uppercase tracking-wider text-sun">Testing</span><p class="mt-2 text-sm">The slipping was traced to too little grip between the smooth rod and the mesh.</p></li>
-            <li class="reveal bg-panel p-6" style="--delay:.2s"><span class="font-mono text-xs uppercase tracking-wider text-aqua">Modification</span><p class="mt-2 text-sm">The rod was modified with extra points of friction so the mesh could grip and move with it.</p></li>
-            <li class="reveal bg-panel p-6" style="--delay:.3s"><span class="font-mono text-xs uppercase tracking-wider text-mint">Result</span><p class="mt-2 text-sm">The conveyor now carries waste reliably upward into the storage compartment.</p></li>
-          </ol>
-        </div>
-
-        <!-- IMAGE PLACEHOLDERS — swap in photos of V1 being tested -->
-        <div class="mt-12 grid gap-6 sm:grid-cols-2">
-          <figure class="reveal overflow-hidden rounded-2xl border border-line">
-            <img src="placeholder.svg" width="800" height="500" loading="lazy" class="img-placeholder h-auto w-full" alt="Placeholder for a photo of Lake Sentry V1 floating on a lake during a test run." />
-            <figcaption class="bg-panel px-5 py-3 text-sm">V1 during a water test (photo to be added).</figcaption>
-          </figure>
-          <figure class="reveal overflow-hidden rounded-2xl border border-line" style="--delay:.1s">
-            <img src="placeholder.svg" width="800" height="500" loading="lazy" class="img-placeholder h-auto w-full" alt="Placeholder for a close-up photo of the modified conveyor rod with added friction points." />
-            <figcaption class="bg-panel px-5 py-3 text-sm">Close-up of the modified conveyor rod (photo to be added).</figcaption>
-          </figure>
-        </div>
       </div>
     </section>
 
-    <!-- ============================ 5. TOWARD V2 ============================ -->
-    <section id="v2" class="relative bg-ink pb-32 pt-20" aria-labelledby="v2-title" data-wave="deep">
-      <div class="mx-auto max-w-6xl px-4 sm:px-6">
-        <div class="reveal rounded-2xl border border-dashed border-sun/50 bg-sun/[.05] p-7 sm:p-10">
-          <p class="eyebrow !text-sun">V1 → V2 · proposed, not finalised</p>
-          <h2 id="v2-title" class="mt-4 font-display text-3xl font-bold text-txt-1 sm:text-4xl">V1 is the beginning, not the destination.</h2>
-          <p class="mt-4 max-w-prose">The aim isn't to make V2 bigger. It's to make it better:</p>
-          <p class="mt-3 font-mono text-sm text-sun">more efficient + more reliable + more environmentally compatible + more intelligent</p>
-          <ul class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <li class="border-l-2 border-sun/50 pl-4"><span aria-hidden="true">☀️</span> <strong class="text-txt-1">Solar power</strong><span class="block text-sm">Longer operating time, less manual charging.</span></li>
-            <li class="border-l-2 border-sun/50 pl-4"><span aria-hidden="true">🤖</span> <strong class="text-txt-1">Greater automation</strong><span class="block text-sm">Less human intervention in the cleaning process.</span></li>
-            <li class="border-l-2 border-sun/50 pl-4"><span aria-hidden="true">📡</span> <strong class="text-txt-1">Sensors</strong><span class="block text-sm">Navigation, waste detection, obstacle avoidance, monitoring.</span></li>
-            <li class="border-l-2 border-sun/50 pl-4"><span aria-hidden="true">🗑️</span> <strong class="text-txt-1">Better storage</strong><span class="block text-sm">More capacity and easier emptying.</span></li>
-            <li class="border-l-2 border-sun/50 pl-4"><span aria-hidden="true">⚙️</span> <strong class="text-txt-1">Stronger mechanics</strong><span class="block text-sm">A more reliable conveyor, propulsion and frame.</span></li>
-            <li class="border-l-2 border-sun/50 pl-4"><span aria-hidden="true">🌱</span> <strong class="text-txt-1">Eco-friendly materials</strong><span class="block text-sm">Durable, corrosion-resistant and gentle on aquatic life.</span></li>
-            <li class="border-l-2 border-sun/50 pl-4"><span aria-hidden="true">🧩</span> <strong class="text-txt-1">Modular design</strong><span class="block text-sm">Swappable parts for different water bodies.</span></li>
-            <li class="border-l-2 border-sun/50 pl-4"><span aria-hidden="true">🌧️</span> <strong class="text-txt-1">Weatherproofing</strong><span class="block text-sm">Protected frame and electronics for the monsoon.</span></li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============================ 6. AWARENESS ============================ -->
-    <section id="awareness" class="relative bg-deep pb-32 pt-20" aria-labelledby="awareness-title" data-wave="ink">
-      <div class="mx-auto grid max-w-6xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-2">
+    <!-- ============================ WHAT'S NEXT + AWARENESS ============================ -->
+    <section id="next" class="relative bg-ink pb-24 pt-14" aria-labelledby="next-title" data-wave="deep2">
+      <div class="mx-auto grid max-w-6xl items-center gap-10 px-4 sm:px-6 lg:grid-cols-2">
         <div>
-          <p class="eyebrow reveal !text-mint">Prevent · the awareness solution</p>
-          <h2 id="awareness-title" class="reveal mt-4 font-display text-3xl font-bold leading-tight text-txt-1 sm:text-5xl">A bot alone can't stop pollution. The root cause is behaviour.</h2>
-          <ul class="reveal mt-8 space-y-5">
-            <li><strong class="block font-display text-lg text-txt-1">“The Rollers”</strong>An offline installation of rotating drums with ironic anti-littering messages.</li>
-            <li><strong class="block font-display text-lg text-txt-1">Online + offline campaigns</strong>Education on lake pollution, plastic waste, responsible disposal and protecting local water bodies, inspiring long-term lake maintenance.</li>
-            <li><strong class="block font-display text-lg text-txt-1">Reaching young people first</strong>Starting with Hyderabad's environmental creators and college eco-clubs, with a joint lake clean-up day as the first shared activity.</li>
-            <li><strong class="block font-display text-lg text-txt-1">Working alongside activists</strong>Environmental activists and local creators help reach more people and build credibility.</li>
+          <p class="eyebrow reveal !text-sun">What's next</p>
+          <h2 id="next-title" class="reveal mt-4 font-display text-3xl font-bold leading-tight text-txt-1 sm:text-4xl">Better, not just bigger.</h2>
+          <p class="reveal mt-4"><strong class="text-txt-1">V2 ideas (proposed, not final):</strong> more efficient, reliable, eco-friendly and intelligent.</p>
+          <ul class="reveal mt-3 flex flex-wrap gap-2 text-sm" aria-label="V2 ideas">
+            <li class="rounded-full border border-sun/40 bg-panel/60 px-4 py-2">☀️ Solar power</li>
+            <li class="rounded-full border border-sun/40 bg-panel/60 px-4 py-2">🤖 Automation</li>
+            <li class="rounded-full border border-sun/40 bg-panel/60 px-4 py-2">📡 Sensors</li>
+            <li class="rounded-full border border-sun/40 bg-panel/60 px-4 py-2">🗑️ More storage</li>
+            <li class="rounded-full border border-sun/40 bg-panel/60 px-4 py-2">⚙️ Sturdier build</li>
+            <li class="rounded-full border border-sun/40 bg-panel/60 px-4 py-2">🌱 Eco-friendly materials</li>
+            <li class="rounded-full border border-sun/40 bg-panel/60 px-4 py-2">🧩 Modular parts</li>
+            <li class="rounded-full border border-sun/40 bg-panel/60 px-4 py-2">🌧️ Weatherproofing</li>
           </ul>
+          <p class="reveal mt-8"><strong class="text-txt-1">A bot alone can't stop pollution.</strong> The root cause is behaviour. So alongside the robot, “The Rollers” installation and Instagram and LinkedIn campaigns spread the message, starting with Hyderabad's young people and college eco-clubs and leading back to LakeSentry.in.</p>
         </div>
         <figure class="reveal float-bob overflow-hidden rounded-2xl border border-linehi bg-white shadow-2xl">
           <img src="the-rollers.png" width="920" height="690" loading="lazy" class="h-auto w-full"
@@ -453,98 +304,71 @@
       </div>
     </section>
 
-    <!-- ============================ 7. LAKESENTRY.IN PLATFORM ============================ -->
-    <section id="platform" class="relative overflow-hidden bg-ink pb-32 pt-20" aria-labelledby="platform-title" data-wave="deep2">
-      <div class="caustics" aria-hidden="true"></div>
-      <div class="relative mx-auto max-w-6xl px-4 sm:px-6">
-        <p class="eyebrow reveal !text-sun">Connect · LakeSentry.in</p>
-        <h2 id="platform-title" class="reveal mt-4 max-w-3xl font-display text-3xl font-bold leading-tight text-txt-1 sm:text-5xl">A digital home for every lake.</h2>
-        <p class="reveal mt-5 max-w-prose">More than a page about the prototype, LakeSentry.in brings the whole initiative together:</p>
-        <p class="reveal mt-3 font-mono text-sm text-aqua">Problem → Research → Evidence → Awareness → Community → Technology</p>
-
-        <div class="mt-12 grid gap-5 lg:grid-cols-3">
-          <article class="reveal glow-card rounded-2xl border border-line bg-panel p-7">
-            <span aria-hidden="true" class="text-2xl">🗺️</span>
-            <h3 class="mt-3 font-display text-xl font-bold text-txt-1">Interactive lake map</h3>
-            <p class="mt-2 text-sm">Explore Hussain Sagar, Durgam Cheruvu, Osman Sagar, Himayat Sagar, Pebble City Lake and more. Hover or select a lake to open its page.</p>
-            <a href="app.html#map" class="mt-4 inline-flex font-semibold text-aqua underline underline-offset-4 hover:text-mint">Open the map</a>
-          </article>
-          <article class="reveal glow-card rounded-2xl border border-line bg-panel p-7" style="--delay:.1s">
-            <span aria-hidden="true" class="text-2xl">📄</span>
-            <h3 class="mt-3 font-display text-xl font-bold text-txt-1">Individual lake pages</h3>
-            <ul class="mt-2 space-y-1 text-sm">
-              <li>· About the lake</li><li>· Research</li><li>· Field observations</li><li>· Original photographs</li>
-              <li>· Existing initiatives</li><li>· Community information</li><li>· The Lake Sentry perspective</li>
-            </ul>
-            <p class="mt-3 text-sm">Together they form a growing digital record of Hyderabad's lakes.</p>
-          </article>
-          <article class="reveal glow-card rounded-2xl border border-line bg-panel p-7" style="--delay:.2s">
-            <span aria-hidden="true" class="text-2xl">🤝</span>
-            <h3 class="mt-3 font-display text-xl font-bold text-txt-1">Lake Initiative Network</h3>
-            <p class="mt-2 text-sm">Anyone can submit a clean-up or conservation effort: its name, description, location, organisation, date, activity type, links, photos and how to take part.</p>
-            <p class="mt-3 font-mono text-xs text-sun">Submit → Review → Approve / Reject → Publish</p>
-            <p class="mt-2 text-sm">Nothing is published automatically, which keeps the network accurate and appropriate.</p>
-          </article>
+    <!-- ============================ WHO IT'S FOR + SDGs ============================ -->
+    <section id="who" class="relative bg-deep2 pb-24 pt-14" aria-labelledby="who-title" data-wave="ink">
+      <div class="mx-auto grid max-w-6xl gap-10 px-4 sm:px-6 lg:grid-cols-2">
+        <div>
+          <p class="eyebrow reveal">Who it's for</p>
+          <h2 id="who-title" class="reveal mt-4 font-display text-3xl font-bold leading-tight text-txt-1 sm:text-4xl">The people who look after lakes.</h2>
+          <p class="reveal mt-4">Not a consumer product. The robot is a tool for organisations that manage lakes, and the campaign speaks to the wider public.</p>
+          <ul class="reveal mt-4 flex flex-wrap gap-2 text-sm" aria-label="Who Lake Sentry is for">
+            <li class="rounded-full border border-line bg-panel/60 px-4 py-2">🏛️ Government and lake authorities (GHMC, HYDRAA)</li>
+            <li class="rounded-full border border-line bg-panel/60 px-4 py-2">🏙️ Municipal bodies</li>
+            <li class="rounded-full border border-line bg-panel/60 px-4 py-2">🌱 Environmental NGOs</li>
+            <li class="rounded-full border border-line bg-panel/60 px-4 py-2">💼 CSR and nonprofits</li>
+            <li class="rounded-full border border-line bg-panel/60 px-4 py-2">👥 Local communities and volunteers</li>
+          </ul>
         </div>
-
-        <h3 class="reveal mt-16 font-display text-2xl font-bold text-txt-1">Public participation: “what can we do about it?”</h3>
-        <ul class="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <li class="reveal rounded-lg border border-line bg-panel px-4 py-3 text-sm">✓ Complete the Lake Sentry survey</li>
-          <li class="reveal rounded-lg border border-line bg-panel px-4 py-3 text-sm">✓ Learn about lake pollution</li>
-          <li class="reveal rounded-lg border border-line bg-panel px-4 py-3 text-sm">✓ Share awareness content</li>
-          <li class="reveal rounded-lg border border-line bg-panel px-4 py-3 text-sm">✓ Discover clean-up initiatives</li>
-          <li class="reveal rounded-lg border border-line bg-panel px-4 py-3 text-sm">✓ Submit initiatives you know about</li>
-          <li class="reveal rounded-lg border border-line bg-panel px-4 py-3 text-sm">✓ Join local environmental activities</li>
-          <li class="reveal rounded-lg border border-line bg-panel px-4 py-3 text-sm sm:col-span-2">✓ Follow the development of the Lake Sentry prototype</li>
-        </ul>
+        <div id="sdgs">
+          <p class="eyebrow reveal">UN Sustainable Development Goals</p>
+          <h2 class="reveal mt-4 font-display text-3xl font-bold leading-tight text-txt-1 sm:text-4xl">Goals we support.</h2>
+          <ul class="mt-4 grid gap-3 sm:grid-cols-2">
+            <li class="reveal rounded-xl border border-line border-t-4 border-t-aqua bg-panel p-4"><strong class="text-txt-1">🌊 SDG 6</strong> Clean water<span class="block text-sm">6.3 water quality · 6.6 lake ecosystems · 6.b community participation</span></li>
+            <li class="reveal rounded-xl border border-line border-t-4 border-t-sun bg-panel p-4" style="--delay:.05s"><strong class="text-txt-1">🏙️ SDG 11</strong> Sustainable cities<span class="block text-sm">11.6 lower environmental impact of cities</span></li>
+            <li class="reveal rounded-xl border border-line border-t-4 border-t-mint bg-panel p-4" style="--delay:.1s"><strong class="text-txt-1">♻️ SDG 12</strong> Responsible consumption<span class="block text-sm">less littering, better disposal</span></li>
+            <li class="reveal rounded-xl border border-line border-t-4 border-t-reef bg-panel p-4" style="--delay:.15s"><strong class="text-txt-1">🐟 SDG 14</strong> Life below water<span class="block text-sm">supporting goal</span></li>
+          </ul>
+          <p class="reveal mt-3 text-sm text-txt-3">Lake Sentry contributes to these goals; it doesn't claim to achieve them alone.</p>
+        </div>
       </div>
     </section>
 
-    <!-- ============================ 8. WHO IT'S FOR ============================ -->
-    <section id="who" class="relative bg-deep2 pb-32 pt-20" aria-labelledby="who-title" data-wave="deep">
-      <div class="mx-auto max-w-6xl px-4 sm:px-6">
-        <p class="eyebrow reveal">Who it's for</p>
-        <h2 id="who-title" class="reveal mt-4 max-w-3xl font-display text-3xl font-bold leading-tight text-txt-1 sm:text-5xl">Not a consumer product: a tool for the people who look after lakes.</h2>
-        <p class="reveal mt-5 max-w-prose">The machine's main stakeholders and the awareness campaign's audience aren't the same people. Lake Sentry isn't meant to work alone: lasting impact means teaming up with the people already invested in Hyderabad's lakes.</p>
-        <ul class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          <li class="reveal glow-card rounded-2xl border border-line bg-panel p-6"><p class="font-mono text-xs uppercase tracking-wider text-txt-3">Deployment partner</p><h3 class="mt-2 font-display text-lg font-bold text-txt-1">🏛️ Government &amp; lake management</h3><p class="mt-2 text-sm">Bodies that maintain urban water bodies. Partnering with GHMC / HYDRAA on lake access and permissions for each new site.</p></li>
-          <li class="reveal glow-card rounded-2xl border border-line bg-panel p-6" style="--delay:.05s"><p class="font-mono text-xs uppercase tracking-wider text-txt-3">Deployment partner</p><h3 class="mt-2 font-display text-lg font-bold text-txt-1">🏙️ Municipal &amp; local authorities</h3><p class="mt-2 text-sm">Responsible for urban environmental management.</p></li>
-          <li class="reveal glow-card rounded-2xl border border-line bg-panel p-6" style="--delay:.1s"><p class="font-mono text-xs uppercase tracking-wider text-txt-3">Partner</p><h3 class="mt-2 font-display text-lg font-bold text-txt-1">🌱 Environmental NGOs</h3><p class="mt-2 text-sm">Joining existing restoration and clean-up efforts instead of duplicating them.</p></li>
-          <li class="reveal glow-card rounded-2xl border border-line bg-panel p-6"><p class="font-mono text-xs uppercase tracking-wider text-txt-3">Supporter</p><h3 class="mt-2 font-display text-lg font-bold text-txt-1">💼 CSR &amp; nonprofits</h3><p class="mt-2 text-sm">Funding and support to manufacture and scale once the model is proven.</p></li>
-          <li class="reveal glow-card rounded-2xl border border-line bg-panel p-6" style="--delay:.05s"><p class="font-mono text-xs uppercase tracking-wider text-txt-3">Beneficiary &amp; operator</p><h3 class="mt-2 font-display text-lg font-bold text-txt-1">👥 Local communities</h3><p class="mt-2 text-sm">People living near lakes who feel the effects of pollution, some of whom could be trained as volunteer operators.</p></li>
-          <li class="reveal glow-card rounded-2xl border border-line bg-panel p-6" style="--delay:.1s"><p class="font-mono text-xs uppercase tracking-wider text-txt-3">Awareness audience</p><h3 class="mt-2 font-display text-lg font-bold text-txt-1">📱 The wider public</h3><p class="mt-2 text-sm">Hyderabad residents, students and environmentally engaged citizens online.</p></li>
-        </ul>
+    <!-- ============================ TEAM ============================ -->
+    <section id="team" class="relative bg-ink pb-24 pt-14" aria-labelledby="team-title" data-wave="deep">
+      <div class="mx-auto grid max-w-6xl items-center gap-8 px-4 sm:px-6 md:grid-cols-[15rem_1fr]">
+        <!-- Team photo: replace team-photo.jpg with another image of the same name, or change the src below -->
+        <figure class="reveal mx-auto w-full max-w-[15rem] overflow-hidden rounded-2xl border border-linehi shadow-xl">
+          <img src="team-photo.jpg" width="432" height="676" loading="lazy" class="aspect-[4/5] w-full object-cover object-top"
+               alt="Portrait of a smiling student in a dark blazer, white shirt and tie, standing in front of a brick wall." />
+        </figure>
+        <div class="reveal">
+          <p class="eyebrow">The team</p>
+          <h2 id="team-title" class="mt-3 font-display text-3xl font-bold text-txt-1 sm:text-4xl">Akhil Chendur</h2>
+          <p class="mt-1 font-mono text-sm text-aqua">Grade 9 · Keystone International School, Hyderabad</p>
+          <p class="mt-4 max-w-prose">Lake Sentry began as a class assignment. When classmates moved on to other projects, Akhil kept going: two years of lake cleaning as a passion project, driven by care for the problem and a determination to see it through.</p>
+        </div>
       </div>
     </section>
 
-    <!-- ============================ 9. IMPACT, RISKS & FEASIBILITY ============================ -->
-    <section id="impact" class="relative bg-deep pb-32 pt-20" aria-labelledby="impact-title" data-wave="ink">
-      <div class="mx-auto max-w-6xl px-4 sm:px-6">
-        <p class="eyebrow reveal">Impact &amp; planning ahead</p>
-        <h2 id="impact-title" class="reveal mt-4 max-w-3xl font-display text-3xl font-bold leading-tight text-txt-1 sm:text-5xl">Expected impact, and how we'll measure it.</h2>
-
-        <div class="mt-10 grid gap-5 md:grid-cols-2">
-          <div class="reveal rounded-2xl border border-line bg-panel p-7">
-            <h3 class="font-display text-xl font-bold text-mint">Environmental targets</h3>
-            <ul class="mt-4 space-y-2 text-sm">
-              <li>· Cut floating trash per km² by <strong class="text-txt-1">50%+</strong> per lake, compared with the first baseline clean-ups</li>
-              <li>· Track habitat cleanliness through regular photo, video and drone imaging</li>
-              <li>· Track bird and wildlife species with local birding and wildlife partners</li>
-            </ul>
-          </div>
-          <div class="reveal rounded-2xl border border-line bg-panel p-7" style="--delay:.1s">
-            <h3 class="font-display text-xl font-bold text-aqua">Societal targets</h3>
-            <ul class="mt-4 space-y-2 text-sm">
-              <li>· Build partnerships with nonprofits, CSR programmes and local government</li>
-              <li>· Grow public awareness of improper waste disposal</li>
-              <li>· Scale clean-ups across the region with community support</li>
-            </ul>
-          </div>
-        </div>
-        <p class="reveal mt-5 rounded-lg border border-aqua/40 bg-aqua/10 px-5 py-4 text-sm"><strong class="text-aqua">Core metric:</strong> weight of trash recovered per km² for each lake cleaned, compared across lakes to show which need the most attention. Campaign reach is tracked through engagement and clean-up event turnout.</p>
-
-        <h3 class="reveal mt-16 font-display text-2xl font-bold text-txt-1">Risks &amp; mitigations</h3>
-        <div class="reveal mt-5 overflow-x-auto rounded-xl border border-line">
+    <!-- ============================ MORE DETAILS (collapsed) ============================ -->
+    <section id="more" class="bg-deep pb-20 pt-12" aria-labelledby="more-title">
+      <div class="mx-auto max-w-4xl px-4 sm:px-6">
+        <h2 id="more-title" class="font-display text-2xl font-bold text-txt-1">More details</h2>
+        <div class="mt-4 space-y-3">
+          <details class="group rounded-xl border border-line bg-panel">
+            <summary class="flex cursor-pointer list-none items-center justify-between gap-3 px-5 py-4 font-display text-lg font-bold text-txt-1 [&::-webkit-details-marker]:hidden">Expected impact and how we measure it<svg aria-hidden="true" class="h-5 w-5 flex-none text-aqua transition-transform group-open:rotate-180" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.2 7.2a1 1 0 0 1 1.4 0L10 10.6l3.4-3.4a1 1 0 1 1 1.4 1.4l-4.1 4.1a1 1 0 0 1-1.4 0L5.2 8.6a1 1 0 0 1 0-1.4Z" clip-rule="evenodd"/></svg></summary>
+            <div class="border-t border-line px-5 py-5">
+              <ul class="space-y-2 text-sm">
+                <li><strong class="text-mint">Environment:</strong> cut floating trash per km² by 50% or more per lake compared with the first baseline clean-ups; track habitat cleanliness with photos, video and drone imaging; track bird and wildlife species with local partners.</li>
+                <li><strong class="text-aqua">Society:</strong> build partnerships with nonprofits, CSR programmes and local government; grow public awareness; scale clean-ups across the region.</li>
+                <li><strong class="text-txt-1">Core metric:</strong> weight of trash recovered per km² for each lake cleaned, compared across lakes to show which need the most attention.</li>
+              </ul>
+            </div>
+          </details>
+          <details class="group rounded-xl border border-line bg-panel">
+            <summary class="flex cursor-pointer list-none items-center justify-between gap-3 px-5 py-4 font-display text-lg font-bold text-txt-1 [&::-webkit-details-marker]:hidden">Risks and how we plan for them<svg aria-hidden="true" class="h-5 w-5 flex-none text-aqua transition-transform group-open:rotate-180" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.2 7.2a1 1 0 0 1 1.4 0L10 10.6l3.4-3.4a1 1 0 1 1 1.4 1.4l-4.1 4.1a1 1 0 0 1-1.4 0L5.2 8.6a1 1 0 0 1 0-1.4Z" clip-rule="evenodd"/></svg></summary>
+            <div class="border-t border-line px-5 py-5">
+<div class="mt-3 overflow-x-auto rounded-xl border border-line">
           <table class="w-full min-w-[40rem] text-left text-sm">
             <thead class="bg-panel font-mono text-xs uppercase tracking-wider text-txt-3"><tr><th scope="col" class="px-5 py-3">Risk</th><th scope="col" class="px-5 py-3">Mitigation</th></tr></thead>
             <tbody class="divide-y divide-line">
@@ -555,9 +379,12 @@
             </tbody>
           </table>
         </div>
-
-        <h3 class="reveal mt-16 font-display text-2xl font-bold text-txt-1">An honest feasibility check</h3>
-        <div class="reveal mt-5 overflow-x-auto rounded-xl border border-line">
+            </div>
+          </details>
+          <details class="group rounded-xl border border-line bg-panel">
+            <summary class="flex cursor-pointer list-none items-center justify-between gap-3 px-5 py-4 font-display text-lg font-bold text-txt-1 [&::-webkit-details-marker]:hidden">An honest feasibility check<svg aria-hidden="true" class="h-5 w-5 flex-none text-aqua transition-transform group-open:rotate-180" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.2 7.2a1 1 0 0 1 1.4 0L10 10.6l3.4-3.4a1 1 0 1 1 1.4 1.4l-4.1 4.1a1 1 0 0 1-1.4 0L5.2 8.6a1 1 0 0 1 0-1.4Z" clip-rule="evenodd"/></svg></summary>
+            <div class="border-t border-line px-5 py-5">
+<div class="mt-3 overflow-x-auto rounded-xl border border-line">
           <table class="w-full min-w-[40rem] text-left text-sm">
             <thead class="bg-panel font-mono text-xs uppercase tracking-wider text-txt-3"><tr><th scope="col" class="px-5 py-3">Dimension</th><th scope="col" class="px-5 py-3">Current status</th></tr></thead>
             <tbody class="divide-y divide-line">
@@ -571,72 +398,13 @@
             </tbody>
           </table>
         </div>
-        <p class="reveal mt-4 text-sm text-txt-3">Lake Sentry does not claim full real-world feasibility until enough field testing has been done.</p>
-      </div>
-    </section>
-
-    <!-- ============================ 10. SDGs ============================ -->
-    <section id="sdgs" class="relative bg-ink pb-32 pt-20" aria-labelledby="sdgs-title" data-wave="deep2">
-      <div class="mx-auto max-w-6xl px-4 sm:px-6">
-        <p class="eyebrow reveal">UN Sustainable Development Goals</p>
-        <h2 id="sdgs-title" class="reveal mt-4 font-display text-3xl font-bold text-txt-1 sm:text-5xl">How Lake Sentry aligns with the SDGs.</h2>
-        <div class="mt-12 grid gap-5 md:grid-cols-2">
-          <article class="reveal glow-card rounded-2xl border border-line border-t-4 border-t-aqua bg-panel p-7">
-            <p class="font-mono text-sm text-aqua">🌊 SDG 6</p>
-            <h3 class="mt-1 font-display text-xl font-bold text-txt-1">Clean Water &amp; Sanitation</h3>
-            <ul class="mt-4 space-y-2 text-sm">
-              <li><strong class="text-txt-1">6.3</strong>: improve water quality by removing floating solid waste.</li>
-              <li><strong class="text-txt-1">6.6</strong>: protect and restore water-related ecosystems. Lakes are explicitly included, making this the strongest link.</li>
-              <li><strong class="text-txt-1">6.b</strong>: community participation through the campaign and initiative network.</li>
-            </ul>
-          </article>
-          <article class="reveal glow-card rounded-2xl border border-line border-t-4 border-t-sun bg-panel p-7" style="--delay:.1s">
-            <p class="font-mono text-sm text-sun">🏙️ SDG 11</p>
-            <h3 class="mt-1 font-display text-xl font-bold text-txt-1">Sustainable Cities &amp; Communities</h3>
-            <ul class="mt-4 space-y-2 text-sm">
-              <li><strong class="text-txt-1">11.6</strong>: reduce the environmental impact of cities through lake clean-up and waste management.</li>
-              <li><strong class="text-txt-1">11.a</strong>: water and waste systems connect urban, peri-urban and rural areas.</li>
-            </ul>
-          </article>
-          <article class="reveal glow-card rounded-2xl border border-line border-t-4 border-t-mint bg-panel p-7">
-            <p class="font-mono text-sm text-mint">♻️ SDG 12</p>
-            <h3 class="mt-1 font-display text-xl font-bold text-txt-1">Responsible Consumption &amp; Production</h3>
-            <p class="mt-4 text-sm">Encouraging responsible disposal, less littering, better waste practices and awareness of the consequences of consumption. This is closely tied to the prevention side of Lake Sentry.</p>
-          </article>
-          <article class="reveal glow-card rounded-2xl border border-line border-t-4 border-t-reef bg-panel p-7" style="--delay:.1s">
-            <p class="font-mono text-sm text-reef">🐟 SDG 14 (supporting)</p>
-            <h3 class="mt-1 font-display text-xl font-bold text-txt-1">Life Below Water</h3>
-            <p class="mt-4 text-sm">Less floating plastic in freshwater helps protect aquatic ecosystems and reduces waste travelling downstream. This is a supporting goal, not the primary one.</p>
-          </article>
-        </div>
-        <p class="reveal mt-6 text-sm text-txt-3">Lake Sentry contributes to and aligns with these goals; it does not claim to achieve them on its own.</p>
-      </div>
-    </section>
-
-    <!-- ============================ 11. TEAM ============================ -->
-    <section id="team" class="relative bg-deep2 pb-32 pt-20" aria-labelledby="team-title" data-wave="deep">
-      <div class="mx-auto grid max-w-6xl items-center gap-10 px-4 sm:px-6 md:grid-cols-[18rem_1fr]">
-        <!-- IMAGE PLACEHOLDER — replace with a team photo, e.g. team.jpg -->
-        <figure class="reveal overflow-hidden rounded-2xl border border-line">
-          <img src="placeholder.svg" width="800" height="500" loading="lazy" class="img-placeholder aspect-square h-auto w-full object-cover"
-               alt="Placeholder for a photo of Akhil Chendur with the Lake Sentry prototype." />
-        </figure>
-        <div class="reveal">
-          <p class="eyebrow">The team</p>
-          <h2 id="team-title" class="mt-4 font-display text-4xl font-bold text-txt-1">Akhil Chendur</h2>
-          <p class="mt-1 font-mono text-sm text-aqua">Grade 9 · Keystone International School, Hyderabad</p>
-          <p class="mt-4 max-w-prose">
-            Passionate about innovation, prototyping and cleaning lakes, with two years spent on lake cleaning as a personal passion project. Lake Sentry began as a class assignment. When classmates moved on to their own passion projects, Akhil kept going, driven by care for the problem and a determination to see it through.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============================ SOURCES ============================ -->
-    <section class="bg-deep py-16" aria-labelledby="sources-title">
-      <div class="mx-auto max-w-6xl px-4 sm:px-6">
-        <h2 id="sources-title" class="font-display text-2xl font-bold text-txt-1">Sources</h2>
-        <ol class="mt-4 list-decimal space-y-2 pl-6 text-sm">
+              <p class="mt-3 text-sm text-txt-3">Lake Sentry does not claim full real-world feasibility until enough field testing has been done.</p>
+            </div>
+          </details>
+          <details class="group rounded-xl border border-line bg-panel">
+            <summary class="flex cursor-pointer list-none items-center justify-between gap-3 px-5 py-4 font-display text-lg font-bold text-txt-1 [&::-webkit-details-marker]:hidden">Sources<svg aria-hidden="true" class="h-5 w-5 flex-none text-aqua transition-transform group-open:rotate-180" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.2 7.2a1 1 0 0 1 1.4 0L10 10.6l3.4-3.4a1 1 0 1 1 1.4 1.4l-4.1 4.1a1 1 0 0 1-1.4 0L5.2 8.6a1 1 0 0 1 0-1.4Z" clip-rule="evenodd"/></svg></summary>
+            <div class="border-t border-line px-5 py-5">
+<ol class="mt-3 list-decimal space-y-2 pl-6 text-sm">
           <li>Times of India (5 June 2025). “Hyderabad staring at a mounting plastic pollution crisis.”</li>
           <li>ResearchGate (August 2013). “Aquatic multi-robot system for lake cleaning.”</li>
           <li>SANDRP (17 Feb 2026). “Hyderabad Lakes 2025: Degradation Continues Amid HYDRAA Efforts.”</li>
@@ -646,6 +414,9 @@
           <li>Sunlight and lake ecology: <a href="http://weedersdigest.com/lake-and-pond-science/my-sun-drenched-shoreline-how-sunlight-shapes-your-lake-s-hidden-world/" class="text-aqua underline underline-offset-4 hover:text-mint">Weeders Digest</a></li>
           <!-- <li>Lake Sentry public survey (self-conducted), and interview with Vishal Raj.</li>  (hidden for now) -->
         </ol>
+            </div>
+          </details>
+        </div>
       </div>
     </section>
   </main>

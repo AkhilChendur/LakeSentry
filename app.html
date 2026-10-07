@@ -4,11 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Lake Explorer App — Lake Sentry</title>
-  <meta name="description" content="Explore Hyderabad's lakes on an interactive map, drive a simulated Lake Sentry V1 robot, and try the initiative submission and review workflow." />
+  <meta name="description" content="Explore detailed reports on Hyderabad's lakes, share lake stories and photos, submit clean-up initiatives, and drive a simulated Lake Sentry V1 robot." />
   <!-- How the page looks when the link is shared (WhatsApp, LinkedIn, etc.) -->
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Lake Explorer App — Lake Sentry" />
-  <meta property="og:description" content="Explore Hyderabad's lakes on an interactive map, drive a simulated Lake Sentry V1 robot, and try the initiative submission and review workflow." />
+  <meta property="og:description" content="Explore detailed reports on Hyderabad's lakes, share lake stories and photos, submit clean-up initiatives, and drive a simulated Lake Sentry V1 robot." />
   <meta property="og:image" content="v1-prototype.png" />
   <meta name="theme-color" content="#040713" />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
@@ -263,7 +263,8 @@
                 </div>
                 <div>
                   <label for="init-date" class="block font-semibold text-txt-1">Date</label>
-                  <input id="init-date" name="date" type="date" class="mt-1 w-full rounded-md border border-txt-3/80 bg-deep px-3 py-2.5 text-txt-1 [color-scheme:dark]" />
+                  <p id="init-date-hint" class="text-sm text-txt-3">Leave blank if it's ongoing.</p>
+                  <input id="init-date" name="date" type="date" aria-describedby="init-date-hint" class="mt-1 w-full rounded-md border border-txt-3/80 bg-deep px-3 py-2.5 text-txt-1" />
                 </div>
               </div>
 
@@ -314,9 +315,9 @@
     <section id="map" role="tabpanel" aria-labelledby="tab-map" hidden class="relative bg-ink pb-24 pt-12">
       <div class="mx-auto max-w-6xl px-4 sm:px-6">
                 <h2 id="map-heading" class="reveal mt-4 font-display text-3xl font-bold text-txt-1 sm:text-5xl">Explore Hyderabad's lakes</h2>
-        <p class="reveal mt-3 max-w-prose">Hover over a lake to see its name. Select it, with a click or by pressing Enter, to open its lake page. You can also use the list.</p>
+        <p class="reveal mt-3 max-w-prose">Select a lake on the map, or in the list, to open its full report: where things stand, recovery figures with sources, ongoing and upcoming initiatives, photos and more.</p>
 
-        <div class="mt-10 grid gap-6 lg:grid-cols-[1.7fr_1fr]">
+        <div class="mt-10 grid grid-cols-1 gap-6 lg:grid-cols-[1.7fr_1fr]">
           <figure class="reveal rounded-2xl border border-line bg-panel p-3">
             <h3 id="lake-map-title" class="sr-only">Schematic map of lakes in and around Hyderabad</h3>
             <!-- The SVG map is inserted here by lake-map.js -->
@@ -328,9 +329,9 @@
             </div>
             <figcaption class="flex flex-wrap items-center gap-x-5 gap-y-2 px-2 pt-3 text-sm">
               <span class="flex items-center gap-2"><span aria-hidden="true" class="inline-block h-3 w-5 rounded-full bg-[#1CA9BE]"></span>Lake</span>
-              <span class="flex items-center gap-2"><span aria-hidden="true" class="inline-block h-3 w-3 rounded-full border-2 border-mint"></span>Lake Sentry field notes</span>
-              <span class="flex items-center gap-2"><span aria-hidden="true" class="inline-block h-3 w-5 rounded-full border border-dashed border-txt-3"></span>Location to be verified</span>
-              <span class="text-txt-3">Schematic map, not to scale.</span>
+              <span class="flex items-center gap-2"><span aria-hidden="true" class="inline-block h-3 w-3 rounded-full border-2 border-mint"></span>Pulsing ring: we hold data on this lake</span>
+              <span class="flex items-center gap-2"><span aria-hidden="true" class="inline-block h-3 w-5 rounded-full border border-dashed border-txt-3"></span>Position is a guess</span>
+              <span class="text-txt-3">Schematic map, not to scale. Lakes without a position are in the list.</span>
             </figcaption>
           </figure>
 

@@ -15,7 +15,7 @@ Vercel is connected to the repo, so it redeploys automatically after each commit
 | File | Page | What's on it |
 |---|---|---|
 | `index.html` | Home | An interactive lake: ripples follow your cursor, trash floats, fish swim away from you, lily pads and reeds sway, and a mini Lake Sentry robot collects trash. Plus the Prevent/Remove/Connect plan, count-up statistics and the awareness funnel |
-| `about.html` | About | What it does, the problem, the research (Hussain Sagar timeline, interview notes), an interactive V1 diagram, the engineering iteration, V2, the awareness campaign, the LakeSentry.in platform, stakeholders, impact targets, risks, feasibility, SDGs, the team and sources |
+| `about.html` | About | A short page: the three parts of the project, the problem, an interactive V1 diagram, what's next, who it's for, the SDGs and the team. Impact targets, risks, feasibility and sources are in collapsed “More details” boxes |
 | `app.html` | Lake Explorer App | Four tools in tabs: **Lake stories** (share posts and photos), **Initiatives** (submit a clean-up effort), the **Lake map** with lake pages, and the **V1 simulator** |
 | `admin.html` | Admin panel | For the Lake Sentry team. Review, approve, reject, unpublish or delete initiatives and lake stories. Open it with the 🔒 **Admin** button in the top-left of any page |
 | `get-involved.html` | Get involved | “Answer the survey” button (opens the Google Form), animated survey results (headline and detailed), feedback themes, six actions and partner information |
@@ -34,9 +34,18 @@ Vercel is connected to the repo, so it redeploys automatically after each commit
 | `tabs.js` | The tool tabs on the App page and admin panel |
 | `store.js`, `cards.js` | Where submissions are saved, and how they're drawn (shared by the App page and admin panel) |
 | `admin-auth.js`, `admin.js` | The admin login (including the password) and the admin panel |
-| `v1-prototype.png`, `the-rollers.png` | Photos of the V1 prototype and “The Rollers” |
+| `v1-prototype.png`, `the-rollers.png`, `team-photo.jpg` | Photos of the V1 prototype, “The Rollers” and the team |
 | `404.html` | The page visitors see if a link is broken |
 | `placeholder.svg`, `favicon.svg` | The image placeholder and the browser-tab icon |
+
+## Lake reports (Lake Explorer → Lake map)
+
+Click a lake on the map, or in the list, to open its full report: where things stand, recovery figures with sources, ongoing / upcoming / past initiatives, key findings and timeline, field notes, photos, visitor stories, and a list of sources. Every lake has a shareable link, such as `app.html?lake=hussain-sagar#map`.
+
+- **Edit the facts in `lakes-data.js`.** The top of that file explains every field. Add a figure to a lake's `stats` and cite a source from `LAKE_SENTRY_SOURCES`; the source shows next to the figure and in the report's source list. Only add numbers you can cite.
+- **Initiatives and stories are automatic.** Anything approved in the Admin panel appears in the right lake's report. An initiative with no date counts as *ongoing*, a future date as *upcoming* and a past date as *past*.
+- Lakes with no `lat`/`lon` (Kotha Cheruvu and Barla Kunta for now) are listed next to the map but not drawn on it. Add their coordinates in `lakes-data.js` to put them on the map.
+- Map positions are approximate. The map is schematic, not to scale.
 
 ## Light / dark mode
 
