@@ -15,8 +15,9 @@ Vercel is connected to the repo, so it redeploys automatically after each commit
 | File | Page | What's on it |
 |---|---|---|
 | `index.html` | Home | An interactive lake: ripples follow your cursor, trash floats, fish swim away from you, lily pads and reeds sway, and a mini Lake Sentry robot collects trash. Plus the Prevent/Remove/Connect plan, count-up statistics and the awareness funnel |
-| `about.html` | About | A short page: the three parts of the project, the problem, an interactive V1 diagram, what's next, who it's for, the SDGs and the team. Impact targets, risks, feasibility and sources are in collapsed “More details” boxes |
+| `about.html` | About | A short page: the three parts of the project, the problem, an interactive V1 diagram, what's next, who it's for, the SDGs. Impact targets, risks, feasibility and sources are in collapsed “More details” boxes |
 | `app.html` | Lake Explorer App | Four tools in tabs: **Lake stories** (share posts and photos), **Initiatives** (submit a clean-up effort), the **Lake map** with lake pages, and the **V1 simulator** |
+| `me.html` | About me | A short page about Akhil Chendur (photo and story), separate from the project's About page |
 | `admin.html` | Admin panel | For the Lake Sentry team. Review, approve, reject, unpublish or delete initiatives and lake stories. Open it with the 🔒 **Admin** button in the top-left of any page |
 | `get-involved.html` | Get involved | “Answer the survey” button (opens the Google Form), animated survey results (headline and detailed), feedback themes, six actions and partner information |
 
@@ -54,7 +55,7 @@ The logo is in `logo-blue.png` (shown in light mode) and `logo-light.png` (the s
 
 The colours are built from the logo's blue, `#00279C`. In light mode it is the main accent, and in dark mode a lighter tint of it. All colours are at the top of `site.css`.
 
-To change how big the mini Lake Sentry robot is on the home-page lake, edit `BOT_SCALE` near the top of `lake-hero.js` (1 is the original small size; it is now about 3, much bigger than any trash piece). The basket holds `BOT_CAPACITY` (2) pieces, then the robot unloads at the green dock near the lake edge. The header logo size is the `h-10 ... sm:h-14` classes on the logo images in each page.
+To change how big the mini Lake Sentry robot is on the home-page lake, edit `BOT_SCALE` near the top of `lake-hero.js` (1 is the original small size; it is now about 2.4, much bigger than any trash piece). The basket holds `BOT_CAPACITY` (2) pieces; it keeps cruising the lake non-stop, tipping pieces into onboard storage so it never has to return anywhere. Floating weed patches and extra reeds are drawn around the lake. The header logo size is the `h-10 ... sm:h-14` classes on the logo images in each page.
 
 ## Official maps (Bhuvan)
 

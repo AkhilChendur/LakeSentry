@@ -67,8 +67,8 @@
 
   // How big the mini Lake Sentry robot is drawn (1 = the original small size).
   // It is drawn much bigger than any piece of trash, and its basket holds
-  // at most BOT_CAPACITY pieces before it must unload at the dock.
-  const BOT_SCALE = isSmallScreen ? 2.2 : 3.2;
+  // at most BOT_CAPACITY pieces before the next one can be picked up.
+  const BOT_SCALE = isSmallScreen ? 1.7 : 2.4;
   const BOT_CAPACITY = 2;
 
   /* ---------- State ---------- */
@@ -81,7 +81,7 @@
   let bot = null;
   let collected = 0;
   let running = true;
-  let fish = [], lilies = [], reeds = [];
+  let fish = [], lilies = [], reeds = [], weeds = [];
   let pointer = null;                 // where the cursor is over the lake (or null)
   let visible = true;
   let rafId = null;
@@ -429,19 +429,13 @@
      Steers towards the nearest piece of trash and "collects" it.
      ============================================================= */
   function makeBot() {
-    return { x: W * 0.78, y: H * 0.7, angle: Math.PI, paddle: 0, target: null, wakeTimer: 0, cargo: [] };
-  }
-
-  // Where the robot empties its basket (a small dock near the lake edge).
-  function dockSpot() {
-    return { x: W * 0.9, y: H * 0.86 };
+    return { x: W * 0.78, y: H * 0.7, angle: Math.PI, paddle: 0, target: null, wakeTimer: 0, cargo: [], unload: 0 };
   }
 
   function updateBot(time, dt) {
     // Find the nearest piece of trash that is fully on screen.
     let best = null, bestD = Infinity;
     const full = bot.cargo.length >= BOT_CAPACITY;
-    const dock = dockSpot();
     trash.forEach(function (p) {
       if (full) return;
       if (p.x < 20 || p.x > W - 20) return;
@@ -451,18 +445,22 @@
     bot.target = best;
 
     let speed = SETTINGS.botSpeed * 0.4;
+    // The robot never stops: pieces on the conveyor are tipped into the
+    // onboard storage one at a time, freeing a slot for the next piece.
+    bot.unload += dt;
+    if (bot.cargo.length && bot.unload > 150) { bot.cargo.shift(); bot.unload = 0; }
+    if (!bot.cargo.length) bot.unload = 0;
     if (full) {
-      // Basket full: head to the dock and unload.
-      const wanted = Math.atan2(dock.y - bot.y, dock.x - bot.x);
+      // Both slots busy: keep cruising (gentle S-curves, turning back from edges).
+      let wanted = bot.angle + Math.sin(time * 0.0012) * 0.5;
+      if (bot.x < 60 * BOT_SCALE || bot.x > W - 60 * BOT_SCALE || bot.y < 60 * BOT_SCALE || bot.y > H - 50 * BOT_SCALE) {
+        wanted = Math.atan2(H * 0.55 - bot.y, W * 0.6 - bot.x);
+      }
       let diff = wanted - bot.angle;
       while (diff > Math.PI) diff -= Math.PI * 2;
       while (diff < -Math.PI) diff += Math.PI * 2;
       bot.angle += Math.max(-0.03, Math.min(0.03, diff)) * dt;
-      speed = SETTINGS.botSpeed * (Math.abs(diff) > 1.2 ? 0.35 : 1);
-      if (Math.hypot(dock.x - bot.x, dock.y - bot.y) < 22 * BOT_SCALE) {
-        bot.cargo = [];
-        disturb(dock.x, dock.y, 2.5, 7);
-      }
+      speed = SETTINGS.botSpeed * 0.7;
     } else if (best) {
       // Turn gradually towards the target (like steering with two paddle wheels).
       const wanted = Math.atan2(best.y - bot.y, best.x - bot.x);
@@ -503,25 +501,7 @@
     }
   }
 
-  function drawDock() {
-    const d = dockSpot();
-    ctx.save();
-    ctx.translate(d.x * dpr, d.y * dpr);
-    ctx.scale(dpr * BOT_SCALE / 1.7, dpr * BOT_SCALE / 1.7);
-    ctx.fillStyle = 'rgba(0, 18, 26, 0.35)';
-    ctx.fillRect(-26, -18, 56, 44);
-    ctx.fillStyle = '#5D6B73';
-    ctx.fillRect(-28, -22, 56, 40);
-    ctx.fillStyle = '#2E7D5B';
-    ctx.fillRect(-24, -18, 48, 32);
-    ctx.strokeStyle = 'rgba(255,255,255,0.7)';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(-24, -18, 48, 32);
-    ctx.restore();
-  }
-
   function drawBot() {
-    drawDock();
     ctx.save();
     ctx.translate(bot.x * dpr, bot.y * dpr);
     ctx.rotate(bot.angle);
@@ -676,9 +656,47 @@
     ctx.restore();
   }
 
+  // Floating weed patches (like water hyacinth) dotted about the lake.
+  function makeWeeds() {
+    const list = [];
+    const n = isSmallScreen ? 5 : 10;
+    for (let i = 0; i < n; i++) {
+      list.push({
+        x: rand(W * 0.04, W * 0.96), y: rand(H * 0.18, H * 0.94),
+        r: rand(14, 30), phase: rand(0, 10), angle: rand(0, Math.PI * 2),
+        leaves: 5 + Math.floor(rand(0, 4)), bloom: Math.random() < 0.3,
+      });
+    }
+    return list;
+  }
+
+  function drawWeed(wd, time) {
+    const w = sampleWater(wd.x, wd.y);
+    const bob = Math.sin(time * 0.0009 + wd.phase) * 1.2 - w.h * 0.3;
+    ctx.save();
+    ctx.translate(wd.x * dpr, (wd.y + bob) * dpr);
+    ctx.rotate(wd.angle + Math.sin(time * 0.0005 + wd.phase) * 0.12);
+    ctx.scale(dpr, dpr);
+    for (let k = 0; k < wd.leaves; k++) {
+      const a = (k / wd.leaves) * Math.PI * 2;
+      const len = wd.r * (0.7 + 0.3 * ((k * 7) % 3) / 2);
+      ctx.fillStyle = k % 2 ? 'rgba(52, 140, 78, 0.9)' : 'rgba(78, 168, 92, 0.9)';
+      ctx.beginPath();
+      ctx.ellipse(Math.cos(a) * len * 0.5, Math.sin(a) * len * 0.5, len * 0.5, len * 0.26, a, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.fillStyle = 'rgba(30, 100, 60, 0.95)';
+    ctx.beginPath(); ctx.arc(0, 0, wd.r * 0.22, 0, Math.PI * 2); ctx.fill();
+    if (wd.bloom) {
+      ctx.fillStyle = '#C9A7F0';
+      ctx.beginPath(); ctx.arc(0, 0, wd.r * 0.2, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.restore();
+  }
+
   function makeReeds() {
     const list = [];
-    const clusters = isSmallScreen ? 3 : 6;
+    const clusters = isSmallScreen ? 5 : 10;
     for (let i = 0; i < clusters; i++) {
       const left = i % 2 === 0;
       list.push({
@@ -768,6 +786,7 @@
   function drawScene() {
     drawWater(clock);
     fish.forEach(drawFish);
+    weeds.forEach(function (wd) { drawWeed(wd, clock); });
     lilies.forEach(function (l) { drawLily(l, clock); });
     trash.forEach(function (p) { drawTrash(p, clock); });
     drawBot();
@@ -847,6 +866,7 @@
   for (let i = 0; i < SETTINGS.fishCount; i++) fish.push(makeFish());
   for (let i = 0; i < (isSmallScreen ? 2 : 5); i++) lilies.push(makeLily(i));
   reeds = makeReeds();
+  weeds = makeWeeds();
 
   // Pre-run a few small ripples so the still picture isn't a flat lake.
   for (let i = 0; i < 10; i++) disturb(rand(0, W), rand(0, H), 1.4, rand(3, 6));
