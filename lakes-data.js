@@ -59,6 +59,18 @@ window.LAKE_SENTRY_SOURCES = {
   'keystone-visits': {
     name: 'Site visits and photographs by Keystone International School students',
   },
+  'bhuvan-water-bodies': {
+    name: 'Bhuvan (ISRO, National Remote Sensing Centre): Water Resources, including the Water Bodies Information System',
+    url: 'https://www.nrsc.gov.in/nrscnew/Services_Bhuvan_WaterResources.php',
+  },
+  'bhuvan': {
+    name: 'Bhuvan geoportal (ISRO, National Remote Sensing Centre)',
+    url: 'https://bhuvan.nrsc.gov.in',
+  },
+  'india-wris': {
+    name: 'India WRIS: Water Resources Information System of India',
+    url: 'https://indiawris.gov.in',
+  },
   'sandrp': {
     name: 'SANDRP, 17 Feb 2026: “Hyderabad Lakes 2025: Degradation Continues Amid HYDRAA Efforts”',
   },
@@ -69,6 +81,11 @@ window.LAKE_SENTRY_SOURCES = {
 
 /* Reading about Hyderabad's lakes in general (shown on every report). */
 window.LAKE_SENTRY_FURTHER_READING = ['sandrp', 'toi'];
+
+/* Official government maps where exact lake boundaries, positions and
+   satellite-measured water-spread area can be checked. Lake Sentry's own
+   map is a simplified drawing, so every report points to these. */
+window.LAKE_SENTRY_MAP_SOURCES = ['bhuvan-water-bodies', 'bhuvan', 'india-wris'];
 
 window.LAKE_SENTRY_LAKES = [
   {

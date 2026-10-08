@@ -36,7 +36,8 @@ Vercel is connected to the repo, so it redeploys automatically after each commit
 | `admin-auth.js`, `admin.js` | The admin login (including the password) and the admin panel |
 | `v1-prototype.png`, `the-rollers.png`, `team-photo.jpg` | Photos of the V1 prototype, “The Rollers” and the team |
 | `404.html` | The page visitors see if a link is broken |
-| `placeholder.svg`, `favicon.svg` | The image placeholder and the browser-tab icon |
+| `logo-blue.png`, `logo-light.png`, `favicon.png`, `apple-touch-icon.png`, `og-image.png` | The logo, browser-tab icon and share preview |
+| `placeholder.svg` | The image placeholder |
 
 ## Lake reports (Lake Explorer → Lake map)
 
@@ -46,6 +47,16 @@ Click a lake on the map, or in the list, to open its full report: where things s
 - **Initiatives and stories are automatic.** Anything approved in the Admin panel appears in the right lake's report. An initiative with no date counts as *ongoing*, a future date as *upcoming* and a past date as *past*.
 - Lakes with no `lat`/`lon` (Kotha Cheruvu and Barla Kunta for now) are listed next to the map but not drawn on it. Add their coordinates in `lakes-data.js` to put them on the map.
 - Map positions are approximate. The map is schematic, not to scale.
+
+## Logo and colours
+
+The logo is in `logo-blue.png` (shown in light mode) and `logo-light.png` (the same logo in a light tint, shown in dark mode). Both have transparent backgrounds. `favicon.png` and `apple-touch-icon.png` are the splash icon, and `og-image.png` is the picture shown when the site is shared. To change the logo, replace those files (keep the names).
+
+The colours are built from the logo's blue, `#00279C`. In light mode it is the main accent, and in dark mode a lighter tint of it. All colours are at the top of `site.css`.
+
+## Official maps (Bhuvan)
+
+The map in the Lake Explorer is a simplified drawing, so the site points to the government's official maps for exact lake boundaries and water-spread area: [Bhuvan](https://bhuvan.nrsc.gov.in) (ISRO's National Remote Sensing Centre) and [India WRIS](https://indiawris.gov.in). The links appear under the map, in every lake report, and in the sources. They are listed in `lakes-data.js` (`LAKE_SENTRY_SOURCES` and `LAKE_SENTRY_MAP_SOURCES`).
 
 ## Light / dark mode
 

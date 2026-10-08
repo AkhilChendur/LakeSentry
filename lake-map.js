@@ -24,6 +24,7 @@
   const lakes = window.LAKE_SENTRY_LAKES || [];
   const SOURCES = window.LAKE_SENTRY_SOURCES || {};
   const FURTHER = window.LAKE_SENTRY_FURTHER_READING || [];
+  const MAP_SOURCES = window.LAKE_SENTRY_MAP_SOURCES || [];
   const store = window.LakeSentryStore;
   const cards = window.LakeSentryCards;
   const mapBox = document.getElementById('lake-map');
@@ -134,12 +135,9 @@
         'aria-label': lake.name + ' — ' + lake.area,
       });
       g.appendChild(el('path', {
-        class: 'lake-shape',
+        class: 'lake-shape' + (lake.positionUnknown ? ' is-guess' : ''),
         d: lakePath(p.x, p.y, 10 + lake.size * 12, lake.id),
-        fill: lake.positionUnknown ? 'rgba(28,169,190,0.35)' : '#1CA9BE',
-        stroke: lake.positionUnknown ? '#96A8CC' : '#38E4F0',
         'stroke-width': 1.5,
-        'stroke-dasharray': lake.positionUnknown ? '5 4' : '',
       }));
       // Lakes we hold data on get a gently pulsing ring.
       if (lake.status === 'documented') {
@@ -437,6 +435,20 @@
       });
       now.appendChild(fl);
     }
+    // Pointer to the official maps (exact boundaries and water-spread area)
+    const maps = el2('div', 'mt-5 rounded-xl border border-aqua/40 bg-aqua/10 p-4 text-sm');
+    maps.append(el2('p', 'font-semibold text-txt-1', '📍 Exact location and water-spread area'),
+      el2('p', 'mt-1', 'Lake Sentry’s map is a simplified drawing. For exact boundaries, check the government’s official water-body maps:'));
+    const ml = el2('p', 'mt-2 flex flex-wrap gap-x-5 gap-y-1 font-semibold');
+    [['bhuvan', 'Bhuvan (ISRO) ↗'], ['india-wris', 'India WRIS ↗']].forEach(function (m) {
+      const src = SOURCES[m[0]]; if (!src) return;
+      const a = el2('a', 'text-aqua underline underline-offset-4 hover:text-mint', m[1]);
+      a.href = src.url; a.target = '_blank'; a.rel = 'noopener noreferrer';
+      a.append(el2('span', 'sr-only', ' (opens in a new tab)'));
+      ml.appendChild(a);
+    });
+    maps.appendChild(ml);
+    now.appendChild(maps);
     ov.append(fig, now);
     art.appendChild(ov);
 
@@ -595,6 +607,15 @@
     } else {
       srcSec.appendChild(el2('p', 'mt-1 text-sm italic text-txt-3', 'No sources yet: this report has no cited figures so far.'));
     }
+    srcSec.appendChild(el2('p', 'mt-4 text-sm text-txt-3', 'Official maps for exact lake boundaries and positions:'));
+    const om = el2('ul', 'mt-2 list-disc space-y-1 pl-6 text-sm');
+    MAP_SOURCES.forEach(function (id) {
+      const src = SOURCES[id]; if (!src) return;
+      const li = el2('li');
+      li.append(src.url ? externalLink(src.url, src.name) : document.createTextNode(src.name));
+      om.appendChild(li);
+    });
+    srcSec.appendChild(om);
     srcSec.appendChild(el2('p', 'mt-4 text-sm text-txt-3', 'Further reading on Hyderabad’s lakes in general:'));
     const fr = el2('ul', 'mt-2 list-disc space-y-1 pl-6 text-sm');
     FURTHER.forEach(function (id) {

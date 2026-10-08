@@ -12,6 +12,8 @@
 
 /* ---------------------------------------------------------------------
    0. THEME COLOURS (light / dark mode)
+   The palette is built from the logo's blue (#00279C): in light mode
+   it is the main accent as-is, and in dark mode a lighter tint of it.
    Each colour is stored as "R G B" numbers so Tailwind can add
    transparency (e.g. bg-ink/80). tailwind-config.js maps class names
    like `text-aqua` to these variables. To tweak a colour, change it
@@ -25,12 +27,12 @@
   --deep2: 15 28 66;      /* #0F1C42 */
   --panel: 19 31 66;      /* #131F42 cards */
   --panel2: 24 37 72;     /* #182548 */
-  --aqua: 56 228 240;     /* #38E4F0 */
-  --reef: 34 195 166;     /* #22C3A6 */
+  --aqua: 128 158 255;    /* #809EFF  main accent: a light tint of the logo blue */
+  --reef: 90 200 250;     /* #5AC8FA  sky blue (water highlights) */
   --mint: 60 232 160;     /* #3CE8A0 */
   --sun: 255 193 99;      /* #FFC163 */
   --coral: 255 122 138;   /* #FF7A8A */
-  --onaccent: 0 35 42;    /* dark text on bright buttons */
+  --onaccent: 4 18 46;    /* dark text on bright buttons */
   --txt1: 251 253 255;
   --txt2: 205 216 237;
   --txt3: 150 168 204;
@@ -38,7 +40,7 @@
   --linehi: rgba(148, 196, 255, 0.34);
   --focus: #FDE047;       /* keyboard focus ring */
   --headline-from: #FFFFFF; /* start/end colour of the shimmering headlines */
-  --glow: 56 228 240;     /* card hover glow */
+  --glow: 128 158 255;    /* card hover glow */
 }
 [data-theme="light"] {
   color-scheme: light;
@@ -47,9 +49,9 @@
   --deep2: 221 232 241;   /* #DDE8F1 */
   --panel: 255 255 255;
   --panel2: 255 255 255;
-  --aqua: 9 97 119;       /* #096177 — darker so text stays readable */
-  --reef: 13 112 101;     /* #0D7065 */
-  --mint: 8 112 74;       /* #08704A */
+  --aqua: 0 39 156;       /* #00279C  the logo blue */
+  --reef: 0 100 154;      /* #00649A  sky blue */
+  --mint: 6 100 66;       /* #066442 */
   --sun: 134 64 4;        /* #864004 */
   --coral: 180 22 58;     /* #B4163A */
   --onaccent: 255 255 255; /* white text on the darker buttons */
@@ -59,8 +61,8 @@
   --line: rgba(15, 40, 80, 0.14);
   --linehi: rgba(15, 40, 80, 0.3);
   --focus: #0B1330;
-  --headline-from: #0B1330;
-  --glow: 9 97 119;
+  --headline-from: #00279C;
+  --glow: 0 39 156;
 }
 
 /* Smoothly fade colours when the theme changes */
@@ -133,6 +135,12 @@ html:has([data-tabs]) {
   top: 1rem;
 }
 
+/* The logo comes in two colours. Dark mode shows the light one and
+   light mode shows the blue one. (logo-light.png / logo-blue.png) */
+.logo-for-light { display: none; }
+[data-theme="light"] .logo-for-light { display: block; }
+[data-theme="light"] .logo-for-dark { display: none; }
+
 /* Small mono "eyebrow" label above headings, with a short aqua line. */
 .eyebrow {
   display: flex;
@@ -167,7 +175,7 @@ html:has([data-tabs]) {
   width: 100%;
   transform-origin: 0 50%;
   transform: scaleX(0);
-  background: linear-gradient(90deg, #38E4F0, #22C3A6, #3CE8A0);
+  background: linear-gradient(90deg, rgb(var(--aqua)), rgb(var(--reef)), rgb(var(--mint)));
 }
 
 /* Headline text with a slowly moving "light on water" gradient */
@@ -238,8 +246,8 @@ html:has([data-tabs]) {
   position: absolute;
   bottom: -20px;
   border-radius: 50%;
-  border: 1px solid rgba(56, 228, 240, 0.45);
-  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.45), rgba(56,228,240,0.08) 60%);
+  border: 1px solid rgb(var(--glow) / 0.45);
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.45), rgb(var(--glow) / 0.08) 60%);
   pointer-events: none;
   animation: bubble-rise linear infinite;
 }
@@ -258,9 +266,9 @@ html:has([data-tabs]) {
   pointer-events: none;
   opacity: 0.55;
   background:
-    radial-gradient(40% 30% at 20% 30%, rgba(56, 228, 240, 0.10), transparent 70%),
-    radial-gradient(35% 25% at 80% 20%, rgba(60, 232, 160, 0.08), transparent 70%),
-    radial-gradient(30% 30% at 60% 80%, rgba(34, 195, 166, 0.10), transparent 70%);
+    radial-gradient(40% 30% at 20% 30%, rgb(var(--glow) / 0.10), transparent 70%),
+    radial-gradient(35% 25% at 80% 20%, rgb(var(--reef) / 0.09), transparent 70%),
+    radial-gradient(30% 30% at 60% 80%, rgb(var(--glow) / 0.10), transparent 70%);
   background-size: 180% 180%;
   animation: caustics 22s ease-in-out infinite alternate;
 }
@@ -278,7 +286,7 @@ html:has([data-tabs]) {
   height: 16px;
   margin: -8px 0 0 -8px;
   border-radius: 50%;
-  border: 2px solid rgba(56, 228, 240, 0.8);
+  border: 2px solid rgb(var(--glow) / 0.8);
   pointer-events: none;
   animation: click-ripple 0.9s ease-out forwards;
 }
@@ -315,6 +323,17 @@ html:has([data-tabs]) {
 [data-bar] {
   width: 0;
   transition: width 1.4s cubic-bezier(.2,.7,.3,1);
+}
+
+/* Lake shapes on the map (colours follow the theme) */
+.lake-shape {
+  fill: rgb(var(--aqua) / 0.55);
+  stroke: rgb(var(--aqua));
+}
+.lake-shape.is-guess {
+  fill: rgb(var(--aqua) / 0.2);
+  stroke: rgb(var(--txt3));
+  stroke-dasharray: 5 4;
 }
 
 /* Pulsing ring used on the map for lakes with field notes */
