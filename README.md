@@ -54,6 +54,8 @@ The logo is in `logo-blue.png` (shown in light mode) and `logo-light.png` (the s
 
 The colours are built from the logo's blue, `#00279C`. In light mode it is the main accent, and in dark mode a lighter tint of it. All colours are at the top of `site.css`.
 
+To change how big the mini Lake Sentry robot is on the home-page lake, edit `BOT_SCALE` near the top of `lake-hero.js` (1 is the original small size). The header logo size is the `h-10 ... sm:h-14` classes on the logo images in each page.
+
 ## Official maps (Bhuvan)
 
 The map in the Lake Explorer is a simplified drawing, so the site points to the government's official maps for exact lake boundaries and water-spread area: [Bhuvan](https://bhuvan.nrsc.gov.in) (ISRO's National Remote Sensing Centre) and [India WRIS](https://indiawris.gov.in). The links appear under the map, in every lake report, and in the sources. They are listed in `lakes-data.js` (`LAKE_SENTRY_SOURCES` and `LAKE_SENTRY_MAP_SOURCES`).

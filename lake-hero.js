@@ -65,6 +65,9 @@
   const WATER_MID = [18, 66, 112];
   const WATER_BOTTOM = [11, 19, 48];
 
+  // How big the mini Lake Sentry robot is drawn (1 = the original small size).
+  const BOT_SCALE = isSmallScreen ? 1.4 : 1.7;
+
   /* ---------- State ---------- */
   let W = 0, H = 0, dpr = 1;          // canvas size in CSS pixels + pixel ratio
   let cell = 4, cols = 0, rows = 0;   // wave grid: size of a cell and grid dimensions
@@ -447,9 +450,9 @@
       speed = SETTINGS.botSpeed * (Math.abs(diff) > 1.2 ? 0.35 : 1);
 
       // Close enough to the front conveyor? Collect it!
-      const noseX = bot.x + Math.cos(bot.angle) * 26;
-      const noseY = bot.y + Math.sin(bot.angle) * 26;
-      if (Math.hypot(best.x - noseX, best.y - noseY) < 22) {
+      const noseX = bot.x + Math.cos(bot.angle) * 26 * BOT_SCALE;
+      const noseY = bot.y + Math.sin(bot.angle) * 26 * BOT_SCALE;
+      if (Math.hypot(best.x - noseX, best.y - noseY) < 22 * BOT_SCALE) {
         trash.splice(trash.indexOf(best), 1);
         collected += 1;
         if (counterEl) counterEl.textContent = String(collected);
@@ -463,15 +466,15 @@
 
     bot.x += Math.cos(bot.angle) * speed * dt;
     bot.y += Math.sin(bot.angle) * speed * dt;
-    bot.x = Math.max(30, Math.min(W - 30, bot.x));
-    bot.y = Math.max(40, Math.min(H - 30, bot.y));
+    bot.x = Math.max(30 * BOT_SCALE, Math.min(W - 30 * BOT_SCALE, bot.x));
+    bot.y = Math.max(40 * BOT_SCALE, Math.min(H - 30 * BOT_SCALE, bot.y));
     bot.paddle += 0.12 * dt * (speed / SETTINGS.botSpeed);
 
     // Leave a gentle wake behind the robot.
     bot.wakeTimer += dt;
     if (bot.wakeTimer > 5) {
       bot.wakeTimer = 0;
-      disturb(bot.x - Math.cos(bot.angle) * 26, bot.y - Math.sin(bot.angle) * 26, 1.6, 2.5);
+      disturb(bot.x - Math.cos(bot.angle) * 26 * BOT_SCALE, bot.y - Math.sin(bot.angle) * 26 * BOT_SCALE, 1.6, 2.5);
     }
   }
 
@@ -479,7 +482,7 @@
     ctx.save();
     ctx.translate(bot.x * dpr, bot.y * dpr);
     ctx.rotate(bot.angle);
-    ctx.scale(dpr, dpr);
+    ctx.scale(dpr * BOT_SCALE, dpr * BOT_SCALE);
     // shadow
     ctx.fillStyle = 'rgba(0, 18, 26, 0.35)';
     ctx.fillRect(-24, -15, 52, 34);
