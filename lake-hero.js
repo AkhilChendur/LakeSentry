@@ -66,7 +66,10 @@
   const WATER_BOTTOM = [11, 19, 48];
 
   // How big the mini Lake Sentry robot is drawn (1 = the original small size).
-  const BOT_SCALE = isSmallScreen ? 1.4 : 1.7;
+  // It is drawn much bigger than any piece of trash, and its basket holds
+  // at most BOT_CAPACITY pieces before it must unload at the dock.
+  const BOT_SCALE = isSmallScreen ? 2.2 : 3.2;
+  const BOT_CAPACITY = 2;
 
   /* ---------- State ---------- */
   let W = 0, H = 0, dpr = 1;          // canvas size in CSS pixels + pixel ratio
@@ -426,21 +429,41 @@
      Steers towards the nearest piece of trash and "collects" it.
      ============================================================= */
   function makeBot() {
-    return { x: W * 0.78, y: H * 0.7, angle: Math.PI, paddle: 0, target: null, wakeTimer: 0 };
+    return { x: W * 0.78, y: H * 0.7, angle: Math.PI, paddle: 0, target: null, wakeTimer: 0, cargo: [] };
+  }
+
+  // Where the robot empties its basket (a small dock near the lake edge).
+  function dockSpot() {
+    return { x: W * 0.9, y: H * 0.86 };
   }
 
   function updateBot(time, dt) {
     // Find the nearest piece of trash that is fully on screen.
     let best = null, bestD = Infinity;
+    const full = bot.cargo.length >= BOT_CAPACITY;
+    const dock = dockSpot();
     trash.forEach(function (p) {
+      if (full) return;
       if (p.x < 20 || p.x > W - 20) return;
-      const d = Math.hypot(p.x - bot.x, p.y - bot.y);
+      const d = Math.hypot(p.x - (bot.x + Math.cos(bot.angle) * 20 * BOT_SCALE), p.y - (bot.y + Math.sin(bot.angle) * 20 * BOT_SCALE));
       if (d < bestD) { bestD = d; best = p; }
     });
     bot.target = best;
 
     let speed = SETTINGS.botSpeed * 0.4;
-    if (best) {
+    if (full) {
+      // Basket full: head to the dock and unload.
+      const wanted = Math.atan2(dock.y - bot.y, dock.x - bot.x);
+      let diff = wanted - bot.angle;
+      while (diff > Math.PI) diff -= Math.PI * 2;
+      while (diff < -Math.PI) diff += Math.PI * 2;
+      bot.angle += Math.max(-0.03, Math.min(0.03, diff)) * dt;
+      speed = SETTINGS.botSpeed * (Math.abs(diff) > 1.2 ? 0.35 : 1);
+      if (Math.hypot(dock.x - bot.x, dock.y - bot.y) < 22 * BOT_SCALE) {
+        bot.cargo = [];
+        disturb(dock.x, dock.y, 2.5, 7);
+      }
+    } else if (best) {
       // Turn gradually towards the target (like steering with two paddle wheels).
       const wanted = Math.atan2(best.y - bot.y, best.x - bot.x);
       let diff = wanted - bot.angle;
@@ -450,10 +473,12 @@
       speed = SETTINGS.botSpeed * (Math.abs(diff) > 1.2 ? 0.35 : 1);
 
       // Close enough to the front conveyor? Collect it!
-      const noseX = bot.x + Math.cos(bot.angle) * 26 * BOT_SCALE;
-      const noseY = bot.y + Math.sin(bot.angle) * 26 * BOT_SCALE;
-      if (Math.hypot(best.x - noseX, best.y - noseY) < 22 * BOT_SCALE) {
+      const noseX = bot.x + Math.cos(bot.angle) * 22 * BOT_SCALE;
+      const noseY = bot.y + Math.sin(bot.angle) * 22 * BOT_SCALE;
+      if (Math.hypot(best.x - noseX, best.y - noseY) < 14 * BOT_SCALE) {
         trash.splice(trash.indexOf(best), 1);
+        bot.cargo.push(best);
+        best.angle = rand(-0.5, 0.5);
         collected += 1;
         if (counterEl) counterEl.textContent = String(collected);
         disturb(best.x, best.y, 2.5, 7); // a little splash
@@ -478,7 +503,25 @@
     }
   }
 
+  function drawDock() {
+    const d = dockSpot();
+    ctx.save();
+    ctx.translate(d.x * dpr, d.y * dpr);
+    ctx.scale(dpr * BOT_SCALE / 1.7, dpr * BOT_SCALE / 1.7);
+    ctx.fillStyle = 'rgba(0, 18, 26, 0.35)';
+    ctx.fillRect(-26, -18, 56, 44);
+    ctx.fillStyle = '#5D6B73';
+    ctx.fillRect(-28, -22, 56, 40);
+    ctx.fillStyle = '#2E7D5B';
+    ctx.fillRect(-24, -18, 48, 32);
+    ctx.strokeStyle = 'rgba(255,255,255,0.7)';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(-24, -18, 48, 32);
+    ctx.restore();
+  }
+
   function drawBot() {
+    drawDock();
     ctx.save();
     ctx.translate(bot.x * dpr, bot.y * dpr);
     ctx.rotate(bot.angle);
@@ -505,6 +548,14 @@
     for (let x = 12 + shift; x < 28; x += 4) {
       ctx.beginPath(); ctx.moveTo(x, -12); ctx.lineTo(x, 12); ctx.stroke();
     }
+    // pieces riding in the basket (two slots)
+    bot.cargo.forEach(function (p, i) {
+      ctx.save();
+      ctx.translate(-15 + i * 14, 0);
+      ctx.rotate(p.angle);
+      DRAW[p.type](11, p);
+      ctx.restore();
+    });
     // paddle wheels at the back — spinning
     ctx.strokeStyle = '#37474F';
     ctx.lineWidth = 2.5;

@@ -54,7 +54,7 @@ The logo is in `logo-blue.png` (shown in light mode) and `logo-light.png` (the s
 
 The colours are built from the logo's blue, `#00279C`. In light mode it is the main accent, and in dark mode a lighter tint of it. All colours are at the top of `site.css`.
 
-To change how big the mini Lake Sentry robot is on the home-page lake, edit `BOT_SCALE` near the top of `lake-hero.js` (1 is the original small size). The header logo size is the `h-10 ... sm:h-14` classes on the logo images in each page.
+To change how big the mini Lake Sentry robot is on the home-page lake, edit `BOT_SCALE` near the top of `lake-hero.js` (1 is the original small size; it is now about 3, much bigger than any trash piece). The basket holds `BOT_CAPACITY` (2) pieces, then the robot unloads at the green dock near the lake edge. The header logo size is the `h-10 ... sm:h-14` classes on the logo images in each page.
 
 ## Official maps (Bhuvan)
 
