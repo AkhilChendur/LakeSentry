@@ -112,7 +112,7 @@
       <!-- Bottom bar: counter + pause button (moving content must be pausable, WCAG 2.2.2) -->
       <div class="absolute inset-x-0 bottom-0 flex flex-wrap items-center justify-between gap-3 px-4 pb-5 sm:px-6">
         <p class="rounded-full border border-linehi bg-ink/80 px-4 py-2 font-mono text-sm text-txt-2 backdrop-blur">
-          Trash collected by the mini Lake Sentry: <strong id="lake-counter" class="font-semibold text-mint">0</strong>
+          Trash collected by the mini Lake Sentry: <strong id="lake-counter" class="font-semibold text-mint">0</strong> pieces · <strong id="lake-kg" class="font-semibold text-mint">0.00</strong> kg
         </p>
         <button id="lake-pause" type="button" class="inline-flex items-center gap-2 rounded-full border border-linehi bg-ink/80 px-4 py-2 text-sm font-medium text-txt-1 backdrop-blur transition hover:border-aqua hover:text-aqua">
           <svg data-icon-pause aria-hidden="true" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M6 4h3v12H6zM11 4h3v12h-3z" /></svg>
@@ -195,7 +195,7 @@
         </div>
 
         <figure class="reveal float-bob overflow-hidden rounded-2xl border border-linehi bg-white shadow-2xl">
-          <img src="v1-prototype.png" width="920" height="690" loading="lazy" class="h-auto w-full"
+          <img src="v1-prototype.png" width="920" height="690" class="h-auto w-full"
                alt="The Lake Sentry V1 prototype: a white CPVC pipe frame on thermocol floats, with a slanted mesh conveyor ramp at the front and two paddle wheels at the back." />
           <figcaption class="border-t border-line bg-panel px-5 py-3 text-sm text-txt-2">Lake Sentry V1: remote-controlled, built from CPVC pipe, and designed to be affordable and locally buildable.</figcaption>
         </figure>
@@ -267,8 +267,8 @@
     <div class="mx-auto grid max-w-6xl gap-10 px-4 py-16 sm:px-6 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
       <div>
         <a href="index.html" class="inline-block rounded">
-          <img src="logo-blue.png" width="533" height="180" alt="Lake Sentry home" class="logo-for-light h-16 w-auto" loading="lazy" />
-          <img src="logo-light.png" width="533" height="180" alt="Lake Sentry home" class="logo-for-dark h-16 w-auto" loading="lazy" />
+          <img src="logo-blue.png" width="533" height="180" alt="Lake Sentry home" class="logo-for-light h-16 w-auto" />
+          <img src="logo-light.png" width="533" height="180" alt="Lake Sentry home" class="logo-for-dark h-16 w-auto" />
         </a>
         <p class="mt-3 text-sm leading-relaxed">A student-led environmental project combining research, engineering and awareness to reduce floating waste in Hyderabad's urban lakes.</p>
       </div>
@@ -307,6 +307,6 @@
 
   <script src="site.js"></script>
   <script src="admin-auth.js"></script>
-  <script src="lake-hero.js?v=3"></script>
+  <script src="lake-hero.js?v=4"></script>
 </body>
 </html>

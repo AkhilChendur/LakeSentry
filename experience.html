@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Immersive lake — Lake Sentry (admin preview)</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="theme-color" content="#02040a" />
+  <link rel="icon" href="favicon.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    html { background: #02040a; }
+    body { margin: 0; background: #02040a; color: #E8EEF8; font-family: Inter, system-ui, sans-serif; line-height: 1.6; }
+    a { color: inherit; }
+    :focus-visible { outline: 3px solid #FFD36B; outline-offset: 3px; }
+    .skip { position: absolute; left: -999px; top: 8px; background: #fff; color: #000; padding: 8px 14px; border-radius: 6px; z-index: 100; }
+    .skip:focus { left: 8px; }
+    #gl { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+    .bar { position: fixed; inset: 0 0 auto 0; z-index: 20; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 18px; font-size: .9rem; }
+    .bar a { text-decoration: none; background: rgba(2,4,10,.6); border: 1px solid rgba(255,255,255,.25); border-radius: 999px; padding: 8px 16px; backdrop-filter: blur(8px); }
+    .bar a:hover { border-color: #7FB2FF; }
+    #hint { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); z-index: 20; font: 500 .8rem 'Space Grotesk', sans-serif; letter-spacing: .2em; text-transform: uppercase; color: #C9D6EE; background: rgba(2,4,10,.55); padding: 8px 16px; border-radius: 999px; transition: opacity .5s; }
+    #meter { position: fixed; right: 14px; top: 50%; transform: translateY(-50%); z-index: 20; width: 3px; height: 40vh; background: rgba(255,255,255,.18); border-radius: 3px; }
+    #meter i { position: absolute; left: 0; right: 0; top: 0; height: 0; background: #7FB2FF; border-radius: 3px; }
+    #spacer { height: 700vh; position: relative; }
+    .scene { position: fixed; inset: 0; z-index: 10; display: flex; flex-direction: column; justify-content: center; padding: 0 6vw; opacity: 0; pointer-events: none; transition: none; }
+    .scene.on { pointer-events: auto; }
+    .scene h2 { font: 700 clamp(2.6rem, 11vw, 9rem)/.95 'Space Grotesk', sans-serif; margin: 0; letter-spacing: -.03em; text-shadow: 0 6px 40px rgba(0,0,0,.6); }
+    .scene p { font-size: clamp(1.05rem, 2.2vw, 1.6rem); max-width: 34ch; margin: 1.2rem 0 0; color: #DDE7F8; text-shadow: 0 2px 20px rgba(0,0,0,.8); }
+    .scene .cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 2rem; }
+    .scene .cta a { text-decoration: none; font-weight: 600; padding: 14px 26px; border-radius: 10px; border: 1px solid rgba(255,255,255,.4); background: rgba(2,4,10,.55); backdrop-filter: blur(8px); }
+    .scene .cta a.primary { background: #7FB2FF; color: #02040a; border-color: #7FB2FF; }
+    .scene.right { align-items: flex-end; text-align: right; }
+    .red { color: #FF7A66; }
+    .gate { position: fixed; inset: 0; z-index: 50; display: none; place-items: center; background: #02040a; padding: 24px; text-align: center; }
+    .gate.show { display: grid; }
+    .gate div { max-width: 28rem; }
+    .gate h1 { font: 700 2rem 'Space Grotesk', sans-serif; margin: 0 0 .5rem; }
+    .gate a { display: inline-block; margin-top: 1.2rem; background: #7FB2FF; color: #02040a; padding: 12px 24px; border-radius: 8px; font-weight: 600; text-decoration: none; }
+    @media (prefers-reduced-motion: reduce) { #hint { display: none; } }
+  </style>
+</head>
+<body>
+  <a href="#scenes" class="skip">Skip to the story</a>
+
+  <!-- Admin-only gate: shown to anyone who isn't logged in as an admin. -->
+  <div id="gate" class="gate" role="alert">
+    <div>
+      <h1>Admin preview</h1>
+      <p>This experimental page is only for the Lake Sentry team. Log in from the Admin button first.</p>
+      <a href="admin.html">Go to admin login</a>
+    </div>
+  </div>
+
+  <header class="bar">
+    <a href="admin.html">← Admin panel</a>
+    <span aria-hidden="true">LAKE SENTRY · IMMERSIVE PREVIEW</span>
+  </header>
+
+  <canvas id="gl" aria-hidden="true"></canvas>
+  <div id="meter" aria-hidden="true"><i></i></div>
+  <div id="hint" aria-hidden="true">Scroll to dive · move your cursor to shine a light</div>
+
+  <main id="scenes">
+    <section class="scene" data-from="0" data-to="0.17" aria-label="Scene 1">
+      <h2>Look<br />closely.</h2>
+      <p>A lake in Hyderabad at dusk. It looks calm.</p>
+    </section>
+    <section class="scene right" data-from="0.17" data-to="0.36" aria-label="Scene 2">
+      <h2>It <span class="red">isn't.</span></h2>
+      <p>Bottles. Bags. Wrappers. Everything we throw away ends up on the water.</p>
+    </section>
+    <section class="scene" data-from="0.36" data-to="0.55" aria-label="Scene 3">
+      <h2>Go<br />under.</h2>
+      <p>Below the surface, it doesn't disappear. It sinks, breaks apart, and stays.</p>
+    </section>
+    <section class="scene right" data-from="0.55" data-to="0.76" aria-label="Scene 4">
+      <h2>Find<br />the light.</h2>
+      <p>Move your cursor. Every beam shows more of what is hiding down here.</p>
+    </section>
+    <section class="scene" data-from="0.78" data-to="1.02" aria-label="Scene 5">
+      <h2>Lake<br />Sentry.</h2>
+      <p>A robot to clear it. A campaign to stop it arriving.</p>
+      <div class="cta"><a class="primary" href="get-involved.html">Get involved</a><a href="index.html">Back to the lake</a></div>
+    </section>
+  </main>
+
+  <div id="spacer" aria-hidden="true"></div>
+
+  <script src="admin-auth.js"></script>
+  <script src="experience.js"></script>
+</body>
+</html>

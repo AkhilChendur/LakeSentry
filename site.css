@@ -34,8 +34,8 @@
   --coral: 255 122 138;   /* #FF7A8A */
   --onaccent: 4 18 46;    /* dark text on bright buttons */
   --txt1: 251 253 255;
-  --txt2: 205 216 237;
-  --txt3: 150 168 204;
+  --txt2: 222 231 247;
+  --txt3: 172 188 220;
   --line: rgba(148, 196, 255, 0.16);
   --linehi: rgba(148, 196, 255, 0.34);
   --focus: #FDE047;       /* keyboard focus ring */
@@ -56,8 +56,8 @@
   --coral: 180 22 58;     /* #B4163A */
   --onaccent: 255 255 255; /* white text on the darker buttons */
   --txt1: 11 19 48;
-  --txt2: 36 50 77;
-  --txt3: 74 88 116;
+  --txt2: 28 40 66;
+  --txt3: 62 76 104;
   --line: rgba(15, 40, 80, 0.14);
   --linehi: rgba(15, 40, 80, 0.3);
   --focus: #0B1330;
@@ -452,3 +452,29 @@ html:has([data-tabs]) {
   color: rgb(var(--txt1) / 0.05);
   pointer-events: none;
 }
+
+/* =====================================================================
+   Easier, friendlier reading (all pages)
+   - bigger, airier body text and small print
+   - the paragraph right under a heading is a larger "lead"
+   - short accent bar under section headings
+   - bold words stand out
+   ===================================================================== */
+main p, main li { line-height: 1.75; }
+main .text-sm { font-size: 1rem; line-height: 1.7; }
+main .text-xs:not(.font-mono) { font-size: 0.875rem; }
+main h1 + p, main h2 + p, main h2 + .reveal + p { font-size: 1.25rem; line-height: 1.7; color: rgb(var(--txt1) / 0.92); }
+main h2:not(.sr-only)::after {
+  content: ""; display: block; width: 3.5rem; height: 4px; margin-top: 0.9rem; border-radius: 4px;
+  background: linear-gradient(90deg, rgb(var(--aqua)), rgb(var(--mint)));
+}
+main .text-center h2::after, main h2.text-center::after { margin-inline: auto; }
+main p strong, main li strong { color: rgb(var(--txt1)); font-weight: 700; }
+main p + p { margin-top: 1.1em; }
+main section p { max-width: 68ch; }
+main .grid p, main .glow-card p, main td, main th { max-width: none; }
+.eyebrow { font-size: 0.9rem; }
+@media (max-width: 640px) {
+  main h1 + p, main h2 + p { font-size: 1.125rem; }
+}
+main li a, main p a { overflow-wrap: anywhere; }

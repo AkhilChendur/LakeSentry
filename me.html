@@ -97,6 +97,36 @@
         </div>
       </div>
     </section>
+
+    <!-- ============================ CONTACT ME ============================ -->
+    <section id="contact" class="relative bg-ink pb-24 pt-14" aria-labelledby="contact-title" data-wave="deep">
+      <div class="mx-auto max-w-3xl px-4 sm:px-6">
+        <p class="eyebrow reveal">Contact me</p>
+        <h2 id="contact-title" class="reveal mt-3 font-display text-3xl font-bold text-txt-1 sm:text-4xl">Send me a message</h2>
+        <p class="reveal mt-3 max-w-prose">Have an idea, a lake to suggest, or want to help? Write to me here. Your message goes straight to the Lake Sentry admin inbox.</p>
+        <form id="contact-form" class="reveal mt-8 space-y-5 rounded-2xl border border-linehi bg-panel p-5 sm:p-8" novalidate>
+          <div id="contact-errors" role="alert" tabindex="-1" hidden class="rounded-lg border-2 border-coral bg-coral/10 px-4 py-3 text-sm text-txt-1"></div>
+          <div class="grid gap-5 sm:grid-cols-2">
+            <div>
+              <label for="c-name" class="block font-semibold text-txt-1">Your name</label>
+              <input id="c-name" name="name" type="text" autocomplete="name" maxlength="80" required class="mt-1 w-full rounded-md border border-txt-3/80 bg-deep px-3 py-2.5 text-txt-1 aria-[invalid=true]:border-2 aria-[invalid=true]:border-coral" />
+            </div>
+            <div>
+              <label for="c-email" class="block font-semibold text-txt-1">Your email</label>
+              <input id="c-email" name="email" type="email" autocomplete="email" maxlength="120" required class="mt-1 w-full rounded-md border border-txt-3/80 bg-deep px-3 py-2.5 text-txt-1 aria-[invalid=true]:border-2 aria-[invalid=true]:border-coral" />
+            </div>
+          </div>
+          <div>
+            <label for="c-message" class="block font-semibold text-txt-1">Message</label>
+            <textarea id="c-message" name="message" rows="6" maxlength="2000" required class="mt-1 w-full rounded-md border border-txt-3/80 bg-deep px-3 py-2.5 text-txt-1 aria-[invalid=true]:border-2 aria-[invalid=true]:border-coral"></textarea>
+          </div>
+          <!-- Honeypot: real people never see or fill this -->
+          <div class="hidden" aria-hidden="true"><label>Leave empty <input id="c-website" type="text" tabindex="-1" autocomplete="off" /></label></div>
+          <button type="submit" class="rounded-md bg-aqua px-6 py-3 font-semibold text-onaccent transition hover:-translate-y-0.5">Send message</button>
+          <p id="contact-status" role="status" aria-live="polite" class="min-h-[1.5rem] font-semibold text-mint"></p>
+        </form>
+      </div>
+    </section>
   </main>
 
   <!-- ============================ SITE FOOTER ============================ -->
@@ -104,8 +134,8 @@
     <div class="mx-auto grid max-w-6xl gap-10 px-4 py-16 sm:px-6 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
       <div>
         <a href="index.html" class="inline-block rounded">
-          <img src="logo-blue.png" width="533" height="180" alt="Lake Sentry home" class="logo-for-light h-16 w-auto" loading="lazy" />
-          <img src="logo-light.png" width="533" height="180" alt="Lake Sentry home" class="logo-for-dark h-16 w-auto" loading="lazy" />
+          <img src="logo-blue.png" width="533" height="180" alt="Lake Sentry home" class="logo-for-light h-16 w-auto" />
+          <img src="logo-light.png" width="533" height="180" alt="Lake Sentry home" class="logo-for-dark h-16 w-auto" />
         </a>
         <p class="mt-3 text-sm leading-relaxed">A student-led environmental project combining research, engineering and awareness to reduce floating waste in Hyderabad's urban lakes.</p>
       </div>
@@ -144,6 +174,8 @@
 
   <script src="site.js"></script>
   <script src="admin-auth.js"></script>
-  <script src="about.js"></script>
+  <script src="lakes-data.js"></script>
+  <script src="store.js"></script>
+  <script src="contact.js"></script>
 </body>
 </html>

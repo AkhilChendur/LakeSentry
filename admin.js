@@ -129,8 +129,66 @@
     return items.length;
   }
 
+  /* ---------- Messages from the Contact me form ---------- */
+  function renderMessages() {
+    const list = $('adm-msg');
+    const msgs = store.read('messages').sort(function (a, b) { return b.sentAt - a.sentAt; });
+    list.textContent = '';
+    msgs.forEach(function (m) {
+      const li = document.createElement('li');
+      li.className = 'rounded-xl border bg-panel p-5 ' + (m.read ? 'border-line' : 'border-sun/60');
+      const head = document.createElement('div');
+      head.className = 'flex flex-wrap items-baseline justify-between gap-2';
+      const who = document.createElement('p');
+      who.className = 'font-display text-lg font-bold text-txt-1';
+      who.textContent = m.name + (m.read ? '' : ' · NEW');
+      const when = document.createElement('p');
+      when.className = 'font-mono text-xs text-txt-3';
+      when.textContent = new Date(m.sentAt).toLocaleString();
+      head.appendChild(who); head.appendChild(when);
+      const mail = document.createElement('a');
+      mail.className = 'mt-1 inline-block text-sm font-semibold text-aqua underline underline-offset-4';
+      mail.href = 'mailto:' + encodeURIComponent(m.email).replace('%40', '@');
+      mail.textContent = m.email;
+      const body = document.createElement('p');
+      body.className = 'mt-3 whitespace-pre-wrap text-txt-1';
+      body.textContent = m.message;
+      const row = document.createElement('div');
+      row.className = 'mt-4 flex flex-wrap gap-2';
+      const mk = function (label, cls, fn) {
+        const b = document.createElement('button');
+        b.type = 'button'; b.className = 'rounded-md px-4 py-2 text-sm font-semibold ' + cls;
+        b.textContent = label; b.setAttribute('aria-label', label + ': message from ' + m.name);
+        b.addEventListener('click', fn); row.appendChild(b);
+      };
+      mk(m.read ? 'Mark as unread' : 'Mark as read', 'border border-linehi text-txt-1 hover:border-aqua', function () {
+        const all = store.read('messages'); const it = all.find(function (x) { return x.id === m.id; });
+        if (it) { it.read = !it.read; store.write('messages', all); announce(it.read ? 'Marked as read.' : 'Marked as unread.'); }
+      });
+      mk('Delete', 'border border-coral/70 text-coral hover:bg-coral/10', function () {
+        if (!window.confirm('Delete this message permanently?')) return;
+        store.remove('messages', m.id); announce('Message deleted.');
+      });
+      li.appendChild(head); li.appendChild(mail); li.appendChild(body); li.appendChild(row);
+      list.appendChild(li);
+    });
+    if (!msgs.length) {
+      const li = document.createElement('li');
+      li.className = 'rounded-xl border border-dashed border-line px-4 py-3 text-txt-3';
+      li.textContent = 'No messages yet.';
+      list.appendChild(li);
+    }
+    const unread = msgs.filter(function (m) { return !m.read; }).length;
+    const count = document.querySelector('[data-list-count="adm-msg"]'); if (count) count.textContent = String(msgs.length);
+    document.querySelectorAll('[data-badge="messages"]').forEach(function (b) { b.textContent = String(unread); b.hidden = unread === 0; });
+    if ($('stat-msg-unread')) $('stat-msg-unread').textContent = String(unread);
+    return unread;
+  }
+  document.addEventListener('lakesentry:messages-changed', function () { renderMessages(); });
+
   function render() {
     if (panel.hidden) return;
+    const um = renderMessages();
     const pi = fillList('initiatives', 'pending', 'adm-init-pending', 'Nothing waiting for review.');
     const ai = fillList('initiatives', 'approved', 'adm-init-approved', 'No published initiatives.');
     const ri = fillList('initiatives', 'rejected', 'adm-init-rejected', 'No rejected initiatives.');
@@ -144,9 +202,10 @@
     const photos = store.read('posts').reduce(function (n, p) { return n + (p.photos ? p.photos.length : 0); }, 0);
     const stats = { 'stat-init-pending': pi, 'stat-post-pending': pp, 'stat-init-approved': ai, 'stat-post-approved': ap, 'stat-photos': photos, 'stat-init-rejected': ri };
     Object.keys(stats).forEach(function (id) { if ($(id)) $(id).textContent = String(stats[id]); });
-    $('dash-summary').textContent = (pi + pp) === 0
-      ? 'You’re all caught up. Nothing is waiting for review.'
-      : (pi + pp) + ' submission' + ((pi + pp) === 1 ? ' is' : 's are') + ' waiting for your review.';
+    const waiting = pi + pp + um;
+    $('dash-summary').textContent = waiting === 0
+      ? 'You’re all caught up. Nothing is waiting for you.'
+      : waiting + ' item' + (waiting === 1 ? ' is' : 's are') + ' waiting for you (submissions to review and unread messages).';
   }
 
   document.addEventListener('lakesentry:initiatives-changed', render);

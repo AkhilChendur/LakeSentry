@@ -18,6 +18,8 @@ Vercel is connected to the repo, so it redeploys automatically after each commit
 | `about.html` | About | A short page: the three parts of the project, the problem, an interactive V1 diagram, what's next, who it's for, the SDGs. Impact targets, risks, feasibility and sources are in collapsed “More details” boxes |
 | `app.html` | Lake Explorer App | Four tools in tabs: **Lake stories** (share posts and photos), **Initiatives** (submit a clean-up effort), the **Lake map** with lake pages, and the **V1 simulator** |
 | `me.html` | About me | A short page about Akhil Chendur (photo and story), separate from the project's About page |
+| `experience.html` + `experience.js` | Immersive lake (preview) | A scroll-driven, cinematic dive from a calm lake to a trash-choked bed, ending with Lake Sentry clearing the water. Only opens when logged in as admin (linked from the Admin dashboard); not in the public menu. The gate runs in the browser, so treat it as hidden, not secret |
+| `contact.js` | Contact me form | Saves messages from the About me page so they appear in Admin → Messages. To receive them from every visitor's device, paste a form-endpoint URL (e.g. Formspree) into `CONTACT_ENDPOINT` in `store.js` |
 | `admin.html` | Admin panel | For the Lake Sentry team. Review, approve, reject, unpublish or delete initiatives and lake stories. Open it with the 🔒 **Admin** button in the top-left of any page |
 | `get-involved.html` | Get involved | “Answer the survey” button (opens the Google Form), animated survey results (headline and detailed), feedback themes, six actions and partner information |
 
@@ -111,3 +113,12 @@ Search the files for `TODO`:
 ## Note on the demo data
 
 The initiative network and Lake stories save submissions (including photos) in the visitor's own browser (`localStorage`), so they work without a server. That means each visitor only sees their own posts. Photos are shrunk to at most 1000 px before saving. To let everyone see everyone's posts, the site needs a small online database. In `posts.js`, only the `load()` and `save()` functions would change.
+
+
+## Home-page robot and lake
+
+- The robot detects trash inside its front conveyor box (not just by distance), slows down for a clean scoop, and backs off to re-line-up if a piece is beside or behind it. It gives up on a piece after 16 s and tries another, so it can't circle forever.
+- Two pieces ride on the conveyor at a time; they are tipped into onboard storage so it keeps cruising without a return point.
+- The counter shows pieces and kg (typical weights per item type, `WEIGHT_KG` in `lake-hero.js`).
+- A faint lake bank with rubbish cuts the bottom-right corner (`bankSize()`); the robot and trash keep clear of it.
+- Pictures retry automatically (site.js) if a load fails; lazy-loading was removed.

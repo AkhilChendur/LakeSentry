@@ -24,7 +24,14 @@
   const KEYS = {
     initiatives: 'lakeSentry.initiatives.v1',
     posts: 'lakeSentry.posts.v1',
+    messages: 'lakeSentry.messages.v1',
   };
+
+  // OPTIONAL: paste a form-endpoint URL here (for example a free Formspree
+  // form, https://formspree.io/f/xxxxxxx) and every message sent from the
+  // "Contact me" form is also emailed to you, from any visitor's device.
+  // Leave it empty and messages stay in the visitor's own browser only.
+  const CONTACT_ENDPOINT = '';
 
   // Example entries shown the first time the site is opened in a browser.
   const SAMPLES = {
@@ -58,6 +65,7 @@
         postedAt: Date.now() - DAY * 3, reviewedAt: Date.now() - DAY * 2,
       },
     ],
+    messages: [],
   };
 
   function copy(list) { return list.map(function (x) { return Object.assign({}, x); }); }
@@ -93,6 +101,13 @@
       write(kind, list);
       return item;
     },
+    // Add a new item to the top of a list (used by the contact form).
+    add: function (kind, item) {
+      const list = read(kind);
+      list.unshift(item);
+      return write(kind, list);
+    },
+    contactEndpoint: CONTACT_ENDPOINT,
     remove: function (kind, id) {
       const list = read(kind).filter(function (x) { return x.id !== id; });
       write(kind, list);

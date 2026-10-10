@@ -40,6 +40,7 @@
   const ctx = canvas.getContext('2d');
   const pauseBtn = document.getElementById('lake-pause');
   const counterEl = document.getElementById('lake-counter');
+  const kgEl = document.getElementById('lake-kg');
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const isSmallScreen = window.matchMedia('(max-width: 640px)').matches;
 
@@ -79,7 +80,7 @@
   let rowBase;                        // pre-computed base colour for every grid row
   let trash = [];
   let bot = null;
-  let collected = 0;
+  let collected = 0, collectedKg = 0;
   let running = true;
   let fish = [], lilies = [], reeds = [], weeds = [];
   let pointer = null;                 // where the cursor is over the lake (or null)
@@ -216,6 +217,8 @@
      Each piece is drawn with simple canvas shapes, centred on (0,0)
      and pointing right, then rotated into place.
      ============================================================= */
+  // Typical weight of one piece (kg) for the "kg collected" counter.
+  const WEIGHT_KG = { bottle: 0.04, glass: 0.35, can: 0.015, bag: 0.008, wrapper: 0.005, cup: 0.01, container: 0.07 };
   const TRASH_TYPES = ['bottle', 'bottle', 'bag', 'can', 'wrapper', 'cup', 'glass', 'container'];
   const LABEL_COLOURS = ['#E53935', '#1E88E5', '#43A047', '#FB8C00', '#8E24AA'];
   const WRAPPER_COLOURS = ['#F9A825', '#EF6C00', '#7B1FA2', '#C62828', '#00897B'];
@@ -393,6 +396,8 @@
       p.vx -= dx * outside * 0.0035 * dt;
       p.vy -= dy * outside * 0.0035 * dt;
     }
+    const bd = bankDist(p.x, p.y);
+    if (bd > -30) { const na = bankNormalAngle(); p.vx += Math.cos(na) * 0.01 * dt; p.vy += Math.sin(na) * 0.01 * dt; }
     p.x += p.vx * dt;
     p.y += p.vy * dt;
     // Waves also make pieces twist a little.
@@ -429,75 +434,158 @@
      Steers towards the nearest piece of trash and "collects" it.
      ============================================================= */
   function makeBot() {
-    return { x: W * 0.78, y: H * 0.7, angle: Math.PI, paddle: 0, target: null, wakeTimer: 0, cargo: [], unload: 0 };
+    return {
+      x: W * 0.62, y: H * 0.72, angle: Math.PI, turn: 0, speed: 0.3, paddle: 0,
+      target: null, targetSince: 0, mode: 'seek', wakeTimer: 0,
+      cargo: [], unload: 0, skip: [],
+    };
+  }
+
+  /* ---------- Lake bank (bottom-right corner, barely visible) ---------- */
+  // A shoreline cutting the corner. bankDist(x, y) is positive inside the
+  // bank, negative out on the water (in pixels, measured from the shoreline).
+  function bankSize() {
+    return isSmallScreen ? { w: W * 0.34, h: H * 0.22 } : { w: W * 0.2, h: H * 0.34 };
+  }
+  function bankDist(x, y) {
+    const b = bankSize();
+    return (b.h * (x - (W - b.w)) + b.w * (y - H)) / Math.hypot(b.h, b.w);
+  }
+  function bankNormalAngle() { // direction pointing away from the bank
+    const b = bankSize();
+    return Math.atan2(-b.w, -b.h);
+  }
+
+  function angleDiff(to, from) {
+    let d = to - from;
+    while (d > Math.PI) d -= Math.PI * 2;
+    while (d < -Math.PI) d += Math.PI * 2;
+    return d;
   }
 
   function updateBot(time, dt) {
-    // Find the nearest piece of trash that is fully on screen.
-    let best = null, bestD = Infinity;
-    const full = bot.cargo.length >= BOT_CAPACITY;
-    trash.forEach(function (p) {
-      if (full) return;
-      if (p.x < 20 || p.x > W - 20) return;
-      const d = Math.hypot(p.x - (bot.x + Math.cos(bot.angle) * 20 * BOT_SCALE), p.y - (bot.y + Math.sin(bot.angle) * 20 * BOT_SCALE));
-      if (d < bestD) { bestD = d; best = p; }
-    });
-    bot.target = best;
+    const S = BOT_SCALE;
+    const cos = Math.cos(bot.angle), sin = Math.sin(bot.angle);
 
-    let speed = SETTINGS.botSpeed * 0.4;
-    // The robot never stops: pieces on the conveyor are tipped into the
-    // onboard storage one at a time, freeing a slot for the next piece.
+    // Pieces on the conveyor ride to their slot, then are tipped into the
+    // onboard storage one at a time (so the robot never has to go back).
     bot.unload += dt;
-    if (bot.cargo.length && bot.unload > 150) { bot.cargo.shift(); bot.unload = 0; }
+    if (bot.cargo.length && bot.unload > 170) { bot.cargo.shift(); bot.unload = 0; }
     if (!bot.cargo.length) bot.unload = 0;
-    if (full) {
-      // Both slots busy: keep cruising (gentle S-curves, turning back from edges).
-      let wanted = bot.angle + Math.sin(time * 0.0012) * 0.5;
-      if (bot.x < 60 * BOT_SCALE || bot.x > W - 60 * BOT_SCALE || bot.y < 60 * BOT_SCALE || bot.y > H - 50 * BOT_SCALE) {
-        wanted = Math.atan2(H * 0.55 - bot.y, W * 0.6 - bot.x);
-      }
-      let diff = wanted - bot.angle;
-      while (diff > Math.PI) diff -= Math.PI * 2;
-      while (diff < -Math.PI) diff += Math.PI * 2;
-      bot.angle += Math.max(-0.03, Math.min(0.03, diff)) * dt;
-      speed = SETTINGS.botSpeed * 0.7;
-    } else if (best) {
-      // Turn gradually towards the target (like steering with two paddle wheels).
-      const wanted = Math.atan2(best.y - bot.y, best.x - bot.x);
-      let diff = wanted - bot.angle;
-      while (diff > Math.PI) diff -= Math.PI * 2;
-      while (diff < -Math.PI) diff += Math.PI * 2;
-      bot.angle += Math.max(-0.03, Math.min(0.03, diff)) * dt;
-      speed = SETTINGS.botSpeed * (Math.abs(diff) > 1.2 ? 0.35 : 1);
+    bot.cargo.forEach(function (it, i) {
+      const tx = -15 + i * 14;
+      it.cx += (tx - it.cx) * Math.min(1, 0.07 * dt);
+      it.cy += (0 - it.cy) * Math.min(1, 0.07 * dt);
+      it.sz += (13 - it.sz) * Math.min(1, 0.05 * dt);
+    });
+    bot.skip = bot.skip.filter(function (e) { return e.until > time; });
 
-      // Close enough to the front conveyor? Collect it!
-      const noseX = bot.x + Math.cos(bot.angle) * 22 * BOT_SCALE;
-      const noseY = bot.y + Math.sin(bot.angle) * 22 * BOT_SCALE;
-      if (Math.hypot(best.x - noseX, best.y - noseY) < 14 * BOT_SCALE) {
-        trash.splice(trash.indexOf(best), 1);
-        bot.cargo.push(best);
-        best.angle = rand(-0.5, 0.5);
+    // ---- anything inside the front conveyor gets pulled aboard ----
+    for (let k = trash.length - 1; k >= 0 && bot.cargo.length < BOT_CAPACITY; k--) {
+      const p = trash[k];
+      const dx = p.x - bot.x, dy = p.y - bot.y;
+      const lx = dx * cos + dy * sin, ly = -dx * sin + dy * cos;
+      if (lx > 8 * S && lx < 34 * S && Math.abs(ly) < 13 * S) {
+        trash.splice(k, 1);
+        bot.cargo.push({ p: p, cx: Math.max(10, Math.min(30, lx / S)), cy: Math.max(-10, Math.min(10, ly / S)), sz: p.size / S });
+        p.angle = rand(-0.6, 0.6);
+        bot.unload = 0;
         collected += 1;
+        collectedKg += WEIGHT_KG[p.type] || 0.03;
         if (counterEl) counterEl.textContent = String(collected);
-        disturb(best.x, best.y, 2.5, 7); // a little splash
-        // A new piece drifts in from the edge a few seconds later —
-        // just like in real life, the trash keeps coming. That's why
-        // Lake Sentry pairs the robot with an awareness campaign!
+        if (kgEl) kgEl.textContent = collectedKg.toFixed(2);
+        disturb(p.x, p.y, 2.5, 5);
         setTimeout(function () { trash.push(makeTrash(true)); }, rand(2500, 6000));
       }
     }
 
-    bot.x += Math.cos(bot.angle) * speed * dt;
-    bot.y += Math.sin(bot.angle) * speed * dt;
-    bot.x = Math.max(30 * BOT_SCALE, Math.min(W - 30 * BOT_SCALE, bot.x));
-    bot.y = Math.max(40 * BOT_SCALE, Math.min(H - 30 * BOT_SCALE, bot.y));
-    bot.paddle += 0.12 * dt * (speed / SETTINGS.botSpeed);
+    const full = bot.cargo.length >= BOT_CAPACITY;
+
+    // ---- choose a target (and keep it, so the robot doesn't dither) ----
+    const valid = function (p) {
+      if (p.x < 30 || p.x > W - 30 || p.y < 30 || p.y > H - 20) return false;
+      if (bankDist(p.x, p.y) > -24) return false;
+      return !bot.skip.some(function (e) { return e.p === p; });
+    };
+    if (full || (bot.target && (trash.indexOf(bot.target) < 0 || !valid(bot.target)))) bot.target = null;
+    if (!full && !bot.target) {
+      let bestCost = Infinity;
+      trash.forEach(function (p) {
+        if (!valid(p)) return;
+        const dx = p.x - bot.x, dy = p.y - bot.y;
+        const lx = dx * cos + dy * sin;
+        const dist = Math.hypot(dx, dy);
+        // prefer pieces ahead of the conveyor, penalise ones behind us
+        const cost = dist + Math.abs(angleDiff(Math.atan2(dy, dx), bot.angle)) * 18 * S - (lx > 0 ? 0 : -10 * S);
+        if (cost < bestCost) { bestCost = cost; bot.target = p; bot.targetSince = time; }
+      });
+    }
+    // Stuck on one piece for too long? Give up on it for a while.
+    if (bot.target && time - bot.targetSince > 16000) {
+      bot.skip.push({ p: bot.target, until: time + 9000 });
+      bot.target = null;
+    }
+
+    // ---- steering ----
+    let wanted = bot.angle;
+    let speedGoal = SETTINGS.botSpeed;
+    const t = bot.target;
+    if (t) {
+      const dx = t.x - bot.x, dy = t.y - bot.y;
+      const lx = dx * cos + dy * sin;          // distance ahead of the robot
+      const ly = -dx * sin + dy * cos;         // distance to its side
+      const dist = Math.hypot(dx, dy);
+      const diff = angleDiff(Math.atan2(dy, dx), bot.angle);
+
+      if (bot.mode === 'clear') {
+        // Too close or on the wrong side to turn round: drive straight
+        // away to open up room, then line up again for a clean approach.
+        speedGoal = SETTINGS.botSpeed * 0.8;
+        wanted = bot.angle;
+        if (dist > 34 * S) bot.mode = 'seek';
+      } else {
+        wanted = Math.atan2(dy, dx);
+        // Inside the turning circle (beside/behind and near)? Clear first.
+        if (lx < 12 * S && dist < 26 * S) bot.mode = 'clear';
+        // Come in slow and straight so the conveyor scoops it up.
+        const aligned = Math.abs(diff) < 0.5;
+        speedGoal = SETTINGS.botSpeed * (aligned ? (dist < 55 * S ? 0.55 : 1) : 0.45);
+      }
+    } else {
+      // Nothing to chase (or the basket is full): cruise in gentle curves.
+      bot.mode = 'seek';
+      wanted = bot.angle + Math.sin(time * 0.0011) * 0.4;
+      speedGoal = SETTINGS.botSpeed * 0.65;
+    }
+
+    // Keep off the lake edges and the bank.
+    const m = 55 * S;
+    if (bot.x < m || bot.x > W - m || bot.y < m * 1.1 || bot.y > H - m * 0.8) {
+      wanted = Math.atan2(H * 0.55 - bot.y, W * 0.55 - bot.x);
+      if (bot.mode === 'clear') bot.mode = 'seek';
+    }
+    if (bankDist(bot.x, bot.y) > -40 * S) {
+      wanted = bankNormalAngle();
+      speedGoal = SETTINGS.botSpeed * 0.7;
+    }
+
+    // Smooth motion: turn rate and speed ease toward their goals.
+    const maxTurn = 0.028;
+    const turnGoal = Math.max(-maxTurn, Math.min(maxTurn, angleDiff(wanted, bot.angle) * 0.12));
+    bot.turn += (turnGoal - bot.turn) * Math.min(1, 0.08 * dt);
+    bot.angle += bot.turn * dt;
+    bot.speed += (speedGoal - bot.speed) * Math.min(1, 0.04 * dt);
+    bot.x += Math.cos(bot.angle) * bot.speed * dt;
+    bot.y += Math.sin(bot.angle) * bot.speed * dt;
+    bot.x = Math.max(30 * S, Math.min(W - 30 * S, bot.x));
+    bot.y = Math.max(40 * S, Math.min(H - 30 * S, bot.y));
+    bot.paddle += 0.12 * dt * (bot.speed / SETTINGS.botSpeed);
 
     // Leave a gentle wake behind the robot.
     bot.wakeTimer += dt;
-    if (bot.wakeTimer > 5) {
+    if (bot.wakeTimer > 6) {
       bot.wakeTimer = 0;
-      disturb(bot.x - Math.cos(bot.angle) * 26 * BOT_SCALE, bot.y - Math.sin(bot.angle) * 26 * BOT_SCALE, 1.6, 2.5);
+      disturb(bot.x - Math.cos(bot.angle) * 26 * S, bot.y - Math.sin(bot.angle) * 26 * S, 1.6, 2);
     }
   }
 
@@ -528,12 +616,12 @@
     for (let x = 12 + shift; x < 28; x += 4) {
       ctx.beginPath(); ctx.moveTo(x, -12); ctx.lineTo(x, 12); ctx.stroke();
     }
-    // pieces riding in the basket (two slots)
-    bot.cargo.forEach(function (p, i) {
+    // pieces riding on the conveyor / in the basket (two slots)
+    bot.cargo.forEach(function (it) {
       ctx.save();
-      ctx.translate(-15 + i * 14, 0);
-      ctx.rotate(p.angle);
-      DRAW[p.type](11, p);
+      ctx.translate(it.cx, it.cy);
+      ctx.rotate(it.p.angle);
+      DRAW[it.p.type](it.sz, it.p);
       ctx.restore();
     });
     // paddle wheels at the back — spinning
@@ -550,6 +638,65 @@
       }
     });
     ctx.restore();
+  }
+
+  /* ---------- Bank drawing ---------- */
+  let bankDecor = null, bankFor = '';
+  function buildBankDecor() {
+    const b = bankSize();
+    bankFor = W + 'x' + H;
+    const pieces = [];
+    const n = isSmallScreen ? 12 : 22;
+    let guard = 0;
+    while (pieces.length < n && guard++ < 400) {
+      const x = rand(W - b.w, W), y = rand(H - b.h, H);
+      if (bankDist(x, y) < 14) continue;
+      pieces.push({
+        type: pick(TRASH_TYPES), x: x, y: y, angle: rand(0, Math.PI * 2),
+        size: rand(20, 34) * (isSmallScreen ? 0.8 : 1),
+        colour: pick(WRAPPER_COLOURS.concat(LABEL_COLOURS)), capColour: pick(['#1565C0', '#C62828', '#2E7D32', '#F9A825']),
+      });
+    }
+    // a wobbly shoreline
+    const edge = [];
+    for (let i = 0; i <= 12; i++) edge.push(rand(-6, 6));
+    bankDecor = { pieces: pieces, edge: edge };
+  }
+
+  function drawBank() {
+    if (bankFor !== W + 'x' + H) buildBankDecor();
+    const b = bankSize();
+    const nrm = Math.hypot(b.h, b.w);
+    const nx = b.h / nrm, ny = b.w / nrm; // points into the bank
+    ctx.save();
+    ctx.scale(dpr, dpr);
+    ctx.beginPath();
+    ctx.moveTo(W - b.w, H);
+    for (let i = 0; i <= 12; i++) {
+      const t = i / 12, w = bankDecor.edge[i];
+      ctx.lineTo(W - b.w + b.w * t + nx * w * (i % 12 ? 1 : 0), H - b.h * t + ny * w * (i % 12 ? 1 : 0));
+    }
+    ctx.lineTo(W, H);
+    ctx.closePath();
+    // faint mud + grass, so it stays a quiet background detail
+    ctx.fillStyle = 'rgba(78, 62, 40, 0.42)';
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(140, 170, 110, 0.35)';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    ctx.clip();
+    ctx.fillStyle = 'rgba(70, 100, 55, 0.18)';
+    ctx.fillRect(W - b.w, H - b.h, b.w, b.h);
+    ctx.restore();
+    bankDecor.pieces.forEach(function (p) {
+      ctx.save();
+      ctx.globalAlpha = 0.8;
+      ctx.translate(p.x * dpr, p.y * dpr);
+      ctx.rotate(p.angle);
+      ctx.scale(dpr, dpr);
+      DRAW[p.type](p.size, p);
+      ctx.restore();
+    });
   }
 
   /* =============================================================
@@ -788,6 +935,7 @@
     fish.forEach(drawFish);
     weeds.forEach(function (wd) { drawWeed(wd, clock); });
     lilies.forEach(function (l) { drawLily(l, clock); });
+    drawBank();
     trash.forEach(function (p) { drawTrash(p, clock); });
     drawBot();
     drawReeds(clock);

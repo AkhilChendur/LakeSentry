@@ -229,4 +229,24 @@
     });
     updateThemeButton();
   }
+
+  /* ---------- Make sure pictures always appear ----------
+     If an image fails to load (slow connection, hiccup), try again a few
+     times with a fresh request instead of leaving a broken picture. */
+  function retryImage(img) {
+    const n = Number(img.dataset.retries || 0);
+    if (n >= 3 || !img.getAttribute('src')) return;
+    img.dataset.retries = String(n + 1);
+    const base = img.getAttribute('src').replace(/[?&]r=\d+$/, '');
+    setTimeout(function () { img.src = base + (base.indexOf('?') < 0 ? '?' : '&') + 'r=' + Date.now(); }, 400 * (n + 1));
+  }
+  document.querySelectorAll('img').forEach(function (img) {
+    img.addEventListener('error', function () { retryImage(img); });
+    if (img.complete && img.naturalWidth === 0 && img.getAttribute('src')) retryImage(img);
+  });
+  window.addEventListener('load', function () {
+    document.querySelectorAll('img').forEach(function (img) {
+      if (img.complete && img.naturalWidth === 0) retryImage(img);
+    });
+  });
 })();
