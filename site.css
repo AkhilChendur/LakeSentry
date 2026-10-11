@@ -478,3 +478,6 @@ main .grid p, main .glow-card p, main td, main th { max-width: none; }
   main h1 + p, main h2 + p { font-size: 1.125rem; }
 }
 main li a, main p a { overflow-wrap: anywhere; }
+
+/* Features an admin has switched off (see features.js) */
+html[data-lakedive="off"] [data-feature="lakeDive"] { display: none !important; }

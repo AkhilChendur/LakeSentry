@@ -18,7 +18,8 @@ Vercel is connected to the repo, so it redeploys automatically after each commit
 | `about.html` | About | A short page: the three parts of the project, the problem, an interactive V1 diagram, what's next, who it's for, the SDGs. Impact targets, risks, feasibility and sources are in collapsed “More details” boxes |
 | `app.html` | Lake Explorer App | Four tools in tabs: **Lake stories** (share posts and photos), **Initiatives** (submit a clean-up effort), the **Lake map** with lake pages, and the **V1 simulator** |
 | `me.html` | About me | A short page about Akhil Chendur (photo and story), separate from the project's About page |
-| `dive.html` + `dive.js` + `dive.css` + `three.min.js` | Lake Dive (3D) | Public tab. A real-time 3D lake at dusk: drive the Lake Sentry robot (W A S D / arrows, Shift to dive, Space to rise, drag to look, scroll to zoom; joystick + Rise/Dive buttons on phones). The front conveyor scoops floating trash into the basket; underwater, target brackets tag the sunken waste. Everything (terrain, water, sky, trash, plants, fish, robot) is generated in code. `three.min.js` is three.js r149 (MIT licence), bundled so the page works without a CDN. Needs WebGL 2; older browsers get a short message instead |
+| `dive.html` + `dive.js` + `dive-page.js` + `dive.css` + `three.min.js` | Lake Dive (3D, prototype) | Public tab (can be switched off, see `features.js`). A scroll-driven 3D exploration of a **simulated** polluted city lake: 10 chapters (encroachment, water hyacinth, sewage nalas as the root cause, oxygen loss and fish deaths, sunlight blocked, sludge and sunken waste, dumping, mosquitoes, what can change). Scroll moves the camera; drag (or arrow keys) to look around; glowing markers explain what you're seeing; illustrative Sunlight/Oxygen gauges. Every fact has a source link, and a full disclaimer explains it's not a real lake. Chapter text lives in `dive.html`; camera positions per chapter are `ROUTE` in `dive.js`. `three.min.js` is three.js r149 (MIT licence), bundled. Needs WebGL 2; otherwise the chapters show as plain text |
+| `features.js` | Feature switches | `lakeDive: true/false` turns Lake Dive on or off for the public (menu links, home teaser, page). Admins can still open it, and can preview the off state in their own browser from Admin → Settings |
 | `experience.html` + `experience.js` | Immersive lake (preview) | A scroll-driven, cinematic dive from a calm lake to a trash-choked bed, ending with Lake Sentry clearing the water. Only opens when logged in as admin (linked from the Admin dashboard); not in the public menu. The gate runs in the browser, so treat it as hidden, not secret |
 | `contact.js` | Contact me form | Saves messages from the About me page so they appear in Admin → Messages. To receive them from every visitor's device, paste a form-endpoint URL (e.g. Formspree) into `CONTACT_ENDPOINT` in `store.js` |
 | `admin.html` | Admin panel | For the Lake Sentry team. Review, approve, reject, unpublish or delete initiatives and lake stories. Open it with the 🔒 **Admin** button in the top-left of any page |
@@ -124,3 +125,11 @@ The initiative network and Lake stories save submissions (including photos) in t
 - A sandy lake bank covered in rubbish cuts the bottom-right corner (`bankSize()`, sand texture in `sandPattern()`). It is solid and never moves; the robot and trash keep clear of it.
 - Lily pads, weed patches and reeds stay still (they're rooted plants, not floating with the ripples).
 - Pictures retry automatically (site.js) if a load fails; lazy-loading was removed.
+
+## Switching Lake Dive on or off
+
+Open `features.js` and change `lakeDive: true` to `lakeDive: false` (or back), then commit. Vercel updates the site in about a minute. Admin → Settings shows the current state and the exact line. A true one-click switch in the admin panel needs an online database (e.g. Supabase or Firebase), because a static site can't save a setting for every visitor from the browser.
+
+## Adding real lake photos
+
+Put each photo in this folder (e.g. `durgam-cheruvu-2026-10.jpg`), then in `lakes-data.js` set that lake's `photo` and `photoAlt`, or add it to `gallery` with a caption that names the lake and the date it was taken. Real photos must always be labelled; the Lake Dive scene itself stays a labelled simulation.

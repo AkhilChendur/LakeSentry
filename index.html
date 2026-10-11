@@ -26,6 +26,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="tailwind-config.js"></script>
   <link rel="stylesheet" href="site.css" />
+  <script src="features.js"></script>
 </head>
 <body class="bg-ink font-sans text-[1.0625rem] leading-relaxed text-txt-2">
 
@@ -68,7 +69,7 @@
           <li class="whitespace-nowrap"><a href="about.html" class="relative block rounded-md px-3 py-2 text-txt-2 transition-colors hover:text-txt-1 lg:after:absolute lg:after:bottom-1 lg:after:left-3 lg:after:h-0.5 lg:after:w-0 lg:after:rounded lg:after:bg-aqua lg:after:transition-all lg:hover:after:w-[calc(100%-1.5rem)]">About</a></li>
           <li class="whitespace-nowrap"><a href="app.html" class="relative block rounded-md px-3 py-2 text-txt-2 transition-colors hover:text-txt-1 lg:after:absolute lg:after:bottom-1 lg:after:left-3 lg:after:h-0.5 lg:after:w-0 lg:after:rounded lg:after:bg-aqua lg:after:transition-all lg:hover:after:w-[calc(100%-1.5rem)]">Lake Explorer</a></li>
           <li class="whitespace-nowrap"><a href="me.html" class="relative block rounded-md px-3 py-2 text-txt-2 transition-colors hover:text-txt-1 lg:after:absolute lg:after:bottom-1 lg:after:left-3 lg:after:h-0.5 lg:after:w-0 lg:after:rounded lg:after:bg-aqua lg:after:transition-all lg:hover:after:w-[calc(100%-1.5rem)]">About me</a></li>
-          <li class="whitespace-nowrap"><a href="dive.html" class="relative block rounded-md px-3 py-2 text-txt-2 transition-colors hover:text-txt-1 lg:after:absolute lg:after:bottom-1 lg:after:left-3 lg:after:h-0.5 lg:after:w-0 lg:after:rounded lg:after:bg-aqua lg:after:transition-all lg:hover:after:w-[calc(100%-1.5rem)]">Lake Dive</a></li>
+          <li class="whitespace-nowrap" data-feature="lakeDive"><a href="dive.html" class="relative block rounded-md px-3 py-2 text-txt-2 transition-colors hover:text-txt-1 lg:after:absolute lg:after:bottom-1 lg:after:left-3 lg:after:h-0.5 lg:after:w-0 lg:after:rounded lg:after:bg-aqua lg:after:transition-all lg:hover:after:w-[calc(100%-1.5rem)]">Lake Dive</a></li>
           <li class="whitespace-nowrap"><a href="get-involved.html" class="mt-2 block rounded-md bg-aqua px-4 py-2 font-semibold text-onaccent transition hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(56,228,240,.3)] lg:ml-3 lg:mt-0">Get involved</a></li>
         </ul>
       </div>
@@ -182,6 +183,14 @@
               <dt class="mt-1 text-sm text-txt-3">tonnes pulled from Barla Kunta lake alone</dt>
               <dd class="order-first font-mono text-4xl font-semibold text-coral sm:text-5xl"><span data-count="5">5</span></dd>
             </div>
+            <div class="reveal glow-card flex flex-col rounded-xl border border-line bg-panel p-5" style="--delay:.2s">
+              <dt class="mt-1 text-sm text-txt-3">encroachments around 134 lakes in GHMC limits (2022 report)</dt>
+              <dd class="order-first font-mono text-4xl font-semibold text-sun sm:text-5xl">14,061</dd>
+            </div>
+            <div class="reveal glow-card flex flex-col rounded-xl border border-line bg-panel p-5" style="--delay:.3s">
+              <dt class="mt-1 text-sm text-txt-3">mg/l of oxygen at Durgam Cheruvu in May 2026, when fish died (fish need 4+)</dt>
+              <dd class="order-first font-mono text-4xl font-semibold text-coral sm:text-5xl">0.3</dd>
+            </div>
             <!-- HIDDEN FOR NOW: waiting for the new survey results. Delete the word "hidden" below to show this again. -->
             <div hidden class="reveal glow-card flex flex-col rounded-xl border border-line bg-panel p-5" style="--delay:.2s">
               <dt class="mt-1 text-sm text-txt-3">of survey respondents would support a lake-cleaning bot</dt>
@@ -192,7 +201,7 @@
               <dd class="order-first font-mono text-4xl font-semibold text-sun sm:text-5xl"><span data-count="87.5" data-suffix="%">87.5%</span></dd>
             </div>
           </dl>
-          <p class="mt-4 text-sm text-txt-3">Source: clean-up drive data courtesy of the Dhruvansh Foundation.</p>
+          <p class="mt-4 text-sm text-txt-3">Sources: clean-up drive data courtesy of the Dhruvansh Foundation; Irrigation Department report to the NGT as reported by <a href="https://www.thenewsminute.com/telangana/134-lakes-14061-encroachments-state-hyderabad-lakes-170335" class="text-aqua underline underline-offset-4">The News Minute</a>; TGPCB figures as reported by <a href="https://www.deccanchronicle.com/southern-states/telangana/fish-deaths-at-durgam-cheruvu-linked-to-oxygen-depletion-1983825" class="text-aqua underline underline-offset-4">Deccan Chronicle</a>.</p>
         </div>
 
         <figure class="reveal float-bob overflow-hidden rounded-2xl border border-linehi bg-white shadow-2xl">
@@ -240,6 +249,28 @@
     </section>
 
     <!-- ============================================================
+         LAKE DIVE TEASER + 3 ACTIONS (hidden automatically if Lake Dive is switched off)
+         ============================================================ -->
+    <section class="relative overflow-hidden bg-deep2 py-24" aria-labelledby="dive-teaser-title">
+      <div class="mx-auto grid max-w-6xl items-center gap-10 px-4 sm:px-6 lg:grid-cols-2">
+        <div data-feature="lakeDive" class="reveal">
+          <p class="eyebrow">New &middot; prototype</p>
+          <h2 id="dive-teaser-title" class="mt-4 font-display text-3xl font-bold leading-tight text-txt-1 sm:text-5xl">See what's under the surface.</h2>
+          <p class="mt-4 max-w-prose">Lake Dive is a 3D, scroll-through look at a simulated polluted city lake: water hyacinth, sewage inflows, oxygen loss and the waste that sinks out of sight, with sources for every fact.</p>
+          <a href="dive.html" class="mt-6 inline-flex items-center gap-2 rounded-md bg-aqua px-6 py-3.5 font-semibold text-onaccent transition hover:-translate-y-0.5">Take the Lake Dive <span aria-hidden="true">&rarr;</span></a>
+        </div>
+        <div class="reveal rounded-2xl border border-linehi bg-panel p-6 sm:p-8">
+          <h3 class="font-display text-2xl font-bold text-txt-1">Three things you can do this week</h3>
+          <ol class="mt-5 space-y-4">
+            <li class="flex gap-4"><span class="font-mono text-2xl font-semibold text-aqua">1</span><span><strong>Keep waste out of nalas and lakes.</strong> Most lake rubbish starts on streets and drains.</span></li>
+            <li class="flex gap-4"><span class="font-mono text-2xl font-semibold text-aqua">2</span><span><strong>Report dumping or encroachment</strong> to GHMC or HYDRAA when you see it.</span></li>
+            <li class="flex gap-4"><span class="font-mono text-2xl font-semibold text-aqua">3</span><span><strong>Share your lake.</strong> Post a photo and what you noticed in the <a href="app.html#stories" class="font-semibold text-aqua underline underline-offset-4">Lake Explorer</a>.</span></li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
          CALL TO ACTION
          ============================================================ -->
     <section class="relative overflow-hidden bg-ink py-24" aria-labelledby="cta-title">
@@ -281,7 +312,7 @@
           <li><a href="about.html#v1" class="hover:text-aqua">Prototype V1</a></li>
           <li><a href="app.html" class="hover:text-aqua">Lake Explorer App</a></li>
           <li><a href="me.html" class="hover:text-aqua">About me</a></li>
-          <li><a href="dive.html" class="hover:text-aqua">Lake Dive (3D)</a></li>
+          <li data-feature="lakeDive"><a href="dive.html" class="hover:text-aqua">Lake Dive (3D)</a></li>
         </ul>
       </nav>
       <div>

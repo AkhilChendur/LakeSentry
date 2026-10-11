@@ -1,23 +1,31 @@
 /* =====================================================================
-   Lake Dive (dive.html) — a real-time 3D lake you can drive around in
+   Lake Dive (dive.html) — explore a polluted city lake in 3D
    ---------------------------------------------------------------------
-   You are the Lake Sentry robot. Cruise the surface at dusk, scoop up
-   floating trash with the front conveyor, or dive below to see the
-   waste that sinks out of sight.
+   PROTOTYPE. The lake is computer-generated. It imitates conditions
+   reported at urban lakes in and around Hyderabad (water hyacinth,
+   sewage inflows, floating and sunken waste, dumping, encroachment).
+   It is NOT a model of any real lake. See the disclaimer on the page.
+
+   How it works
+     - Scrolling moves the camera along a guided route through chapters
+       (the text sections in dive.html, each with sourced facts).
+     - Dragging (or the arrow keys) lets you look around from wherever
+       you are. Scroll again and the view eases back onto the route.
+     - Hotspots in the scene can be clicked for short explanations.
 
    Built with three.js (three.min.js, bundled in this folder, MIT licence).
-   Everything is generated in code: terrain, water, sky, trash, plants,
-   fish and the robot. No image or model files are needed.
+   Everything is generated in code. No image or model files are needed.
 
    Sections
-     1. Helpers (noise, colours, the shared wave + terrain functions)
-     2. Renderer, camera, post-processing (grain, vignette, underwater blur)
+     1. Helpers (noise, colours, lake shape, where the pollution is)
+     2. Renderer, camera, post-processing
      3. Sky, water, terrain, shore, city
-     4. Trash (instanced: bottles, cans, cups, bags, wrappers, foam, tyres)
+     4. Trash
      5. Plants, fish, particles, light shafts
      6. The Lake Sentry robot
-     7. Controls (keyboard, touch joystick, mouse orbit)
-     8. HUD (counters, target brackets, captions)
+     7. Pollution set pieces (hyacinth, sewage channel, foam, dead fish,
+        dumping, encroaching buildings, mosquitoes)
+     8. The guided route (chapters, look-around, hotspots, gauges)
      9. Main loop
    ===================================================================== */
 (function () {
@@ -26,7 +34,8 @@
   const stage = document.getElementById('dive-stage');
   const fallback = document.getElementById('dive-fallback');
   if (!stage) return;
-  if (!window.THREE) { fallback.hidden = false; return; }
+  function noGL() { fallback.hidden = false; const l = document.getElementById('dive-loader'); if (l) l.hidden = true; document.body.classList.add('dive-nogl'); }
+  if (!window.THREE) { noGL(); return; }
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const isSmall = Math.min(window.innerWidth, window.innerHeight) < 700 || /Mobi|Android/i.test(navigator.userAgent);
@@ -70,15 +79,71 @@
     const wob = 1 + 0.12 * Math.sin(3 * a + 1.3) + 0.07 * Math.sin(5 * a + 0.4) + 0.04 * Math.sin(9 * a + 2.1);
     return Math.hypot(x / LAKE_RX, z / LAKE_RZ) / wob;
   }
+  // Where the sewage channel enters the lake (on the shore, angle INF.a)
+  const INF = (function () {
+    const a = 2.35; let k = 0.6;
+    while (shore(Math.cos(a) * LAKE_RX * k, Math.sin(a) * LAKE_RZ * k) < 1 && k < 2) k += 0.004;
+    const x = Math.cos(a) * LAKE_RX * k, z = Math.sin(a) * LAKE_RZ * k, L = Math.hypot(x, z);
+    return { a: a, k: k, x: x, z: z, nx: x / L, nz: z / L };
+  })();
+  // Rubbish dumped on the bank (angle 0.75), just behind the beach
+  const DUMP = (function () {
+    const a = 0.75; let k = 0.6;
+    while (shore(Math.cos(a) * LAKE_RX * k, Math.sin(a) * LAKE_RZ * k) < 1 && k < 2) k += 0.004;
+    const x = Math.cos(a) * LAKE_RX * k, z = Math.sin(a) * LAKE_RZ * k, L = Math.hypot(x, z);
+    return { a: a, x: x + x / L * 9, z: z + z / L * 9 };
+  })();
+  function dumpAt(x, z) { const u = (x - DUMP.x) / 11, v = (z - DUMP.z) / 9; return smooth(1.0, 0.35, u * u + v * v + (noise(x * 0.3, z * 0.3) - 0.5) * 0.4); }
+  // (the lake-bed chapter's spot is set after lakePt below)
+  // A point in the lake: angle a, fraction k of the way to the shore, height y
+  function lakePt(a, k, y) {
+    let edge = 0.5;
+    while (shore(Math.cos(a) * LAKE_RX * edge, Math.sin(a) * LAKE_RZ * edge) < 1 && edge < 2) edge += 0.004;
+    return new THREE.Vector3(Math.cos(a) * LAKE_RX * edge * k, y, Math.sin(a) * LAKE_RZ * edge * k);
+  }
+  const BEDP = lakePt(4.75, 0.45, 0);
+  /* ---------- Where the pollution is (0..1), used by shaders and placement ----------
+     hyacinth: a thick carpet that grows out from the sewage inlet (nutrients)
+     plume:    murky sewage spreading from the inlet
+     scum:     green algal film along the edges */
+  const PATCH2 = { a: 4.1, k: 0.8 };
+  function hyacinthAt(x, z) {
+    const cx = INF.x * 0.62, cz = INF.z * 0.62;
+    const d = Math.hypot(x - cx, z - cz) + (noise(x * 0.045 + 3, z * 0.045) - 0.5) * 34;
+    const p2x = Math.cos(PATCH2.a) * LAKE_RX * PATCH2.k, p2z = Math.sin(PATCH2.a) * LAKE_RZ * PATCH2.k;
+    const d2 = Math.hypot(x - p2x, z - p2z) + (noise(x * 0.07, z * 0.07 + 9) - 0.5) * 18;
+    const m = Math.max(smooth(56, 32, d), smooth(20, 9, d2));
+    const open = smooth(9, 24, Math.hypot(x - INF.x, z - INF.z));
+    return shore(x, z) > 0.99 ? 0 : m * open;
+  }
+  function plumeAt(x, z) { return smooth(48, 4, Math.hypot(x - INF.x, z - INF.z) + (noise(x * 0.06, z * 0.06) - 0.5) * 16); }
+  function scumAt(x, z) { const s = shore(x, z); return Math.max(smooth(0.8, 0.97, s) * smooth(0.4, 0.65, noise(x * 0.04 + 7, z * 0.04)), plumeAt(x, z) * 0.25); }
+
   function groundH(x, z) {
     const s = shore(x, z);
     const n = fbm(x * 0.035 + 10, z * 0.035 - 4);
     if (s < 1) {
       // lake bed: deepest in the middle, shelving up to the shore
-      return lerp(0.7, -11, smooth(0.97, 0.35, s)) + (n - 0.5) * 2.2 * smooth(0.95, 0.6, s);
+      const lagoon = smooth(26, 6, Math.hypot(x - INF.x, z - INF.z));
+      return lerp(0.7, -11, smooth(0.97, 0.35, s)) + (n - 0.5) * 2.2 * smooth(0.95, 0.6, s) - lagoon * 2.2;
     }
     const land = smooth(1.0, 1.25, s) * 3 + smooth(1.2, 3.2, s) * (10 + n * 26) + (n - 0.5) * 3 * smooth(1.05, 1.4, s);
-    return 0.7 + land;
+    let h = 0.7 + land + dumpAt(x, z) * (2.4 + noise(x * 0.5, z * 0.5) * 1.2);
+    // the sewage channel (nala) cut through the bank
+    const along = (x - INF.x) * INF.nx + (z - INF.z) * INF.nz, across = Math.abs((x - INF.x) * INF.nz - (z - INF.z) * INF.nx);
+    if (along > -4 && along < 60 && across < 6) h = lerp(h, Math.min(h, 0.15 + Math.max(0, along) * 0.03), smooth(6, 2.6, across));
+    return h;
+  }
+
+  // The terrain mesh is a grid, so between grid points its height differs a
+  // little from groundH(). Objects resting on the ground use this instead.
+  const T_SIZE = 1500, T_SEGS = isSmall ? 220 : 300, T_STEP = T_SIZE / T_SEGS;
+  function meshH(x, z) {
+    const gx = (x + T_SIZE / 2) / T_STEP, gz = (z + T_SIZE / 2) / T_STEP;
+    const i = Math.floor(gx), j = Math.floor(gz), fx = gx - i, fz = gz - j;
+    const X = function (k) { return k * T_STEP - T_SIZE / 2; };
+    const h00 = groundH(X(i), X(j)), h10 = groundH(X(i + 1), X(j)), h01 = groundH(X(i), X(j + 1)), h11 = groundH(X(i + 1), X(j + 1));
+    return Math.max(lerp(lerp(h00, h10, fx), lerp(h01, h11, fx), fz), groundH(x, z));
   }
 
   /* ---------- Waves (the same maths runs on the GPU in the water shader) ---------- */
@@ -108,7 +173,7 @@
   try {
     renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance' });
     if (!renderer.capabilities.isWebGL2) throw new Error('WebGL2 needed');
-  } catch (e) { fallback.hidden = false; return; }
+  } catch (e) { noGL(); return; }
   const DPR = Math.min(window.devicePixelRatio || 1, isSmall ? 1.5 : 1.75);
   renderer.setPixelRatio(DPR);
   renderer.outputEncoding = THREE.LinearEncoding; // the post pass does tone mapping + gamma
@@ -122,10 +187,23 @@
   camera.position.set(-160, 70, 190);
 
   const SUN_DIR = new THREE.Vector3(-0.62, 0.16, -0.77).normalize();
-  const FOG_ABOVE = col('#b9989c'), FOG_BELOW = col('#1d4a3c');
+  const FOG_ABOVE = col('#b9989c'), FOG_BELOW = col('#24533f');
   const fogU = { uFogColor: { value: FOG_ABOVE.clone() }, uFogDensity: { value: 0.0021 } };
   scene.fog = new THREE.FogExp2(FOG_ABOVE.clone(), 0.0021);
   const timeU = { value: 0 };
+  // Pollution map as a texture (R = hyacinth, G = algal scum, B = sewage plume)
+  // covering x, z from -180 to 180 m, so the shaders match the placed objects.
+  const maskTex = (function () {
+    const N = 256, data = new Uint8Array(N * N * 4);
+    for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) {
+      const x = (i + 0.5) / N * 360 - 180, z = (j + 0.5) / N * 360 - 180, o = (j * N + i) * 4;
+      const edge = (i === 0 || j === 0 || i === N - 1 || j === N - 1) ? 0 : 1;
+      data[o] = 255 * hyacinthAt(x, z) * edge; data[o + 1] = 255 * scumAt(x, z) * edge; data[o + 2] = 255 * plumeAt(x, z) * edge; data[o + 3] = 255 * dumpAt(x, z) * edge;
+    }
+    const tex = new THREE.DataTexture(data, N, N, THREE.RGBAFormat);
+    tex.magFilter = tex.minFilter = THREE.LinearFilter; tex.needsUpdate = true;
+    return tex;
+  })();
   const underU = { value: 0 };
 
   const hemi = new THREE.HemisphereLight(col('#9fb6ff'), col('#5a4630'), 0.75);
@@ -183,7 +261,8 @@
 
   /* ---------- Shared GLSL ---------- */
   const GLSL_COMMON = [
-    'uniform vec3 uFogColor; uniform float uFogDensity; uniform float uTime; uniform float uUnder; uniform vec3 uSunDir;',
+    'uniform vec3 uFogColor; uniform float uFogDensity; uniform float uTime; uniform float uUnder; uniform vec3 uSunDir; uniform sampler2D uMask;',
+    'vec4 maskAt(vec2 xz){ vec2 uv = (xz + 180.0) / 360.0; if (uv.x < 0.0 || uv.y < 0.0 || uv.x > 1.0 || uv.y > 1.0) return vec4(0.0); return texture2D(uMask, uv); }',
     'vec3 applyFog(vec3 c, float dist){ float f = 1.0 - exp(-uFogDensity*uFogDensity*dist*dist); return mix(c, uFogColor, clamp(f,0.0,1.0)); }',
     'vec3 srgb(vec3 c){ return pow(c, vec3(2.2)); }',
     'vec3 skyColor(vec3 d){',
@@ -202,7 +281,7 @@
   function sharedU(extra) {
     return Object.assign({
       uFogColor: fogU.uFogColor, uFogDensity: fogU.uFogDensity, uTime: timeU, uUnder: underU,
-      uSunDir: { value: SUN_DIR },
+      uSunDir: { value: SUN_DIR }, uMask: { value: maskTex },
     }, extra || {});
   }
 
@@ -241,6 +320,7 @@
       '  vec3 toCam = cameraPosition - vWorld; float dist = length(toCam); vec3 V = toCam/dist;',
       '  float fade = smoothstep(260.0, 20.0, dist);',
       '  vec2 g = waveGrad(vWorld.xz) * mix(0.35, 1.0, fade) + rippleGrad(vWorld.xz) * fade;',
+      '  vec4 mk = maskAt(vWorld.xz); g *= 1.0 - mk.r * 0.9;',
       '  vec3 N = normalize(vec3(-g.x, 1.0, -g.y));',
       '  vec3 deep = srgb(vec3(0.06,0.16,0.13)); vec3 murk = srgb(vec3(0.16,0.26,0.17));',
       '  vec3 c;',
@@ -250,7 +330,13 @@
       '    vec3 refl = skyColor(R);',
       '    float scat = pow(max(dot(V, -uSunDir), 0.0), 3.0) * 0.25;',
       '    vec3 body = mix(deep, murk, 0.4 + 0.6*clamp(g.x*4.0+0.5, 0.0, 1.0)*0.3) + murk*scat;',
-      '    c = mix(body, refl, fres);',
+      '    body = mix(body, srgb(vec3(0.085,0.09,0.065)), mk.b * 0.7);',
+      '    float sc = mk.g * smoothstep(0.35, 0.75, vnoise(vWorld.xz*0.35) + vnoise(vWorld.xz*1.7)*0.4);',
+      '    body = mix(body, srgb(vec3(0.26,0.37,0.12)), sc * 0.85);',
+      '    c = mix(body, refl, fres * (1.0 - sc * 0.75));',
+      '    float fz = smoothstep(0.7, 0.98, mk.b) * smoothstep(0.5, 0.78, vnoise(vWorld.xz*2.6 + vec2(uTime*0.05, 0.0)) * 0.7 + vnoise(vWorld.xz*9.0) * 0.3) * 0.5;',
+      '    float bub = smoothstep(0.6, 0.9, vnoise(vWorld.xz*18.0));',
+      '    c = mix(c, srgb(vec3(0.86,0.83,0.74)) * (0.55 + 0.45*max(uSunDir.y*3.0, 0.3)), fz * (0.75 + bub * 0.25));',
       '    float sp = max(dot(R, uSunDir), 0.0);',
       '    c += vec3(1.0,0.78,0.5) * (pow(sp, 900.0)*40.0 + pow(sp, 90.0)*0.6);',
       '    c = applyFog(c, dist);',
@@ -259,6 +345,7 @@
       '    vec3 T = refract(I, -N, 1.33);',
       '    if (dot(T,T) < 0.001) { c = srgb(vec3(0.07,0.17,0.14)) * 1.1; }',
       '    else { c = skyColor(normalize(T)) * 0.75 + vec3(1.0,0.8,0.55) * pow(max(dot(normalize(T), uSunDir), 0.0), 60.0) * 3.0; }',
+      '    c *= 1.0 - mk.r * 0.93; c = mix(c, c * vec3(0.7, 0.62, 0.4), mk.b);',
       '    c = applyFog(c, dist);',
       '  }',
       '  gl_FragColor = vec4(c, 1.0);',
@@ -269,7 +356,7 @@
 
   // Terrain: lake bed, beach and the hills around it.
   function buildTerrain() {
-    const size = 1500, segs = isSmall ? 220 : 300;
+    const size = T_SIZE, segs = T_SEGS;
     const geo = new THREE.PlaneGeometry(size, size, segs, segs).rotateX(-Math.PI / 2);
     const pos = geo.attributes.position;
     for (let i = 0; i < pos.count; i++) {
@@ -290,25 +377,28 @@
         '    c += 1.0/length(vec2(p.x / (sin(i.x+tt)/inten), p.y / (cos(i.y+tt)/inten))); }',
         '  c /= 4.0; c = 1.17 - pow(c, 1.4); return pow(abs(c), 8.0); }',
         'void main(){',
-        '  vec3 N = normalize(vN); float h = vWorld.y;',
+        '  vec3 N = normalize(vN); float h = vWorld.y; vec4 mk = maskAt(vWorld.xz);',
         '  float n1 = vnoise(vWorld.xz*0.15); float n2 = vnoise(vWorld.xz*1.3); float n3 = vnoise(vWorld.xz*7.0);',
-        '  vec3 mud = mix(srgb(vec3(0.20,0.19,0.13)), srgb(vec3(0.34,0.31,0.20)), n1*0.7+n2*0.3);',
+        '  vec3 mud = mix(srgb(vec3(0.30,0.28,0.20)), srgb(vec3(0.44,0.40,0.29)), n1*0.7+n2*0.3);',
         '  vec3 wetSand = srgb(vec3(0.46,0.40,0.29)); vec3 sand = mix(srgb(vec3(0.80,0.71,0.53)), srgb(vec3(0.70,0.60,0.43)), n2*0.6+n3*0.4);',
         '  vec3 grass = mix(srgb(vec3(0.30,0.36,0.17)), srgb(vec3(0.52,0.50,0.28)), n1*0.8+n3*0.2);',
         '  vec3 rock = mix(srgb(vec3(0.42,0.40,0.37)), srgb(vec3(0.58,0.55,0.51)), n2);',
+        '  mud = mix(mud, srgb(vec3(0.07,0.065,0.05)), mk.b * 0.85);',
         '  vec3 c = mud;',
         '  c = mix(c, wetSand, smoothstep(-0.9, 0.1, h + (n2-0.5)*0.6));',
         '  c = mix(c, sand, smoothstep(0.35, 0.9, h + (n3-0.5)*0.3));',
         '  c = mix(c, grass, smoothstep(1.8, 3.2, h + (n1-0.5)*2.0));',
         '  c = mix(c, rock, smoothstep(0.72, 0.55, N.y) * step(1.0, h));',
+        '  vec3 debris = mix(srgb(vec3(0.42,0.38,0.33)), srgb(vec3(0.30,0.25,0.20)), n3) * (0.8 + 0.4*vnoise(vWorld.xz*3.0));',
+        '  c = mix(c, debris, smoothstep(0.1, 0.5, mk.a));',
         '  c *= 0.85 + n3*0.3;',
         '  float diff = max(dot(N, uSunDir), 0.0);',
         '  vec3 light = vec3(1.0,0.78,0.56)*2.1*diff + mix(srgb(vec3(0.33,0.27,0.22)), srgb(vec3(0.52,0.58,0.78)), N.y*0.5+0.5)*0.75;',
         '  float depth = max(-h, 0.0);',
         '  if (h < 0.05) {',
         '    float k = caustic(vWorld.xz*0.11) ;',
-        '    light *= exp(-depth*0.075) * vec3(0.6, 0.92, 0.82) + 0.1;',
-        '    light += vec3(0.9,1.0,0.8) * k * 1.4 * exp(-depth*0.1);',
+        '    light *= (exp(-depth*0.075) * vec3(0.6, 0.92, 0.82) + 0.1) * (1.0 - mk.r * 0.85);',
+        '    light += vec3(0.9,1.0,0.8) * k * 1.4 * exp(-depth*0.1) * (1.0 - mk.r) * (1.0 - mk.b * 0.7);',
         '  }',
         '  c *= light;',
         '  gl_FragColor = vec4(applyFog(c, length(cameraPosition - vWorld)), 1.0);',
@@ -491,7 +581,8 @@
       patches.push({ x: Math.cos(a) * LAKE_RX * s, z: Math.sin(a) * LAKE_RZ * s, r: rand(4, 12) });
     }
     // two patches straight ahead of the start, so there's something to collect right away
-    patches.push({ x: 5, z: 15, r: 5 }, { x: 9, z: 30, r: 8 });
+    const bc = lakePt(-0.78, 0.35, 0);
+    patches.push({ x: bc.x, z: bc.z, r: 9 }, { x: INF.x * 0.8, z: INF.z * 0.8, r: 10 });
     const nFloat = Math.round(360 * Q);
     for (let i = 0; i < nFloat; i++) {
       const p = patches[i % patches.length];
@@ -507,8 +598,13 @@
       const x = Math.cos(a) * LAKE_RX * s, z = Math.sin(a) * LAKE_RZ * s;
       const h = groundH(x, z);
       if (h > -0.6) continue;
-      addItem(pick(sinkKinds), 'sunk', x, z, { y: h + 0.03 });
+      addItem(pick(sinkKinds), 'sunk', x, z, { y: meshH(x, z) + 0.05 });
       i++;
+    }
+    // A cluster of sunken waste where the lake-bed chapter looks
+    for (let i = 0; i < Math.round(90 * Q); i++) {
+      const a = rand(0, TAU), r = Math.sqrt(rnd()) * 6, x = BEDP.x + Math.cos(a) * r, z = BEDP.z + Math.sin(a) * r;
+      addItem(pick(['bottle', 'bottle', 'can', 'bag', 'sandal', 'tyre', 'cup', 'wrapper']), 'sunk', x, z, { y: meshH(x, z) + 0.05 });
     }
     // Bags drifting mid-water
     for (let i = 0; i < Math.round(90 * Q); i++) {
@@ -518,13 +614,20 @@
       if (h > -2) continue;
       addItem(pick(['bag', 'bag', 'wrapper']), 'suspended', x, z, { y: rand(h + 0.6, -0.8), base: 0 });
     }
+    // A heap of rubbish dumped on the bank
+    for (let i = 0; i < Math.round(420 * Q); i++) {
+      const a = rand(0, TAU), r = Math.sqrt(rnd()) * 11;
+      const x = DUMP.x + Math.cos(a) * r, z = DUMP.z + Math.sin(a) * r * 0.85;
+      if (dumpAt(x, z) < 0.2) continue;
+      addItem(pick(['bag', 'bag', 'bottle', 'wrapper', 'cup', 'sandal', 'can', 'foam']), 'shore', x, z, { y: meshH(x, z) + 0.06 });
+    }
     // Trash washed up along the beach
     for (let i = 0, guard = 0; i < Math.round(260 * Q) && guard < 9000; guard++) {
       const a = rand(0, TAU), s = rand(0.97, 1.08);
       const x = Math.cos(a) * LAKE_RX * s * 1.05, z = Math.sin(a) * LAKE_RZ * s * 1.05;
       const h = groundH(x, z);
       if (h < 0.1 || h > 1.6) continue;
-      addItem(pick(floatKinds), 'shore', x, z, { y: h + 0.02 });
+      addItem(pick(floatKinds), 'shore', x, z, { y: meshH(x, z) + 0.04 });
       i++;
     }
 
@@ -678,9 +781,9 @@
 
     // God rays underwater
     shaftMat = new THREE.ShaderMaterial({
-      uniforms: sharedU(), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
+      uniforms: sharedU({ uShade: { value: 0 } }), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
       vertexShader: 'varying vec2 vUv; varying vec3 vWorld; void main(){ vUv = uv; vec4 w = modelMatrix*vec4(position,1.0); vWorld = w.xyz; gl_Position = projectionMatrix*viewMatrix*w; }',
-      fragmentShader: 'uniform float uTime, uUnder; varying vec2 vUv; varying vec3 vWorld; void main(){ float e = smoothstep(0.0,0.35,vUv.x)*smoothstep(1.0,0.65,vUv.x); float f = smoothstep(0.0,1.0,vUv.y); float fl = 0.6 + 0.4*sin(uTime*0.7 + vWorld.x*0.3); gl_FragColor = vec4(vec3(0.55,0.75,0.55)*e*f*f*fl*0.09*uUnder, 1.0); }',
+      fragmentShader: 'uniform float uTime, uUnder, uShade; varying vec2 vUv; varying vec3 vWorld; void main(){ float e = smoothstep(0.0,0.35,vUv.x)*smoothstep(1.0,0.65,vUv.x); float f = smoothstep(0.0,1.0,vUv.y); float fl = 0.6 + 0.4*sin(uTime*0.7 + vWorld.x*0.3); gl_FragColor = vec4(vec3(0.55,0.75,0.55)*e*f*f*fl*0.09*uUnder*(1.0-uShade), 1.0); }',
     });
     const shafts = new THREE.Group();
     for (let i = 0; i < 14; i++) {
@@ -803,214 +906,421 @@
     scene.add(botGroup);
   }
 
-  /* =============================================================
-     7. Controls
-     ============================================================= */
-  const keys = {};
-  const input = { throttle: 0, steer: 0, vert: 0 };
-  let started = false;
-  window.addEventListener('keydown', function (e) {
-    if (!started || e.target.closest('input, textarea, select, dialog')) return;
-    keys[e.code] = true;
-    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'].indexOf(e.code) >= 0) e.preventDefault();
-  });
-  window.addEventListener('keyup', function (e) { keys[e.code] = false; });
-  window.addEventListener('blur', function () { Object.keys(keys).forEach(function (k) { keys[k] = false; }); });
-
-  // Mouse / touch drag on the canvas orbits the camera; wheel zooms.
-  const orbit = { yaw: 0, pitch: 0.28, dist: 5.2, tYaw: 0, tPitch: 0.28, tDist: 5.2 };
-  let drag = null;
-  renderer.domElement.addEventListener('pointerdown', function (e) { drag = { x: e.clientX, y: e.clientY, id: e.pointerId }; renderer.domElement.setPointerCapture(e.pointerId); });
-  renderer.domElement.addEventListener('pointermove', function (e) {
-    if (!drag || drag.id !== e.pointerId) return;
-    orbit.tYaw -= (e.clientX - drag.x) * 0.006;
-    orbit.tPitch = clamp(orbit.tPitch + (e.clientY - drag.y) * 0.004, -0.35, 1.2);
-    drag.x = e.clientX; drag.y = e.clientY;
-  });
-  ['pointerup', 'pointercancel'].forEach(function (ev) { renderer.domElement.addEventListener(ev, function () { drag = null; }); });
-  renderer.domElement.addEventListener('wheel', function (e) { e.preventDefault(); orbit.tDist = clamp(orbit.tDist * (1 + e.deltaY * 0.001), 2.8, 14); }, { passive: false });
-
-  // On-screen controls (touch + mouse): joystick and rise / dive buttons
-  const joy = document.getElementById('dive-joy'), knob = document.getElementById('dive-knob');
-  let joyId = null;
-  function joyMove(e) {
-    const r = joy.getBoundingClientRect();
-    let dx = (e.clientX - (r.left + r.width / 2)) / (r.width / 2), dy = (e.clientY - (r.top + r.height / 2)) / (r.height / 2);
-    const l = Math.hypot(dx, dy); if (l > 1) { dx /= l; dy /= l; }
-    input.steer = dx; input.throttle = -dy;
-    knob.style.transform = 'translate(' + dx * 34 + 'px,' + dy * 34 + 'px)';
-  }
-  if (joy) {
-    joy.addEventListener('pointerdown', function (e) { joyId = e.pointerId; joy.setPointerCapture(e.pointerId); joyMove(e); });
-    joy.addEventListener('pointermove', function (e) { if (e.pointerId === joyId) joyMove(e); });
-    ['pointerup', 'pointercancel'].forEach(function (ev) { joy.addEventListener(ev, function () { joyId = null; input.steer = 0; input.throttle = 0; knob.style.transform = ''; }); });
-  }
-  function holdButton(id, val) {
-    const b = document.getElementById(id); if (!b) return;
-    const on = function (e) { e.preventDefault(); input.vert = val; b.setAttribute('aria-pressed', 'true'); };
-    const off = function () { if (input.vert === val) input.vert = 0; b.setAttribute('aria-pressed', 'false'); };
-    b.addEventListener('pointerdown', on); b.addEventListener('pointerup', off); b.addEventListener('pointerleave', off); b.addEventListener('pointercancel', off);
-    b.addEventListener('keydown', function (e) { if (e.code === 'Enter' || e.code === 'Space') on(e); });
-    b.addEventListener('keyup', off);
-  }
-  holdButton('dive-up', 1); holdButton('dive-down', -1);
 
   /* =============================================================
-     8. HUD
+     7. Pollution set pieces
      ============================================================= */
-  const hud = {
-    depth: document.getElementById('hud-depth'), hdg: document.getElementById('hud-hdg'), spd: document.getElementById('hud-spd'),
-    got: document.getElementById('hud-got'), kg: document.getElementById('hud-kg'), seen: document.getElementById('hud-seen'),
-    mode: document.getElementById('hud-mode'), caption: document.getElementById('dive-caption'), live: document.getElementById('dive-live'),
-    tags: document.getElementById('dive-tags'),
-  };
-  let collected = 0, collectedKg = 0, spotted = 0;
-  const tagEls = [];
-  for (let i = 0; i < 6; i++) {
-    const el = document.createElement('div'); el.className = 'dive-tag'; el.innerHTML = '<span></span>';
-    hud.tags.appendChild(el); tagEls.push(el);
-  }
-  let captionTimer = null;
-  const said = {};
-  function caption(key, text, ms) {
-    if (said[key]) return; said[key] = true;
-    hud.caption.textContent = '';
-    hud.caption.classList.add('on');
-    let i = 0;
-    clearInterval(captionTimer);
-    captionTimer = setInterval(function () {
-      hud.caption.textContent = text.slice(0, ++i);
-      if (i >= text.length) { clearInterval(captionTimer); setTimeout(function () { hud.caption.classList.remove('on'); }, ms || 4200); }
-    }, reduceMotion ? 1 : 22);
-    hud.live.textContent = text;
+  // Merge several geometries into one (so a plant is a single instance).
+  function merge(list) {
+    let n = 0, idx = 0;
+    list.forEach(function (g) { n += g.attributes.position.count; idx += g.index ? g.index.count : g.attributes.position.count; });
+    const pos = new Float32Array(n * 3), nor = new Float32Array(n * 3), ind = new Uint32Array(idx);
+    let vo = 0, io = 0;
+    list.forEach(function (g) {
+      pos.set(g.attributes.position.array, vo * 3); nor.set(g.attributes.normal.array, vo * 3);
+      const c = g.attributes.position.count;
+      if (g.index) { for (let i = 0; i < g.index.count; i++) ind[io + i] = g.index.array[i] + vo; io += g.index.count; }
+      else { for (let i = 0; i < c; i++) ind[io + i] = vo + i; io += c; }
+      vo += c;
+    });
+    const out = new THREE.BufferGeometry();
+    out.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    out.setAttribute('normal', new THREE.BufferAttribute(nor, 3));
+    out.setIndex(new THREE.BufferAttribute(ind, 1));
+    return out;
   }
 
-  /* =============================================================
-     9. Main loop
-     ============================================================= */
-  const clock = new THREE.Clock();
-  let foamAcc = 0, camSide = false, t = 0, introT = reduceMotion ? 1 : 0, splash = 0, wasUnder = false, hudTimer = 0, bubbleTimer = 0;
-  const camTarget = new THREE.Vector3(), camWant = new THREE.Vector3(), introFrom = new THREE.Vector3(-150, 60, 170), tmpV = new THREE.Vector3();
-  const botQ = new THREE.Quaternion();
-
-  function updateBot(dt) {
-    let thr = input.throttle, str = input.steer, vert = input.vert;
-    if (keys.KeyW || keys.ArrowUp) thr = 1;
-    if (keys.KeyS || keys.ArrowDown) thr = -0.6;
-    if (keys.KeyA || keys.ArrowLeft) str = -1;
-    if (keys.KeyD || keys.ArrowRight) str = 1;
-    if (keys.Space || keys.KeyE) vert = 1;
-    if (keys.ShiftLeft || keys.ShiftRight || keys.KeyQ || keys.KeyC) vert = -1;
-
-    const maxV = bot.under ? 2.2 : 3.2;
-    bot.speed = lerp(bot.speed, thr * maxV, 1 - Math.exp(-dt * 1.4));
-    bot.turn = lerp(bot.turn, -str * (0.9 - Math.min(0.4, Math.abs(bot.speed) * 0.08)), 1 - Math.exp(-dt * 3));
-    bot.yaw += bot.turn * dt;
-    let nx = bot.x + Math.sin(bot.yaw) * bot.speed * dt, nz = bot.z + Math.cos(bot.yaw) * bot.speed * dt;
-    const surf = waveH(nx, nz, t);
-    // Stay in the water: block movement into the shallows/shore.
-    if (groundH(nx, nz) > -0.35) { nx = bot.x; nz = bot.z; bot.speed *= -0.3; }
-    bot.x = nx; bot.z = nz;
-
-    // Diving / surfacing
-    const floor = groundH(bot.x, bot.z) + 0.45;
-    if (vert < 0 || bot.under) {
-      bot.vy = lerp(bot.vy, vert * 1.3, 1 - Math.exp(-dt * 2));
-      bot.y += bot.vy * dt;
-      if (bot.y < floor) { bot.y = floor; bot.vy = 0; }
-      if (bot.y > surf - 0.05 && vert >= 0) { bot.y = surf; bot.under = false; bot.vy = 0; }
-      else if (bot.y < surf - 0.25) bot.under = true;
-    } else {
-      bot.y = lerp(bot.y, surf, 1 - Math.exp(-dt * 8));
+  let foamMesh, foams = [], deadMesh, dead = [], swarm, swarmMat;
+  const SPOT = {}; // named places used by the route and the hotspots
+  function buildPollution() {
+    /* ---- Water hyacinth carpet ---- */
+    // one rosette: glossy rounded leaves on spongy stalks
+    const leaves = [];
+    for (let k = 0; k < 6; k++) {
+      const ang = k / 6 * TAU + (k % 2) * 0.25, lean = 0.75 + (k % 3) * 0.18, out = 0.03 + (k % 2) * 0.015;
+      const leaf = new THREE.CircleGeometry(1, 14);
+      const lp = leaf.attributes.position;
+      for (let i = 0; i < lp.count; i++) { const x = lp.getX(i), y = lp.getY(i); lp.setZ(i, x * x * 0.35 + y * 0.08); } // cupped
+      leaf.computeVertexNormals();
+      leaf.scale(0.055, 0.065, 0.06); leaf.rotateX(-lean); leaf.translate(0, 0.075, out + 0.03); leaf.rotateY(ang);
+      const stalk = new THREE.SphereGeometry(1, 7, 4); stalk.scale(0.02, 0.04, 0.02); stalk.rotateX(-0.5); stalk.translate(0, 0.03, out); stalk.rotateY(ang);
+      leaves.push(leaf, stalk);
     }
+    const rosette = merge(leaves);
+    const pts = [];
+    const want = Math.round(6500 * Q);
+    for (let guard = 0; pts.length < want && guard < want * 8; guard++) {
+      const x = rand(-170, 170), z = rand(-170, 170);
+      const m = hyacinthAt(x, z);
+      if (m < 0.05 || rnd() > Math.pow(m, 0.6)) continue;
+      if (groundH(x, z) > -0.2) continue;
+      pts.push({ x: x, z: z, s: rand(1.8, 3.2) * (0.7 + m * 0.5) });
+    }
+    const hy = new THREE.InstancedMesh(rosette, M.std('#ffffff', { roughness: 0.38, metalness: 0.05, side: THREE.DoubleSide }), Math.max(1, pts.length));
+    const greens = ['#3c6b2a', '#46772f', '#335f25', '#527f37', '#2d5422', '#5d7f36', '#6b6a32'];
+    pts.forEach(function (p, i) {
+      dummy.position.set(p.x, 0.02, p.z); dummy.rotation.set(rand(-0.08, 0.08), rand(0, TAU), rand(-0.08, 0.08)); dummy.scale.setScalar(p.s);
+      dummy.updateMatrix(); hy.setMatrixAt(i, dummy.matrix); hy.setColorAt(i, col(pick(greens)).multiplyScalar(rand(0.8, 1.15)));
+    });
+    scene.add(hy);
+    // pale lavender flower spikes on some plants
+    const fl = []; for (let k = 0; k < 7; k++) { const g = new THREE.SphereGeometry(0.018, 6, 4); g.translate(Math.sin(k * 2.1) * 0.015, 0.09 + k * 0.022, Math.cos(k * 2.1) * 0.015); fl.push(g); }
+    const flowerPts = pts.filter(function () { return rnd() < 0.07; });
+    const flowers = new THREE.InstancedMesh(merge(fl), M.std('#c9b3ea', { roughness: 0.6, emissive: col('#2a1f3a') }), Math.max(1, flowerPts.length));
+    flowerPts.forEach(function (p, i) { dummy.position.set(p.x, 0.02, p.z); dummy.rotation.set(0, 0, 0); dummy.scale.setScalar(p.s); dummy.updateMatrix(); flowers.setMatrixAt(i, dummy.matrix); });
+    scene.add(flowers);
+    // dark trailing roots underneath (seen when diving)
+    const rootPts = pts.filter(function () { return rnd() < 0.3; });
+    const roots = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.012, 0.003, 1, 4).translate(0, -0.5, 0), M.std('#241c20', { roughness: 1 }), Math.max(1, rootPts.length));
+    rootPts.forEach(function (p, i) { dummy.position.set(p.x, 0.02, p.z); dummy.rotation.set(rand(-0.3, 0.3), 0, rand(-0.3, 0.3)); dummy.scale.set(p.s * 1.5, rand(0.3, 0.7) * p.s, p.s * 1.5); dummy.updateMatrix(); roots.setMatrixAt(i, dummy.matrix); });
+    scene.add(roots);
+    // a continuous green mat between the plants (dark from below)
+    const matGeo = new THREE.PlaneGeometry(360, 360, 140, 140).rotateX(-Math.PI / 2);
+    const mAttr = new Float32Array(matGeo.attributes.position.count);
+    for (let i = 0; i < mAttr.length; i++) mAttr[i] = hyacinthAt(matGeo.attributes.position.getX(i), matGeo.attributes.position.getZ(i));
+    matGeo.setAttribute('m', new THREE.BufferAttribute(mAttr, 1));
+    const carpet = new THREE.Mesh(matGeo, new THREE.ShaderMaterial({
+      uniforms: sharedU(), side: THREE.DoubleSide,
+      vertexShader: 'attribute float m; varying float vM; varying vec3 vWorld; void main(){ vM = m; vec4 w = modelMatrix*vec4(position,1.0); w.y = 0.025; vWorld = w.xyz; gl_Position = projectionMatrix*viewMatrix*w; }',
+      fragmentShader: GLSL_COMMON + '\nvarying float vM; varying vec3 vWorld; void main(){ float n = vnoise(vWorld.xz*2.3)*0.6 + vnoise(vWorld.xz*9.0)*0.4; if (vM + (n-0.5)*0.5 < 0.42) discard;' +
+        ' vec3 c; if (gl_FrontFacing) { float dead = smoothstep(0.62, 0.8, vnoise(vWorld.xz*0.09 + 4.0)); float cell = vnoise(vWorld.xz*14.0);' +
+        ' c = mix(srgb(vec3(0.12,0.22,0.08)), srgb(vec3(0.24,0.36,0.13)), n*0.7 + cell*0.3);' +
+        ' c = mix(c, srgb(vec3(0.33,0.27,0.14)), dead*0.75);' +
+        ' c *= 0.45 + 1.9*max(uSunDir.y, 0.0) + 0.25*cell; }' +
+        ' else { c = srgb(vec3(0.03,0.04,0.03)) + vec3(0.02,0.05,0.03)*n; }' +
+        ' gl_FragColor = vec4(applyFog(c, length(cameraPosition - vWorld)), 1.0); }',
+    }));
+    scene.add(carpet);
+    SPOT.hyacinth = lakePt(INF.a, 0.7, 0.15);
 
-    // Orientation: ride the waves on the surface, pitch with climb underwater
-    waveN(bot.x, bot.z, t, tmpN);
-    const surfMix = bot.under ? 0 : 1;
-    const wantPitch = surfMix ? -Math.atan2(tmpN.z * Math.cos(bot.yaw) + tmpN.x * Math.sin(bot.yaw), 1) : -bot.vy * 0.25;
-    const wantRoll = surfMix ? Math.atan2(tmpN.x * Math.cos(bot.yaw) - tmpN.z * Math.sin(bot.yaw), 1) - bot.turn * 0.05 : -bot.turn * 0.12;
-    bot.pitch = lerp(bot.pitch, wantPitch, 1 - Math.exp(-dt * 4));
-    bot.roll = lerp(bot.roll, wantRoll, 1 - Math.exp(-dt * 4));
-    tmpE.set(bot.pitch, bot.yaw, bot.roll, 'YXZ');
-    botQ.setFromEuler(tmpE);
-    botGroup.position.set(bot.x, bot.y - 0.06, bot.z);
-    botGroup.quaternion.copy(botQ);
+    /* ---- Sewage channel (nala) entering the lake ---- */
+    const len = 46, yaw = Math.atan2(INF.nx, INF.nz);
+    const concrete = M.std('#6f6b63', { roughness: 0.97 });
+    const nala = new THREE.Group();
+    nala.position.set(INF.x, 0, INF.z); nala.rotation.y = yaw;
+    for (let k = 0; k < 12; k++) {
+      const z0 = -2 + k * (len / 12), zc = z0 + len / 24;
+      const floor = 0.15 + Math.max(0, zc) * 0.03;
+      [-2.6, 2.6].forEach(function (side) {
+        const wall = new THREE.Mesh(new THREE.BoxGeometry(0.45, 2.0, len / 12 + 0.05), concrete);
+        wall.position.set(side, floor + 0.35, zc); nala.add(wall);
+      });
+    }
+    // the flowing sewage
+    const flow = new THREE.Mesh(new THREE.PlaneGeometry(4.7, len + 2, 1, 20).rotateX(-Math.PI / 2), new THREE.ShaderMaterial({
+      uniforms: sharedU(),
+      vertexShader: 'varying vec2 vUv; varying vec3 vWorld; void main(){ vUv = uv; vec4 w = modelMatrix*vec4(position,1.0); vWorld = w.xyz; gl_Position = projectionMatrix*viewMatrix*w; }',
+      fragmentShader: GLSL_COMMON + '\nvarying vec2 vUv; varying vec3 vWorld; void main(){ vec2 p = vec2(vUv.x*3.0, vUv.y*40.0 + uTime*1.6); float n = vnoise(p) * 0.6 + vnoise(p*3.1) * 0.4;' +
+        ' vec3 c = mix(srgb(vec3(0.16,0.15,0.11)), srgb(vec3(0.36,0.33,0.25)), n); c += vec3(0.5,0.45,0.35) * smoothstep(0.78, 0.95, n) * 0.6;' +
+        ' c *= 0.9 + 0.5*max(uSunDir.y,0.0); gl_FragColor = vec4(applyFog(c, length(cameraPosition - vWorld)), 1.0); }',
+    }));
+    flow.position.set(0, 0.9, len / 2 - 3); flow.rotation.x = -0.03; nala.add(flow);
+    scene.add(nala);
+    SPOT.inlet = new THREE.Vector3(INF.x, 0.8, INF.z);
 
-    bot.paddle += bot.speed * dt * 3 + bot.turn * dt;
-    paddles.forEach(function (p, i) { p.rotation.x = bot.paddle * (i ? 1 : 1) + (i ? bot.turn : -bot.turn) * 0.5; });
-    bot.belt += dt * 0.6;
-    beltTex.offset.y = -bot.belt;
-    led.material.emissiveIntensity = (Math.sin(t * 4) > 0.6 ? 6 : 0.4);
+    /* ---- Froth near the inlet ---- */
+    for (let i = 0; i < 0; i++) {
+      const a = INF.a + Math.PI + rand(-1.1, 1.1), r = Math.pow(rnd(), 1.6) * 9;
+      const x = INF.x + Math.cos(a) * r, z = INF.z + Math.sin(a) * r;
+      if (groundH(x, z) > -0.15) continue;
+      foams.push({ x: x, z: z, s: rand(0.1, 0.35), ph: rand(0, TAU) });
+    }
+    foamMesh = new THREE.InstancedMesh(crumple(new THREE.IcosahedronGeometry(1, 2), 0.55, 2.2), M.std('#e6e1d2', { roughness: 1 }), Math.max(1, foams.length));
+    foamMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+    scene.add(foamMesh);
+    SPOT.froth = lakePt(INF.a, 0.93, 0.3);
 
-    // Wake on the surface, bubbles below
-    const sp = Math.abs(bot.speed);
-    if (!bot.under && sp > 0.2) {
-      foamAcc += dt * sp * 26;
-      const fs = Math.sin(bot.yaw), fc = Math.cos(bot.yaw);
-      while (foamAcc > 1) {
-        foamAcc -= 1;
-        // churn behind each paddle wheel, spreading outward
-        const side = rnd() < 0.5 ? -1 : 1, back = rand(0.55, 0.85), lat = side * rand(0.5, 0.75);
-        emit(foamPts, bot.x - fs * back + fc * lat, 0, bot.z - fc * back - fs * lat,
-          -fs * sp * rand(0.05, 0.25) + fc * side * rand(0.05, 0.3), 0, -fc * sp * rand(0.05, 0.25) - fs * side * rand(0.05, 0.3));
-        // bow wave peeling off the front corners
-        if (rnd() < 0.35) {
-          const bs = rnd() < 0.5 ? -1 : 1;
-          emit(foamPts, bot.x + fs * 0.9 + fc * bs * 0.45, 0, bot.z + fc * 0.9 - fs * bs * 0.45, fc * bs * rand(0.2, 0.45), 0, -fs * bs * rand(0.2, 0.45));
+    /* ---- Dead fish floating belly-up in the low-oxygen water ---- */
+    // a fish body (lathe profile, flattened sideways) with a tail and a dorsal fin
+    const prof = [[0, -0.2], [0.02, -0.19], [0.045, -0.13], [0.06, -0.04], [0.058, 0.04], [0.045, 0.11], [0.022, 0.17], [0, 0.19]].map(function (q) { return new THREE.Vector2(q[0], q[1]); });
+    const fishGeo = new THREE.LatheGeometry(prof, 10); fishGeo.scale(1, 1, 0.42); fishGeo.rotateZ(-Math.PI / 2);
+    const tailShape = new THREE.Shape(); tailShape.moveTo(0, 0); tailShape.lineTo(-0.1, 0.06); tailShape.lineTo(-0.085, 0); tailShape.lineTo(-0.1, -0.06); tailShape.lineTo(0, 0);
+    const tail = new THREE.ShapeGeometry(tailShape); tail.translate(-0.18, 0, 0);
+    const finShape = new THREE.Shape(); finShape.moveTo(-0.06, 0); finShape.lineTo(0.0, 0.045); finShape.lineTo(0.05, 0); finShape.lineTo(-0.06, 0);
+    const fin = new THREE.ShapeGeometry(finShape); fin.translate(0, 0.055, 0);
+    for (let i = 0; i < Math.round(46 * Q); i++) {
+      const a = INF.a + Math.PI + (i < 14 ? rand(-0.35, 0.35) : rand(-0.9, 0.9)), r = i < 14 ? rand(9, 15) : rand(5, 30);
+      const x = INF.x + Math.cos(a) * r, z = INF.z + Math.sin(a) * r;
+      if (groundH(x, z) > -0.2) continue;
+      dead.push({ x: x, z: z, yaw: rand(0, TAU), ph: rand(0, TAU), s: rand(1.3, 2.0) });
+    }
+    deadMesh = new THREE.InstancedMesh(merge([fishGeo, tail, fin]), M.std('#b9c0ba', { metalness: 0.45, roughness: 0.35, side: THREE.DoubleSide }), Math.max(1, dead.length));
+    deadMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+    scene.add(deadMesh);
+    SPOT.fish = new THREE.Vector3(INF.x - INF.nx * 12, 0.15, INF.z - INF.nz * 12);
+
+    /* ---- Rubble on the dump ---- */
+    const bricks = [];
+    for (let i = 0; i < Math.round(700 * Q); i++) {
+      const a = rand(0, TAU), r = Math.sqrt(rnd()) * 11, x = DUMP.x + Math.cos(a) * r, z = DUMP.z + Math.sin(a) * r * 0.85;
+      if (dumpAt(x, z) < 0.25) continue;
+      bricks.push({ x: x, z: z });
+    }
+    const rubble = new THREE.InstancedMesh(crumple(new THREE.BoxGeometry(1, 1, 1, 2, 2, 2), 0.15, 3), M.std('#ffffff', { roughness: 0.95 }), Math.max(1, bricks.length));
+    bricks.forEach(function (b, i) {
+      dummy.position.set(b.x, meshH(b.x, b.z) + 0.05, b.z); dummy.rotation.set(rand(0, 1), rand(0, TAU), rand(0, 1));
+      const big = rnd() < 0.15; dummy.scale.set(rand(0.2, 0.45) * (big ? 2.4 : 1), rand(0.08, 0.2) * (big ? 2 : 1), rand(0.12, 0.3) * (big ? 2.4 : 1));
+      dummy.updateMatrix(); rubble.setMatrixAt(i, dummy.matrix);
+      rubble.setColorAt(i, col(pick(['#9a5b44', '#a86a4f', '#8f8a82', '#b0aaa0', '#6f6a64'])));
+    });
+    scene.add(rubble);
+    SPOT.dump = new THREE.Vector3(DUMP.x, groundH(DUMP.x, DUMP.z) + 1, DUMP.z);
+
+    /* ---- Buildings crowding the shore (encroachment) ---- */
+    const bc = document.createElement('canvas'); bc.width = 128; bc.height = 128;
+    const bg = bc.getContext('2d'); bg.fillStyle = '#ffffff'; bg.fillRect(0, 0, 128, 128);
+    for (let y = 10; y < 128; y += 32) for (let x = 10; x < 128; x += 40) { bg.fillStyle = '#3b3f45'; bg.fillRect(x, y, 22, 16); bg.fillStyle = '#c9c4ba'; bg.fillRect(x - 3, y + 18, 28, 3); }
+    const wallTex = new THREE.CanvasTexture(bc); wallTex.encoding = THREE.sRGBEncoding;
+    const blocks = [];
+    for (let i = 0; i < 70; i++) {
+      const a = rand(-0.75, 0.05);
+      let k = 0.6; while (shore(Math.cos(a) * LAKE_RX * k, Math.sin(a) * LAKE_RZ * k) < 1 && k < 2) k += 0.004;
+      const out = rnd() < 0.3 ? rand(-1, 3) : rand(4, 60);
+      const L = Math.hypot(Math.cos(a) * LAKE_RX, Math.sin(a) * LAKE_RZ) * k + out;
+      const x = Math.cos(a) * L, z = Math.sin(a) * L * (LAKE_RZ / LAKE_RX);
+      if (blocks.some(function (b) { return Math.hypot(b.x - x, b.z - z) < 12; })) continue;
+      const floors = Math.floor(rand(2, 6));
+      blocks.push({ x: x, z: z, w: rand(8, 15), d: rand(8, 13), h: floors * 3.1, yaw: -a + rand(-0.15, 0.15) });
+    }
+    const houses = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshStandardMaterial({ map: wallTex, roughness: 0.9 }), Math.max(1, blocks.length));
+    const tanks = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.6, 0.6, 1.2, 12), M.std('#1b1b1b', { roughness: 0.6 }), Math.max(1, blocks.length * 2));
+    blocks.forEach(function (b, i) {
+      const base = Math.max(groundH(b.x, b.z), 0.4);
+      dummy.position.set(b.x, base + b.h / 2 - 0.5, b.z); dummy.rotation.set(0, b.yaw, 0); dummy.scale.set(b.w, b.h, b.d);
+      dummy.updateMatrix(); houses.setMatrixAt(i, dummy.matrix);
+      houses.setColorAt(i, col(pick(['#e3d6c4', '#d9cbb3', '#cfc2ae', '#e8dccb', '#c6cdd0', '#e0c9c0', '#d4d0a8'])));
+      for (let k = 0; k < 2; k++) {
+        dummy.position.set(b.x + rand(-b.w, b.w) * 0.3, base + b.h - 0.5 + 0.6, b.z + rand(-b.d, b.d) * 0.3); dummy.rotation.set(0, 0, 0); dummy.scale.setScalar(1);
+        dummy.updateMatrix(); tanks.setMatrixAt(i * 2 + k, dummy.matrix);
+      }
+    });
+    scene.add(houses, tanks);
+    const nearest = blocks.slice().sort(function (p, q) { return shore(p.x, p.z) - shore(q.x, q.z); })[0];
+    SPOT.buildings = nearest ? new THREE.Vector3(nearest.x, Math.max(groundH(nearest.x, nearest.z), 0.4) + nearest.h * 0.6, nearest.z) : lakePt(-0.35, 1.1, 4);
+
+    /* ---- Mosquitoes over the weed-choked water ---- */
+    SPOT.mosquito = lakePt(INF.a - 0.15, 0.68, 1.2);
+    const N = 360, arr = new Float32Array(N * 3);
+    for (let i = 0; i < N; i++) { arr[i * 3] = rand(-1, 1); arr[i * 3 + 1] = rand(-1, 1); arr[i * 3 + 2] = rand(-1, 1); }
+    const sg = new THREE.BufferGeometry(); sg.setAttribute('position', new THREE.BufferAttribute(arr, 3));
+    swarmMat = new THREE.ShaderMaterial({
+      uniforms: sharedU({ uPx: { value: DPR } }), transparent: true, depthWrite: false,
+      vertexShader: 'uniform float uTime, uPx; void main(){ vec3 p = position; float t = uTime*3.0 + p.x*40.0; p += vec3(sin(t), sin(t*1.3+p.y*30.0)*0.6, cos(t*0.9+p.z*20.0)) * 0.35; p *= vec3(2.2, 0.9, 2.2); vec4 mv = modelViewMatrix*vec4(p,1.0); gl_PointSize = uPx * 22.0 / -mv.z; gl_Position = projectionMatrix*mv; }',
+      fragmentShader: 'void main(){ float r = length(gl_PointCoord-0.5); gl_FragColor = vec4(0.04,0.04,0.03, smoothstep(0.5,0.2,r)*0.9); }',
+    });
+    swarm = new THREE.Points(sg, swarmMat); swarm.position.copy(SPOT.mosquito); swarm.frustumCulled = false; scene.add(swarm);
+
+    SPOT.bed = BEDP.clone(); SPOT.bed.y = meshH(SPOT.bed.x, SPOT.bed.z) + 0.2;
+    SPOT.under = lakePt(INF.a, 0.66, -0.35);
+  }
+
+  function updatePollution(t) {
+    foams.forEach(function (f, i) {
+      dummy.position.set(f.x + Math.sin(t * 0.2 + f.ph) * 0.15, 0.02 + Math.sin(t * 0.9 + f.ph) * 0.015, f.z + Math.cos(t * 0.17 + f.ph) * 0.15);
+      dummy.rotation.set(0, f.ph, 0); dummy.scale.set(f.s, f.s * 0.12, f.s * 0.8);
+      dummy.updateMatrix(); foamMesh.setMatrixAt(i, dummy.matrix);
+    });
+    foamMesh.instanceMatrix.needsUpdate = true;
+    dead.forEach(function (f, i) {
+      dummy.position.set(f.x, waveH(f.x, f.z, t) * 0.4 + 0.045, f.z);
+      dummy.rotation.set(Math.PI / 2 + Math.sin(t * 0.7 + f.ph) * 0.1, f.yaw + Math.sin(t * 0.1 + f.ph) * 0.2, 0, 'YXZ');
+      dummy.scale.setScalar(f.s); dummy.updateMatrix(); deadMesh.setMatrixAt(i, dummy.matrix);
+    });
+    deadMesh.instanceMatrix.needsUpdate = true;
+  }
+
+  /* =============================================================
+     8. The guided route
+     Each chapter section in dive.html has data-chapter="id". Scrolling
+     through a section holds the camera at that chapter for the first
+     half, then glides to the next one.
+     ============================================================= */
+  let ROUTE = [];
+  function buildRoute() {
+    const bc = lakePt(-0.78, 0.35, 0);
+    bot.x = bc.x; bot.z = bc.z; bot.cx = bc.x; bot.cz = bc.z;
+    const V = function (x, y, z) { return new THREE.Vector3(x, y, z); };
+    // light / oxygen: illustrative levels 0..1 for the gauges
+    ROUTE = {
+      intro:   { pos: V(-150, 88, 165), tgt: V(0, -8, 0), light: 0.7, oxy: 0.55 },
+      squeeze: { pos: lakePt(-0.35, 0.55, 7), tgt: SPOT.buildings.clone().setY(5), light: 0.7, oxy: 0.55 },
+      carpet:  { pos: lakePt(INF.a, 0.36, 5.5), tgt: lakePt(INF.a, 0.78, 0), light: 0.3, oxy: 0.35 },
+      cause:   { pos: V(INF.x - INF.nx * 13 + INF.nz * 4, 4.5, INF.z - INF.nz * 13 - INF.nx * 4), tgt: V(INF.x + INF.nx * 10, 0.6, INF.z + INF.nz * 10), light: 0.3, oxy: 0.2 },
+      oxygen:  { pos: V(SPOT.fish.x - INF.nx * 4 - INF.nz * 2, 1.1, SPOT.fish.z - INF.nz * 4 + INF.nx * 2), tgt: SPOT.fish.clone().setY(0), light: 0.3, oxy: 0.06 },
+      dark:    { pos: lakePt(INF.a, 0.58, -2.3), tgt: lakePt(INF.a, 0.8, -0.3), light: 0.04, oxy: 0.05 },
+      bed:     { pos: SPOT.bed.clone().add(V(-2.2, 1.6, 2.2)), tgt: SPOT.bed.clone().add(V(1, -0.2, -1)), light: 0.08, oxy: 0.05 },
+      banks:   { pos: V(DUMP.x - Math.cos(DUMP.a) * 24, 3.6, DUMP.z - Math.sin(DUMP.a) * 24), tgt: SPOT.dump.clone(), light: 0.65, oxy: 0.5 },
+      health:  { pos: lakePt(INF.a - 0.3, 0.5, 1.6), tgt: SPOT.mosquito.clone(), light: 0.25, oxy: 0.2 },
+      change:  { pos: V(bc.x - 6.5, 2.8, bc.z + 6.5), tgt: V(bc.x, 0.1, bc.z), light: 0.85, oxy: 0.8 },
+    };
+    SPOT.robot = V(bc.x, 0.9, bc.z);
+  }
+
+  const sections = Array.prototype.slice.call(document.querySelectorAll('[data-chapter]'));
+  let chapterPos = [], chapterTgt = [], chapterIds = [], posCurve, tgtCurve;
+  function prepareCurves() {
+    chapterIds = sections.map(function (s) { return s.dataset.chapter; }).filter(function (id) { return ROUTE[id]; });
+    chapterPos = chapterIds.map(function (id) { return ROUTE[id].pos; });
+    chapterTgt = chapterIds.map(function (id) { return ROUTE[id].tgt; });
+    posCurve = new THREE.CatmullRomCurve3(chapterPos, false, 'centripetal');
+    tgtCurve = new THREE.CatmullRomCurve3(chapterTgt, false, 'centripetal');
+  }
+
+  // Where are we along the route? (chapter index + fraction)
+  let cTarget = 0, cNow = 0;
+  function readScroll() {
+    const mid = window.scrollY + window.innerHeight * 0.4;
+    let c = 0;
+    for (let i = 0; i < sections.length; i++) {
+      const s = sections[i], top = s.offsetTop, h = s.offsetHeight;
+      if (mid >= top) {
+        const f = clamp((mid - top) / h, 0, 1);
+        c = i + (i < sections.length - 1 ? smooth(0.5, 1.0, f) : 0);
+        // fade each card in and out as its section passes
+        const card = s.querySelector('.dive-card');
+        if (card) {
+          const o = (i === 0 ? 1 : smooth(0.02, 0.14, f)) * (i === sections.length - 1 ? 1 : 1 - smooth(0.62, 0.86, f));
+          card.style.opacity = String(o);
+          card.style.transform = 'translateY(' + ((1 - o) * 24) + 'px)';
+          card.classList.toggle('is-active', o > 0.3);
         }
       }
     }
-    if (bot.under) {
-      bubbleTimer += dt;
-      while (bubbleTimer > 0.14) { bubbleTimer -= 0.14; emit(bubblePts, bot.x + rand(-0.4, 0.4), bot.y + 0.3, bot.z + rand(-0.4, 0.4), 0, rand(0.6, 1.2), 0); }
-    }
+    cTarget = clamp(c, 0, chapterIds.length - 1);
+  }
+  window.addEventListener('scroll', readScroll, { passive: true });
+  window.addEventListener('resize', readScroll);
+
+  // Look around: drag (or arrow keys); scrolling eases the view back.
+  const look = { yaw: 0, pitch: 0, tYaw: 0, tPitch: 0 };
+  let drag = null;
+  const cv = renderer.domElement;
+  cv.addEventListener('pointerdown', function (e) { drag = { x: e.clientX, y: e.clientY, id: e.pointerId, touch: e.pointerType === 'touch' }; if (!drag.touch) cv.setPointerCapture(e.pointerId); stage.classList.add('is-looking'); });
+  cv.addEventListener('pointermove', function (e) {
+    if (!drag || drag.id !== e.pointerId) return;
+    look.tYaw = clamp(look.tYaw - (e.clientX - drag.x) * 0.004, -2.2, 2.2);
+    if (!drag.touch) look.tPitch = clamp(look.tPitch - (e.clientY - drag.y) * 0.003, -0.7, 0.7);
+    drag.x = e.clientX; drag.y = e.clientY;
+    if (hint) hint.classList.add('is-done');
+  });
+  ['pointerup', 'pointercancel'].forEach(function (ev) { cv.addEventListener(ev, function () { drag = null; stage.classList.remove('is-looking'); }); });
+  window.addEventListener('keydown', function (e) {
+    if (e.target.closest && e.target.closest('input, textarea, select, dialog')) return;
+    if (e.key === 'ArrowLeft') { look.tYaw = clamp(look.tYaw + 0.25, -2.2, 2.2); e.preventDefault(); }
+    if (e.key === 'ArrowRight') { look.tYaw = clamp(look.tYaw - 0.25, -2.2, 2.2); e.preventDefault(); }
+  });
+  const hint = document.getElementById('dive-hint');
+
+  /* ---------- Hotspots ---------- */
+  const hotEls = Array.prototype.slice.call(document.querySelectorAll('[data-hot]'));
+  hotEls.forEach(function (el) {
+    const btn = el.querySelector('button'), pop = el.querySelector('.dive-pop');
+    btn.addEventListener('click', function () {
+      const open = btn.getAttribute('aria-expanded') !== 'true';
+      hotEls.forEach(function (o) { o.querySelector('button').setAttribute('aria-expanded', 'false'); o.querySelector('.dive-pop').hidden = true; });
+      btn.setAttribute('aria-expanded', String(open)); pop.hidden = !open;
+    });
+  });
+  const proj = new THREE.Vector3();
+  function updateHotspots(active) {
+    const w = stage.clientWidth, h = stage.clientHeight;
+    hotEls.forEach(function (el) {
+      const p = SPOT[el.dataset.hot];
+      const on = p && el.dataset.in.split(' ').indexOf(active) >= 0;
+      if (!on) { el.classList.remove('on'); return; }
+      proj.copy(p).project(camera);
+      const vis = proj.z < 1 && Math.abs(proj.x) < 0.92 && Math.abs(proj.y) < 0.9;
+      el.classList.toggle('on', vis);
+      if (vis) el.style.transform = 'translate(' + ((proj.x * 0.5 + 0.5) * w) + 'px,' + ((-proj.y * 0.5 + 0.5) * h) + 'px)';
+    });
   }
 
-  // Front conveyor: floating pieces in the scoop zone ride up into the basket.
-  const local = new THREE.Vector3();
-  function updateCollection(dt) {
+  /* ---------- Gauges + chapter readout ---------- */
+  const G = {
+    light: document.getElementById('g-light'), oxy: document.getElementById('g-oxy'),
+    lightT: document.getElementById('g-light-t'), oxyT: document.getElementById('g-oxy-t'),
+    num: document.getElementById('hud-chapter'), depth: document.getElementById('hud-depth'),
+    dots: Array.prototype.slice.call(document.querySelectorAll('[data-goto]')), got: document.getElementById('dive-got'),
+  };
+  function word(v) { return v > 0.66 ? 'Good' : v > 0.4 ? 'Fair' : v > 0.15 ? 'Low' : 'Very low'; }
+  let lastActive = '';
+  function updateHud(active, under) {
+    const i0 = Math.floor(cNow), i1 = Math.min(i0 + 1, chapterIds.length - 1), f = cNow - i0;
+    const a = ROUTE[chapterIds[i0]], b = ROUTE[chapterIds[i1]];
+    const light = lerp(a.light, b.light, f), oxy = lerp(a.oxy, b.oxy, f);
+    G.light.style.transform = 'scaleX(' + light.toFixed(3) + ')'; G.oxy.style.transform = 'scaleX(' + oxy.toFixed(3) + ')';
+    G.lightT.textContent = word(light); G.oxyT.textContent = word(oxy);
+    const d = waveH(camera.position.x, camera.position.z, t) - camera.position.y;
+    G.depth.textContent = under ? ('-' + d.toFixed(1) + ' m') : ('+' + (-d).toFixed(1) + ' m');
+    if (active !== lastActive) {
+      lastActive = active;
+      const idx = chapterIds.indexOf(active);
+      G.num.textContent = String(idx + 1).padStart(2, '0') + ' / ' + String(chapterIds.length).padStart(2, '0');
+      G.dots.forEach(function (dot) { const on = dot.dataset.goto === active; dot.classList.toggle('is-on', on); if (on) dot.setAttribute('aria-current', 'step'); else dot.removeAttribute('aria-current'); });
+    }
+  }
+  G.dots.forEach(function (dot) {
+    dot.dataset.label = dot.textContent;
+    dot.addEventListener('click', function () {
+      const s = document.querySelector('[data-chapter="' + dot.dataset.goto + '"]');
+      if (s) window.scrollTo({ top: s.offsetTop - window.innerHeight * 0.1, behavior: reduceMotion ? 'auto' : 'smooth' });
+    });
+  });
+
+  /* ---------- The robot at work in the last chapter ---------- */
+  const botQ = new THREE.Quaternion(), local = new THREE.Vector3();
+  let collected = 0;
+  function updateBot(dt) {
+    bot.th = (bot.th || 0) + 0.35 * dt;
+    bot.speed = 0.7;
+    bot.x = bot.cx + Math.cos(bot.th) * 1.8; bot.z = bot.cz + Math.sin(bot.th) * 1.8;
+    bot.yaw = Math.atan2(-Math.sin(bot.th), Math.cos(bot.th));
+    bot.y = waveH(bot.x, bot.z, t);
+    waveN(bot.x, bot.z, t, tmpN);
+    bot.pitch = lerp(bot.pitch, -Math.atan2(tmpN.z * Math.cos(bot.yaw) + tmpN.x * Math.sin(bot.yaw), 1), 1 - Math.exp(-dt * 4));
+    bot.roll = lerp(bot.roll, Math.atan2(tmpN.x * Math.cos(bot.yaw) - tmpN.z * Math.sin(bot.yaw), 1), 1 - Math.exp(-dt * 4));
+    tmpE.set(bot.pitch, bot.yaw, bot.roll, 'YXZ'); botQ.setFromEuler(tmpE);
+    botGroup.position.set(bot.x, bot.y - 0.06, bot.z); botGroup.quaternion.copy(botQ);
+    bot.paddle += bot.speed * dt * 3;
+    paddles.forEach(function (p) { p.rotation.x = bot.paddle; });
+    bot.belt += dt * 0.6; beltTex.offset.y = -bot.belt;
+    led.material.emissiveIntensity = (Math.sin(t * 4) > 0.6 ? 6 : 0.4);
+    SPOT.robot.set(bot.x, bot.y + 0.9, bot.z);
+    // conveyor pickup
     const s = Math.sin(bot.yaw), c = Math.cos(bot.yaw);
     for (let k = 0; k < items.length; k++) {
       const it = items[k];
-      if (it.state === 'float' && !bot.under) {
+      if (it.state === 'float') {
         const dx = it.x - bot.x, dz = it.z - bot.z;
-        if (dx * dx + dz * dz > 4) continue;
-        const fwd = dx * s + dz * c, side = dx * c - dz * s;
-        if (fwd > 0.75 && fwd < 1.45 && Math.abs(side) < 0.36) {
-          it.state = 'collect'; it.t = 0; it.side = side; it.world = new THREE.Vector3(); it.worldQ = new THREE.Quaternion();
-          it.slot = new THREE.Vector3(rand(-0.22, 0.22), rand(0.12, 0.26), rand(-0.35, 0.25));
-          collected += 1; collectedKg += KINDS[it.kind].kg;
-          if (collected === 1) caption('first', 'Scooped. The conveyor lifts it out of the water and into the basket.');
-          if (collected === 6) caption('six', 'Every piece taken out now can’t break down into microplastics later.');
+        if (dx * dx + dz * dz < 4) {
+          const fwd = dx * s + dz * c, side = dx * c - dz * s;
+          if (fwd > 0.75 && fwd < 1.45 && Math.abs(side) < 0.36) {
+            it.state = 'collect'; it.t = 0; it.side = side; it.world = new THREE.Vector3(); it.worldQ = new THREE.Quaternion();
+            it.slot = new THREE.Vector3(rand(-0.22, 0.22), rand(0.12, 0.26), rand(-0.35, 0.25));
+            collected += 1; if (G.got) G.got.textContent = String(collected);
+          }
         }
       }
       if (it.state === 'collect' || it.state === 'stored') {
         if (it.state === 'collect') {
           it.t += dt * 0.8;
           const u = Math.min(it.t, 1);
-          // up the belt, then drop into the basket
           if (u < 0.75) { const v = u / 0.75; local.set(it.side * (1 - v * 0.5), lerp(-0.08, 0.45, v), lerp(1.12, 0.42, v)); }
           else { const v = (u - 0.75) / 0.25; local.set(lerp(it.side * 0.5, it.slot.x, v), lerp(0.45, it.slot.y, v) + Math.sin(v * Math.PI) * 0.08, lerp(0.42, it.slot.z, v)); }
-          if (it.t >= 1) { it.state = 'stored'; bot.stored.push(it); if (bot.stored.length > 14) bot.stored.shift().state = 'gone'; }
+          if (it.t >= 1) { it.state = 'stored'; bot.stored.push(it); if (bot.stored.length > 12) bot.stored.shift().state = 'gone'; }
         } else local.copy(it.slot);
         it.world.copy(local).applyQuaternion(botQ).add(botGroup.position);
         it.worldQ.copy(botQ).multiply(tmpQ.setFromEuler(tmpE.set(Math.PI / 2, it.yaw, 0)));
       }
       if (it.state === 'gone') {
-        // More trash keeps arriving from the shore drains
+        // trash keeps arriving: a piece reappears near the robot's loop later on
         it.t += dt;
-        if (it.t > 40) {
-          const a = rand(0, TAU), sh = rand(0.8, 0.92);
-          it.x = Math.cos(a) * LAKE_RX * sh; it.z = Math.sin(a) * LAKE_RZ * sh;
-          if (groundH(it.x, it.z) < -0.3) { it.state = 'float'; it.t = 0; }
-        }
-      }
-      if (it.state === 'float') {
-        // slow drift with the breeze, kept off the beach
-        it.x += Math.sin(t * 0.05 + it.phase) * 0.02 * dt;
-        it.z += Math.cos(t * 0.04 + it.phase) * 0.02 * dt;
+        if (it.t > 30) { const a = rand(0, TAU), r = rand(3, 9); it.x = bot.cx + Math.cos(a) * r; it.z = bot.cz + Math.sin(a) * r; it.state = 'float'; it.t = 0; }
       }
     }
+    // wake
+    const fs = Math.sin(bot.yaw), fc = Math.cos(bot.yaw);
+    if (rnd() < 0.7) { const side = rnd() < 0.5 ? -1 : 1; emit(foamPts, bot.x - fs * 0.7 + fc * side * 0.6, 0, bot.z - fc * 0.7 - fs * side * 0.6, -fs * 0.15 + fc * side * 0.1, 0, -fc * 0.15 - fs * side * 0.1); }
   }
 
   function updateLife(dt) {
@@ -1030,117 +1340,78 @@
     });
     fishMesh.instanceMatrix.needsUpdate = true;
     const g = shaftMat.userData.group;
-    g.position.set(camera.position.x, waveH(camera.position.x, camera.position.z, t), camera.position.z);
+    g.position.set(camera.position.x, 0, camera.position.z);
     g.children.forEach(function (m) { m.lookAt(camera.position.x, m.getWorldPosition(tmpV).y, camera.position.z); m.rotateZ(-0.2); });
+    shaftMat.uniforms.uShade.value = hyacinthAt(camera.position.x, camera.position.z);
     snowMat.uniforms.uCam.value.copy(camera.position);
   }
 
-  function updateCamera(dt) {
-    orbit.yaw = lerp(orbit.yaw, orbit.tYaw, 1 - Math.exp(-dt * 6));
-    orbit.pitch = lerp(orbit.pitch, orbit.tPitch, 1 - Math.exp(-dt * 6));
-    orbit.dist = lerp(orbit.dist, orbit.tDist, 1 - Math.exp(-dt * 6));
-    camTarget.set(bot.x, bot.y + 0.45, bot.z);
-    const a = bot.yaw + Math.PI + orbit.yaw;
-    const p = bot.under ? Math.min(orbit.pitch, 0.35) : orbit.pitch;
-    camWant.set(bot.x + Math.sin(a) * Math.cos(p) * orbit.dist, bot.y + 0.45 + Math.sin(p) * orbit.dist, bot.z + Math.cos(a) * Math.cos(p) * orbit.dist);
-    const surf = waveH(camWant.x, camWant.z, t);
-    // keep the camera cleanly on one side of the surface
-    if (bot.under) camWant.y = Math.min(camWant.y, surf - 0.3); else camWant.y = Math.max(camWant.y, surf + 0.35);
-    camWant.y = Math.max(camWant.y, groundH(camWant.x, camWant.z) + 0.4);
-    if (introT < 1) {
-      const e = 1 - Math.pow(1 - introT, 3);
-      camera.position.set(lerp(introFrom.x, camWant.x, e), lerp(introFrom.y, camWant.y, e * e), lerp(introFrom.z, camWant.z, e));
-      tmpV.set(lerp(0, camTarget.x, e), lerp(-2, camTarget.y, e), lerp(0, camTarget.z, e));
-      camera.lookAt(tmpV);
-    } else {
-      camera.position.lerp(camWant, 1 - Math.exp(-dt * 5));
-      if (bot.under !== camSide) { camera.position.y = camWant.y; camSide = bot.under; }
-      camera.lookAt(camTarget);
-    }
-  }
+  /* =============================================================
+     9. Main loop
+     ============================================================= */
+  const clock = new THREE.Clock();
+  let t = 0, splash = 0, wasUnder = false, raf = null;
+  const tmpV = new THREE.Vector3(), camPos = new THREE.Vector3(), camTgt = new THREE.Vector3(), dir = new THREE.Vector3();
 
-  const proj = new THREE.Vector3();
-  function updateHud(dt) {
-    hudTimer += dt;
-    // target brackets on nearby trash
-    const cands = [];
-    for (let k = 0; k < items.length; k++) {
-      const it = items[k];
-      if (bot.under ? (it.state !== 'sunk' && it.state !== 'suspended') : it.state !== 'float') continue;
-      const d = Math.hypot(it.x - bot.x, (it.y || 0) - bot.y, it.z - bot.z);
-      if (d > (bot.under ? 9 : 11)) continue;
-      cands.push({ it: it, d: d, rank: d + (it.state === 'suspended' ? 4 : 0) });
-      if (bot.under && d < 7 && !it.spotted) { it.spotted = true; spotted += 1; }
-    }
-    cands.sort(function (a, b) { return a.rank - b.rank; });
-    const w = stage.clientWidth, h = stage.clientHeight;
-    const placed = [];
-    let ci = 0;
-    tagEls.forEach(function (el) {
-      let c = null;
-      while (ci < cands.length && !c) {
-        const k = cands[ci++];
-        proj.set(k.it.x, (k.it.y || 0) + 0.08, k.it.z).project(camera);
-        const sx = (proj.x * 0.5 + 0.5) * w, sy = (-proj.y * 0.5 + 0.5) * h;
-        if (placed.some(function (q) { return Math.abs(q[0] - sx) < 150 && Math.abs(q[1] - sy) < 30; })) continue;
-        placed.push([sx, sy]); c = k;
-      }
-      if (!c || introT < 1) { el.classList.remove('on'); return; }
-      proj.set(c.it.x, (c.it.y || 0) + 0.08, c.it.z).project(camera);
-      if (proj.z > 1 || Math.abs(proj.x) > 0.95 || Math.abs(proj.y) > 0.95) { el.classList.remove('on'); return; }
-      el.classList.add('on');
-      el.style.transform = 'translate(' + ((proj.x * 0.5 + 0.5) * w) + 'px,' + ((-proj.y * 0.5 + 0.5) * h) + 'px)';
-      const def = KINDS[c.it.kind];
-      el.firstChild.textContent = def.label.toUpperCase() + ' · ' + c.d.toFixed(1) + ' m';
-    });
-    if (hudTimer < 0.12) return;
-    hudTimer = 0;
-    const depth = Math.max(0, waveH(bot.x, bot.z, t) - bot.y);
-    hud.depth.textContent = (bot.under ? '-' : '') + depth.toFixed(1) + ' m';
-    hud.hdg.textContent = String(Math.round(((bot.yaw * 180 / Math.PI) % 360 + 360) % 360)).padStart(3, '0') + '°';
-    hud.spd.textContent = Math.abs(bot.speed).toFixed(1) + ' m/s';
-    hud.got.textContent = String(collected);
-    hud.kg.textContent = collectedKg.toFixed(2);
-    hud.seen.textContent = String(spotted);
-    hud.mode.textContent = bot.under ? 'BELOW SURFACE' : 'SURFACE';
-    stage.classList.toggle('is-under', bot.under);
+  function updateCamera(dt) {
+    cNow = reduceMotion ? cTarget : lerp(cNow, cTarget, 1 - Math.exp(-dt * 2.6));
+    const moving = Math.abs(cTarget - cNow) > 0.004;
+    if (moving && !drag) { look.tYaw = lerp(look.tYaw, 0, 1 - Math.exp(-dt * 1.8)); look.tPitch = lerp(look.tPitch, 0, 1 - Math.exp(-dt * 1.8)); }
+    look.yaw = lerp(look.yaw, look.tYaw, 1 - Math.exp(-dt * 6)); look.pitch = lerp(look.pitch, look.tPitch, 1 - Math.exp(-dt * 6));
+    const u = chapterIds.length > 1 ? cNow / (chapterIds.length - 1) : 0;
+    posCurve.getPoint(u, camPos); tgtCurve.getPoint(u, camTgt);
+    if (!reduceMotion) { camPos.x += Math.sin(t * 0.21) * 0.25; camPos.y += Math.sin(t * 0.33) * 0.12; camPos.z += Math.cos(t * 0.17) * 0.25; }
+    // stay above the ground and never sit exactly on the waterline
+    camPos.y = Math.max(camPos.y, meshH(camPos.x, camPos.z) + 0.6);
+    const surf = waveH(camPos.x, camPos.z, t);
+    if (Math.abs(camPos.y - surf) < 0.3) camPos.y = surf + (camPos.y >= surf ? 0.3 : -0.3);
+    camera.position.copy(camPos);
+    dir.subVectors(camTgt, camPos).normalize();
+    // Cards sit left (even chapters) or right (odd); on phones at the bottom.
+    // Turn the view a little so the subject isn't hidden behind the card.
+    const W = stage.clientWidth, wide = W > 760;
+    const cardFrac = Math.min(0.6, (Math.min(480, W) + W * 0.04 + 30) / W);
+    const halfH = Math.atan(Math.tan(camera.fov * Math.PI / 360) * camera.aspect);
+    const amt = Math.atan(cardFrac * Math.tan(halfH));
+    const sideOf = function (i) { return i % 2 === 0 ? amt : -amt; };
+    const i0 = Math.floor(cNow), fr = cNow - i0;
+    const shift = wide ? lerp(sideOf(i0), sideOf(Math.min(i0 + 1, chapterIds.length - 1)), fr) : 0;
+    dir.applyAxisAngle(UP, look.yaw + shift);
+    if (!wide) dir.y -= 0.12;
+    const horiz = Math.hypot(dir.x, dir.z), pitch = clamp(Math.atan2(dir.y, horiz) + look.pitch, -1.3, 1.3);
+    tmpV.set(dir.x / horiz * Math.cos(pitch), Math.sin(pitch), dir.z / horiz * Math.cos(pitch));
+    camera.lookAt(tmpV.add(camPos));
   }
 
   function frame() {
     const dt = Math.min(clock.getDelta(), 0.05);
-    t += dt;
-    timeU.value = t;
-    if (started) {
-      if (introT < 1) introT = Math.min(1, introT + dt / 4.2);
-      else updateBot(dt);
-    } else {
-      // idle: slow orbit behind the start screen
-      const a = t * 0.04;
-      camera.position.set(Math.cos(a) * 150, 46, Math.sin(a) * 150); introFrom.copy(camera.position);
-      camera.lookAt(0, -2, 0);
-    }
-    if (started) updateCamera(dt);
-    if (introT >= 1) updateCollection(dt);
+    t += dt; timeU.value = t;
+    updateCamera(dt);
+    const active = chapterIds[Math.round(cNow)] || 'intro';
+    updateBot(dt);
     updateTrashMeshes(t);
+    updatePollution(t);
     updateLife(dt);
     stepPool(foamPts, dt, t); stepPool(bubblePts, dt, t);
+    swarm.visible = camera.position.distanceTo(SPOT.mosquito) < 45;
 
     const under = camera.position.y < waveH(camera.position.x, camera.position.z, t);
-    if (under !== wasUnder) {
-      splash = 1;
-      if (under) caption('dive', 'Below the surface, the waste you can’t see from the bank.', 5200);
-    }
+    if (under !== wasUnder) splash = 1;
+    if (under && rnd() < 0.15) emit(bubblePts, camera.position.x + rand(-1.5, 1.5), camera.position.y - rand(0.5, 2), camera.position.z + rand(-1.5, 1.5), 0, rand(0.4, 0.9), 0);
     wasUnder = under;
     splash = Math.max(0, splash - dt * 2.2);
     postU.uSplash.value = splash;
     underU.value = lerp(underU.value, under ? 1 : 0, 1 - Math.exp(-dt * 20));
-    const u = underU.value;
-    fogU.uFogColor.value.copy(FOG_ABOVE).lerp(FOG_BELOW, u);
-    fogU.uFogDensity.value = lerp(0.0021, 0.06, u);
+    const uw = underU.value, shade = hyacinthAt(camera.position.x, camera.position.z);
+    fogU.uFogColor.value.copy(FOG_ABOVE).lerp(FOG_BELOW, uw);
+    if (uw > 0.5) fogU.uFogColor.value.multiplyScalar(1 - shade * 0.75);
+    fogU.uFogDensity.value = lerp(0.0021, 0.07 + shade * 0.05, uw);
     scene.fog.color.copy(fogU.uFogColor.value); scene.fog.density = fogU.uFogDensity.value;
-    sun.intensity = lerp(2.4, 0.9, u); hemi.intensity = lerp(0.75, 0.45, u);
+    sun.intensity = lerp(2.4, 1.3 * (1 - shade * 0.8), uw); hemi.intensity = lerp(0.75, 0.75 * (1 - shade * 0.7), uw);
     sky.position.copy(camera.position);
-    if (started && introT >= 1) updateHud(dt);
+    stage.classList.toggle('is-under', under);
+    updateHotspots(active);
+    updateHud(active, under);
 
     renderer.setRenderTarget(rt);
     renderer.render(scene, camera);
@@ -1149,53 +1420,35 @@
     raf = requestAnimationFrame(frame);
   }
 
-  /* ---------- Build in stages (with a real progress bar), then wait for Enter ---------- */
-  const bar = document.getElementById('dive-progress'), pct = document.getElementById('dive-pct'), enter = document.getElementById('dive-enter');
-  const steps = [buildTerrain, buildShore, buildTrash, buildLife, buildBot];
-  let raf = null;
+  /* ---------- Build in stages with a real progress bar ---------- */
+  const bar = document.getElementById('dive-progress'), loader = document.getElementById('dive-loader');
+  const steps = [buildTerrain, buildShore, buildTrash, buildLife, buildBot, buildPollution, buildRoute, prepareCurves];
   resize();
   (function nextStep(i) {
     if (i < steps.length) {
       steps[i]();
-      const p = Math.round(((i + 1) / steps.length) * 100);
-      bar.style.width = p + '%'; pct.textContent = String(p).padStart(3, '0');
+      bar.style.width = Math.round(((i + 1) / steps.length) * 100) + '%';
       requestAnimationFrame(function () { nextStep(i + 1); });
       return;
     }
-    botGroup.position.set(bot.x, 0, bot.z);
+    readScroll(); cNow = cTarget;
     renderer.compile(scene, camera);
-    stage.classList.add('is-ready');
-    enter.disabled = false;
-    enter.focus();
     clock.getDelta();
+    stage.classList.add('is-ready');
+    loader.setAttribute('aria-hidden', 'true');
     raf = requestAnimationFrame(frame);
   })(0);
 
-  enter.addEventListener('click', function () {
-    started = true;
-    stage.classList.add('is-started');
-    document.getElementById('dive-intro').setAttribute('aria-hidden', 'true');
-    renderer.domElement.focus();
-    setTimeout(function () { caption('start', isSmall ? 'Drag the joystick to steer. Hold Dive to go under.' : 'W A S D to steer · Shift to dive · Space to rise · drag to look around', 6000); }, reduceMotion ? 200 : 4300);
-  });
-
-  // Pause when the tab is hidden (saves battery)
   document.addEventListener('visibilitychange', function () {
     if (document.hidden) { cancelAnimationFrame(raf); raf = null; }
     else if (!raf && stage.classList.contains('is-ready')) { clock.getDelta(); raf = requestAnimationFrame(frame); }
   });
 
-  // For automated checks
+  // For automated checks: jump to a chapter instantly
   window.__lakeDive = {
-    bot: bot, items: items, keys: keys, input: input,
-    stats: function () { return { collected: collected, spotted: spotted }; },
-    // fast-forward the simulation (used by automated tests on slow machines)
-    sim: function (sec) {
-      for (let i = 0; i < Math.round(sec / 0.05); i++) {
-        t += 0.05; timeU.value = t; introT = 1;
-        updateBot(0.05); updateCamera(0.05); updateCollection(0.05); stepPool(foamPts, 0.05, t); stepPool(bubblePts, 0.05, t);
-      }
-      updateHud(0.2);
-    },
+    chapters: function () { return chapterIds.slice(); },
+    jump: function (id) { const i = chapterIds.indexOf(id); if (i >= 0) { cTarget = cNow = i; } },
+    stats: function () { return { collected: collected, under: wasUnder }; },
+    debug: function () { return { bot: [bot.x, bot.y, bot.z, bot.cx, bot.cz].map(function (v) { return +(+v).toFixed(2); }), cam: camera.position.toArray().map(function (v) { return +v.toFixed(2); }), vis: botGroup.visible, inScene: !!botGroup.parent }; },
   };
 })();

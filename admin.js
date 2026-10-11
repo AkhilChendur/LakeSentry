@@ -232,6 +232,32 @@
     if (navigator.clipboard) navigator.clipboard.writeText(text).then(done, function () { announce('Select the line and copy it manually.'); });
   });
 
+  /* ---------- Settings: Lake Dive on/off ---------- */
+  const feats = window.LakeSentryFeatures;
+  function showFeature() {
+    if (!feats || !$('feat-dive-status')) return;
+    const pub = feats.publicValue('lakeDive');
+    $('feat-dive-status').textContent = pub ? 'ON (open to the public)' : 'OFF (hidden from the public)';
+    $('feat-dive-verb').textContent = pub ? 'off' : 'on';
+    $('feat-dive-line').textContent = '  lakeDive: ' + (!pub) + ',';
+    const pv = feats.previewValue('lakeDive') === false;
+    $('feat-dive-preview').setAttribute('aria-pressed', String(pv));
+    $('feat-dive-preview').textContent = pv ? 'Stop previewing (show it again in this browser)' : 'Preview as switched off (this browser only)';
+  }
+  if ($('feat-dive-copy')) {
+    $('feat-dive-copy').addEventListener('click', function () {
+      const text = $('feat-dive-line').textContent.trim();
+      if (navigator.clipboard) navigator.clipboard.writeText(text).then(function () { announce('Copied.'); }, function () { announce('Select the line and copy it manually.'); });
+    });
+    $('feat-dive-preview').addEventListener('click', function () {
+      const pv = feats.previewValue('lakeDive') === false;
+      feats.setPreview('lakeDive', pv ? null : false);
+      announce(pv ? 'Preview ended. Reloading.' : 'Previewing as switched off. Reloading.');
+      window.location.reload();
+    });
+    showFeature();
+  }
+
   /* ---------- Settings: reset + log out ---------- */
   $('reset-initiatives').addEventListener('click', function () {
     if (!window.confirm('Delete all initiatives saved in this browser and restore the samples?')) return;

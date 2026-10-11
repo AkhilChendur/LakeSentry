@@ -26,6 +26,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="tailwind-config.js"></script>
   <link rel="stylesheet" href="site.css" />
+  <script src="features.js"></script>
 </head>
 <body class="bg-ink font-sans text-[1.0625rem] leading-relaxed text-txt-2">
 
@@ -68,7 +69,7 @@
           <li class="whitespace-nowrap"><a href="about.html" class="relative block rounded-md px-3 py-2 text-txt-2 transition-colors hover:text-txt-1 lg:after:absolute lg:after:bottom-1 lg:after:left-3 lg:after:h-0.5 lg:after:w-0 lg:after:rounded lg:after:bg-aqua lg:after:transition-all lg:hover:after:w-[calc(100%-1.5rem)]">About</a></li>
           <li class="whitespace-nowrap"><a href="app.html" class="relative block rounded-md px-3 py-2 text-txt-2 transition-colors hover:text-txt-1 lg:after:absolute lg:after:bottom-1 lg:after:left-3 lg:after:h-0.5 lg:after:w-0 lg:after:rounded lg:after:bg-aqua lg:after:transition-all lg:hover:after:w-[calc(100%-1.5rem)]">Lake Explorer</a></li>
           <li class="whitespace-nowrap"><a href="me.html" class="relative block rounded-md px-3 py-2 text-txt-2 transition-colors hover:text-txt-1 lg:after:absolute lg:after:bottom-1 lg:after:left-3 lg:after:h-0.5 lg:after:w-0 lg:after:rounded lg:after:bg-aqua lg:after:transition-all lg:hover:after:w-[calc(100%-1.5rem)]">About me</a></li>
-          <li class="whitespace-nowrap"><a href="dive.html" class="relative block rounded-md px-3 py-2 text-txt-2 transition-colors hover:text-txt-1 lg:after:absolute lg:after:bottom-1 lg:after:left-3 lg:after:h-0.5 lg:after:w-0 lg:after:rounded lg:after:bg-aqua lg:after:transition-all lg:hover:after:w-[calc(100%-1.5rem)]">Lake Dive</a></li>
+          <li class="whitespace-nowrap" data-feature="lakeDive"><a href="dive.html" class="relative block rounded-md px-3 py-2 text-txt-2 transition-colors hover:text-txt-1 lg:after:absolute lg:after:bottom-1 lg:after:left-3 lg:after:h-0.5 lg:after:w-0 lg:after:rounded lg:after:bg-aqua lg:after:transition-all lg:hover:after:w-[calc(100%-1.5rem)]">Lake Dive</a></li>
           <li class="whitespace-nowrap"><a href="get-involved.html" aria-current="page" class="mt-2 block rounded-md bg-aqua px-4 py-2 font-semibold text-onaccent transition hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(56,228,240,.3)] lg:ml-3 lg:mt-0 ring-2 ring-txt-1 ring-offset-2 ring-offset-ink">Get involved</a></li>
         </ul>
       </div>
@@ -260,7 +261,7 @@
           <li><a href="about.html#v1" class="hover:text-aqua">Prototype V1</a></li>
           <li><a href="app.html" class="hover:text-aqua">Lake Explorer App</a></li>
           <li><a href="me.html" class="hover:text-aqua">About me</a></li>
-          <li><a href="dive.html" class="hover:text-aqua">Lake Dive (3D)</a></li>
+          <li data-feature="lakeDive"><a href="dive.html" class="hover:text-aqua">Lake Dive (3D)</a></li>
         </ul>
       </nav>
       <div>
