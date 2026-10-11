@@ -1,0 +1,98 @@
+/* =====================================================================
+   Lake Dive (dive.html) — full-screen 3D stage + HUD
+   The scene always looks like dusk, whatever the site theme.
+   ===================================================================== */
+body.dive-page { overflow: hidden; background: #02040a; }
+.dive-stage {
+  position: relative; width: 100%; height: calc(100vh - var(--header-h, 64px)); height: calc(100dvh - var(--header-h, 64px));
+  overflow: hidden; background: #02040a; color: #e9eef7; font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  touch-action: none; user-select: none; -webkit-user-select: none;
+}
+.dive-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; outline: none; cursor: grab; }
+.dive-canvas:active { cursor: grabbing; }
+
+/* ---------- Start screen ---------- */
+.dive-intro {
+  position: absolute; inset: 0; z-index: 30; display: grid; place-items: center; padding: 24px;
+  background: radial-gradient(ellipse at 50% 60%, rgba(2,4,10,.35), rgba(2,4,10,.92) 70%);
+  transition: opacity 1.2s ease, visibility 1.2s;
+}
+.is-started .dive-intro { opacity: 0; visibility: hidden; }
+.dive-intro-inner { max-width: 44rem; text-align: center; }
+.dive-kicker { font-size: .75rem; letter-spacing: .32em; text-transform: uppercase; color: #9fb8e8; }
+.dive-title { margin: .4rem 0 0; font: 700 clamp(4rem, 17vw, 11rem)/.82 'Space Grotesk', sans-serif; letter-spacing: -.05em; display: flex; flex-direction: column; }
+.dive-title span { background: linear-gradient(180deg, #ffffff 30%, #7fa0ff); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.dive-title span + span { background: linear-gradient(180deg, #ffd3a8, #ff8a5c 80%); -webkit-background-clip: text; background-clip: text; }
+.dive-sub { margin: 1.4rem auto 0; max-width: 34rem; font-family: Inter, system-ui, sans-serif; font-size: 1.05rem; line-height: 1.6; color: #d7e0f0; }
+.dive-load { margin: 2rem auto 0; width: min(18rem, 70%); height: 2px; background: rgba(255,255,255,.15); overflow: hidden; }
+.dive-load i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #7fb2ff, #ffb07a); transition: width .3s; }
+.dive-pct { margin-top: .6rem; font-size: .7rem; letter-spacing: .3em; color: #8ea2c4; }
+.is-ready .dive-pct { opacity: 0; }
+.dive-enter {
+  margin-top: 1.4rem; padding: 1rem 2.2rem; border-radius: 999px; border: 1px solid rgba(255,255,255,.55);
+  background: rgba(255,255,255,.06); color: #fff; font: 600 .85rem 'IBM Plex Mono', monospace; letter-spacing: .25em; text-transform: uppercase;
+  backdrop-filter: blur(6px); cursor: pointer; transition: background .3s, color .3s, transform .3s, opacity .3s;
+}
+.dive-enter:disabled { opacity: .3; cursor: wait; }
+.dive-enter:not(:disabled):hover { background: #fff; color: #02040a; transform: translateY(-2px); }
+.dive-keys { margin-top: 1.2rem; font-size: .72rem; letter-spacing: .08em; color: #a9b7d0; }
+
+/* ---------- HUD ---------- */
+.dive-hud { position: absolute; inset: 0; z-index: 10; pointer-events: none; opacity: 0; transition: opacity 1.5s 3.8s; font-size: .72rem; letter-spacing: .14em; text-shadow: 0 1px 8px rgba(0,0,0,.7); }
+.is-started .dive-hud { opacity: 1; }
+.hud-tl { position: absolute; left: 18px; top: 16px; line-height: 1.7; color: #dfe8f8; }
+.hud-tl b { color: #ffb07a; font-weight: 600; }
+.hud-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #5ef0a8; margin-right: 8px; box-shadow: 0 0 10px #5ef0a8; animation: hudblink 1.6s infinite; }
+.is-under .hud-dot { background: #7fb2ff; box-shadow: 0 0 10px #7fb2ff; }
+@keyframes hudblink { 50% { opacity: .25; } }
+.dive-hud dl { margin: 0; }
+.dive-hud dt { color: #93a6c8; font-size: .62rem; letter-spacing: .24em; text-transform: uppercase; }
+.dive-hud dd { margin: 0; color: #fff; font-size: .9rem; letter-spacing: .06em; font-variant-numeric: tabular-nums; }
+.hud-tr { position: absolute; right: 18px; top: 16px; display: flex; gap: 22px; text-align: right; }
+.hud-br { position: absolute; right: 18px; bottom: 18px; display: grid; gap: 10px; text-align: right; }
+.hud-cross { position: absolute; left: 50%; top: 50%; width: 22px; height: 22px; transform: translate(-50%,-50%); opacity: .35;
+  background: linear-gradient(#fff,#fff) center/1px 100% no-repeat, linear-gradient(#fff,#fff) center/100% 1px no-repeat; mask: radial-gradient(circle, transparent 4px, #000 5px); -webkit-mask: radial-gradient(circle, transparent 4px, #000 5px); }
+.dive-tags { position: absolute; inset: 0; }
+.dive-tag { position: absolute; left: 0; top: 0; width: 0; height: 0; opacity: 0; transition: opacity .35s; will-change: transform; }
+.dive-tag.on { opacity: 1; }
+.dive-tag::before { content: ""; position: absolute; left: -14px; top: -14px; width: 28px; height: 28px;
+  background:
+    linear-gradient(#fff,#fff) left top/8px 1px no-repeat, linear-gradient(#fff,#fff) left top/1px 8px no-repeat,
+    linear-gradient(#fff,#fff) right top/8px 1px no-repeat, linear-gradient(#fff,#fff) right top/1px 8px no-repeat,
+    linear-gradient(#fff,#fff) left bottom/8px 1px no-repeat, linear-gradient(#fff,#fff) left bottom/1px 8px no-repeat,
+    linear-gradient(#fff,#fff) right bottom/8px 1px no-repeat, linear-gradient(#fff,#fff) right bottom/1px 8px no-repeat; }
+.is-under .dive-tag::before { filter: drop-shadow(0 0 3px #7fb2ff); }
+.dive-tag span { position: absolute; left: 20px; top: -20px; white-space: nowrap; font-size: .6rem; letter-spacing: .16em; color: #fff; background: rgba(2,4,10,.45); padding: 2px 6px; }
+.dive-caption {
+  position: absolute; left: 50%; bottom: 22px; z-index: 12; transform: translateX(-50%); max-width: min(40rem, 86vw); margin: 0;
+  font: 500 .95rem/1.5 Inter, system-ui, sans-serif; text-align: center; color: #fff; text-shadow: 0 2px 14px rgba(0,0,0,.9);
+  opacity: 0; transition: opacity .6s; pointer-events: none;
+}
+.dive-caption.on { opacity: 1; }
+
+/* ---------- Touch controls ---------- */
+.dive-touch { position: absolute; inset: auto 0 0 0; z-index: 15; display: none; justify-content: space-between; align-items: flex-end; padding: 0 18px 70px; pointer-events: none; }
+@media (pointer: coarse) { .is-started .dive-touch { display: flex; } .hud-br { bottom: auto; top: 64px; } .dive-caption { bottom: 190px; } }
+.dive-joy { pointer-events: auto; width: 116px; height: 116px; border-radius: 50%; border: 1px solid rgba(255,255,255,.35); background: rgba(2,4,10,.3); backdrop-filter: blur(4px); display: grid; place-items: center; touch-action: none; }
+.dive-joy span { width: 46px; height: 46px; border-radius: 50%; background: rgba(255,255,255,.85); box-shadow: 0 0 20px rgba(127,178,255,.6); transition: transform .08s; }
+.dive-vbtns { pointer-events: auto; display: grid; gap: 12px; }
+.dive-vbtns button { width: 76px; height: 54px; border-radius: 14px; border: 1px solid rgba(255,255,255,.4); background: rgba(2,4,10,.4); color: #fff; font: 600 .75rem 'IBM Plex Mono', monospace; letter-spacing: .15em; text-transform: uppercase; backdrop-filter: blur(4px); touch-action: none; }
+.dive-vbtns button[aria-pressed="true"] { background: #fff; color: #02040a; }
+
+.dive-fallback { position: absolute; inset: 0; z-index: 40; display: grid; place-items: center; padding: 24px; background: #02040a; font-family: Inter, sans-serif; text-align: center; }
+.dive-fallback[hidden] { display: none; }
+.dive-fallback p { max-width: 32rem; line-height: 1.6; }
+.dive-fallback a { color: #7fb2ff; }
+
+@media (max-width: 640px) {
+  .hud-tr { gap: 12px; } .dive-hud dd { font-size: .8rem; }
+  .dive-keys { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dive-hud { transition: none; } .hud-dot { animation: none; }
+}
+/* soft dark fades behind the HUD corners so numbers stay readable over a bright sky */
+.dive-hud::before, .dive-hud::after { content: ""; position: absolute; left: 0; right: 0; height: 120px; pointer-events: none; }
+.dive-hud::before { top: 0; background: linear-gradient(rgba(2,4,10,.55), rgba(2,4,10,0)); }
+.dive-hud::after { bottom: 0; background: linear-gradient(rgba(2,4,10,0), rgba(2,4,10,.5)); }
+.hud-tl, .hud-tr, .hud-br { z-index: 1; }

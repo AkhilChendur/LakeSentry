@@ -41,7 +41,7 @@
       }
     });
     // Reset the menu if the window grows to desktop size.
-    const desktop = window.matchMedia('(min-width: 768px)');
+    const desktop = window.matchMedia('(min-width: 1024px)');
     const onChange = function () {
       if (desktop.matches) {
         toggle.setAttribute('aria-expanded', 'false');

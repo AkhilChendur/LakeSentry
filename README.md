@@ -18,6 +18,7 @@ Vercel is connected to the repo, so it redeploys automatically after each commit
 | `about.html` | About | A short page: the three parts of the project, the problem, an interactive V1 diagram, what's next, who it's for, the SDGs. Impact targets, risks, feasibility and sources are in collapsed “More details” boxes |
 | `app.html` | Lake Explorer App | Four tools in tabs: **Lake stories** (share posts and photos), **Initiatives** (submit a clean-up effort), the **Lake map** with lake pages, and the **V1 simulator** |
 | `me.html` | About me | A short page about Akhil Chendur (photo and story), separate from the project's About page |
+| `dive.html` + `dive.js` + `dive.css` + `three.min.js` | Lake Dive (3D) | Public tab. A real-time 3D lake at dusk: drive the Lake Sentry robot (W A S D / arrows, Shift to dive, Space to rise, drag to look, scroll to zoom; joystick + Rise/Dive buttons on phones). The front conveyor scoops floating trash into the basket; underwater, target brackets tag the sunken waste. Everything (terrain, water, sky, trash, plants, fish, robot) is generated in code. `three.min.js` is three.js r149 (MIT licence), bundled so the page works without a CDN. Needs WebGL 2; older browsers get a short message instead |
 | `experience.html` + `experience.js` | Immersive lake (preview) | A scroll-driven, cinematic dive from a calm lake to a trash-choked bed, ending with Lake Sentry clearing the water. Only opens when logged in as admin (linked from the Admin dashboard); not in the public menu. The gate runs in the browser, so treat it as hidden, not secret |
 | `contact.js` | Contact me form | Saves messages from the About me page so they appear in Admin → Messages. To receive them from every visitor's device, paste a form-endpoint URL (e.g. Formspree) into `CONTACT_ENDPOINT` in `store.js` |
 | `admin.html` | Admin panel | For the Lake Sentry team. Review, approve, reject, unpublish or delete initiatives and lake stories. Open it with the 🔒 **Admin** button in the top-left of any page |
@@ -120,5 +121,6 @@ The initiative network and Lake stories save submissions (including photos) in t
 - The robot detects trash inside its front conveyor box (not just by distance), slows down for a clean scoop, and backs off to re-line-up if a piece is beside or behind it. It gives up on a piece after 16 s and tries another, so it can't circle forever.
 - Two pieces ride on the conveyor at a time; they are tipped into onboard storage so it keeps cruising without a return point.
 - The counter shows pieces and kg (typical weights per item type, `WEIGHT_KG` in `lake-hero.js`).
-- A faint lake bank with rubbish cuts the bottom-right corner (`bankSize()`); the robot and trash keep clear of it.
+- A sandy lake bank covered in rubbish cuts the bottom-right corner (`bankSize()`, sand texture in `sandPattern()`). It is solid and never moves; the robot and trash keep clear of it.
+- Lily pads, weed patches and reeds stay still (they're rooted plants, not floating with the ripples).
 - Pictures retry automatically (site.js) if a load fails; lazy-loading was removed.

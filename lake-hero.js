@@ -660,7 +660,13 @@
     // a wobbly shoreline
     const edge = [];
     for (let i = 0; i <= 12; i++) edge.push(rand(-6, 6));
-    bankDecor = { pieces: pieces, edge: edge };
+    const pebbles = [];
+    for (let i = 0; i < (isSmallScreen ? 14 : 26); i++) {
+      const x = rand(W - b.w, W), y = rand(H - b.h, H);
+      if (bankDist(x, y) < 8) continue;
+      pebbles.push({ x: x, y: y, r: rand(1.5, 4), a: rand(0, 3), c: pick(['#8d8173', '#a39684', '#6f665c', '#b5a891']) });
+    }
+    bankDecor = { pieces: pieces, edge: edge, pebbles: pebbles };
   }
 
   function drawBank() {
@@ -678,25 +684,63 @@
     }
     ctx.lineTo(W, H);
     ctx.closePath();
-    // faint mud + grass, so it stays a quiet background detail
-    ctx.fillStyle = 'rgba(78, 62, 40, 0.42)';
+    // Solid sand (it never moves, and the water no longer shows through)
+    ctx.fillStyle = sandPattern();
     ctx.fill();
-    ctx.strokeStyle = 'rgba(140, 170, 110, 0.35)';
-    ctx.lineWidth = 3;
-    ctx.stroke();
+    ctx.save();
     ctx.clip();
-    ctx.fillStyle = 'rgba(70, 100, 55, 0.18)';
+    // drier, lighter sand further up the bank
+    const g = ctx.createLinearGradient(W - b.w * 0.5, H - b.h * 0.5, W, H);
+    g.addColorStop(0, 'rgba(255, 244, 214, 0)');
+    g.addColorStop(1, 'rgba(255, 244, 214, 0.22)');
+    ctx.fillStyle = g;
     ctx.fillRect(W - b.w, H - b.h, b.w, b.h);
+    // dark wet band along the waterline
+    ctx.strokeStyle = 'rgba(96, 78, 50, 0.55)';
+    ctx.lineWidth = 16;
+    ctx.stroke();
     ctx.restore();
+    // thin line of foam where the water meets the sand
+    ctx.strokeStyle = 'rgba(235, 242, 238, 0.55)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.restore();
+    bankDecor.pebbles.forEach(function (p) {
+      ctx.fillStyle = p.c;
+      ctx.beginPath();
+      ctx.ellipse(p.x * dpr, p.y * dpr, p.r * dpr, p.r * 0.7 * dpr, p.a, 0, Math.PI * 2);
+      ctx.fill();
+    });
     bankDecor.pieces.forEach(function (p) {
       ctx.save();
-      ctx.globalAlpha = 0.8;
       ctx.translate(p.x * dpr, p.y * dpr);
       ctx.rotate(p.angle);
       ctx.scale(dpr, dpr);
+      // a soft shadow so pieces sit on the sand
+      ctx.fillStyle = 'rgba(70, 52, 28, 0.3)';
+      ctx.beginPath(); ctx.ellipse(2, 3, p.size * 0.45, p.size * 0.18, 0, 0, Math.PI * 2); ctx.fill();
       DRAW[p.type](p.size, p);
       ctx.restore();
     });
+  }
+
+  // A small tile of sand grains, repeated over the bank.
+  let sandTile = null;
+  function sandPattern() {
+    if (!sandTile) {
+      const c = document.createElement('canvas');
+      c.width = c.height = 96;
+      const g = c.getContext('2d');
+      g.fillStyle = '#cdb68a';
+      g.fillRect(0, 0, 96, 96);
+      for (let i = 0; i < 900; i++) {
+        const v = Math.random();
+        g.fillStyle = v < 0.45 ? 'rgba(120, 96, 60, 0.35)' : v < 0.85 ? 'rgba(244, 228, 190, 0.5)' : 'rgba(90, 80, 70, 0.4)';
+        g.fillRect(Math.random() * 96, Math.random() * 96, rand(0.6, 1.6), rand(0.6, 1.6));
+      }
+      sandTile = ctx.createPattern(c, 'repeat');
+    }
+    return sandTile;
   }
 
   /* =============================================================
@@ -761,20 +805,21 @@
   function makeLily(i) {
     // Lily pads sit near the left and right edges of the lake.
     const left = i % 2 === 0;
+    const x = left ? rand(20, W * 0.14) : rand(W * 0.86, W - 20);
+    let y = rand(H * 0.25, H * 0.9);
+    if (bankDist(x, y) > -40) y = rand(H * 0.22, H * 0.5); // keep it in the water
     return {
-      x: left ? rand(20, W * 0.14) : rand(W * 0.86, W - 20),
-      y: rand(H * 0.25, H * 0.9),
+      x: x,
+      y: y,
       r: rand(16, 28), angle: rand(0, Math.PI * 2),
       flower: Math.random() < 0.45, phase: rand(0, 10),
     };
   }
 
   function drawLily(l, time) {
-    const w = sampleWater(l.x, l.y);
-    const bob = Math.sin(time * 0.001 + l.phase) * 1.5 - w.h * 0.3;
     ctx.save();
-    ctx.translate(l.x * dpr, (l.y + bob) * dpr);
-    ctx.rotate(l.angle + Math.sin(time * 0.0004 + l.phase) * 0.1);
+    ctx.translate(l.x * dpr, l.y * dpr);
+    ctx.rotate(l.angle);
     ctx.scale(dpr, dpr);
     // pad with its classic notch
     ctx.fillStyle = 'rgba(46, 125, 80, 0.9)';
@@ -808,8 +853,10 @@
     const list = [];
     const n = isSmallScreen ? 5 : 10;
     for (let i = 0; i < n; i++) {
+      let x = rand(W * 0.04, W * 0.96), y = rand(H * 0.18, H * 0.94);
+      if (bankDist(x, y) > -40) { x = rand(W * 0.04, W * 0.7); } // not on the sand
       list.push({
-        x: rand(W * 0.04, W * 0.96), y: rand(H * 0.18, H * 0.94),
+        x: x, y: y,
         r: rand(14, 30), phase: rand(0, 10), angle: rand(0, Math.PI * 2),
         leaves: 5 + Math.floor(rand(0, 4)), bloom: Math.random() < 0.3,
       });
@@ -818,11 +865,10 @@
   }
 
   function drawWeed(wd, time) {
-    const w = sampleWater(wd.x, wd.y);
-    const bob = Math.sin(time * 0.0009 + wd.phase) * 1.2 - w.h * 0.3;
+    // Plants stay where they are (they're rooted, not drifting with the ripples).
     ctx.save();
-    ctx.translate(wd.x * dpr, (wd.y + bob) * dpr);
-    ctx.rotate(wd.angle + Math.sin(time * 0.0005 + wd.phase) * 0.12);
+    ctx.translate(wd.x * dpr, wd.y * dpr);
+    ctx.rotate(wd.angle);
     ctx.scale(dpr, dpr);
     for (let k = 0; k < wd.leaves; k++) {
       const a = (k / wd.leaves) * Math.PI * 2;
@@ -861,7 +907,7 @@
       for (let b = 0; b < c.blades; b++) {
         const bx = (c.x + (b - c.blades / 2) * 8) * dpr;
         const bh = c.h * (0.7 + (b % 3) * 0.15) * dpr;
-        const sway = Math.sin(time * 0.0009 * c.sway + c.phase + b) * 10 * dpr;
+        const sway = Math.sin(c.phase + b) * 4 * dpr; // fixed lean, no swaying
         ctx.beginPath();
         ctx.moveTo(bx, H * dpr);
         ctx.quadraticCurveTo(bx + sway * 0.5, H * dpr - bh * 0.55, bx + sway, H * dpr - bh);

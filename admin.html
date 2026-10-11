@@ -53,23 +53,24 @@
 
       <div class="flex items-center gap-2">
         <!-- Light / dark mode switch (site.js) -->
-        <button id="theme-toggle" type="button" class="inline-flex items-center gap-1.5 rounded-md border border-linehi px-2.5 py-2 text-sm font-medium text-txt-1 transition hover:border-aqua hover:text-aqua md:order-last md:ml-2">
+        <button id="theme-toggle" type="button" class="inline-flex items-center gap-1.5 rounded-md border border-linehi px-2.5 py-2 text-sm font-medium text-txt-1 transition hover:border-aqua hover:text-aqua lg:order-last lg:ml-2">
           <svg data-icon-sun aria-hidden="true" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0V3a1 1 0 0 1 1-1Zm4 8a4 4 0 1 1-8 0 4 4 0 0 1 8 0Zm-.46 4.95.7.7a1 1 0 0 0 1.42-1.41l-.71-.71a1 1 0 0 0-1.41 1.42ZM16 10a1 1 0 0 1 1-1h1a1 1 0 1 1 0 2h-1a1 1 0 0 1-1-1Zm-.35-5.66a1 1 0 0 0-1.41-1.41l-.71.7a1 1 0 0 0 1.42 1.42l.7-.71ZM10 16a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0v-1a1 1 0 0 1 1-1ZM4.34 14.95a1 1 0 0 0 1.41 1.41l.71-.7a1 1 0 0 0-1.42-1.42l-.7.71ZM2 10a1 1 0 0 1 1-1h1a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm3.05-6.07a1 1 0 0 0-1.41 1.41l.7.71a1 1 0 0 0 1.42-1.42l-.71-.7Z"/></svg>
           <svg data-icon-moon aria-hidden="true" class="hidden h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M17.3 13.35A8 8 0 0 1 6.65 2.7a8 8 0 1 0 10.65 10.65Z"/></svg>
           <span data-theme-label class="sr-only lg:not-sr-only">Light mode</span>
         </button>
         <!-- Menu button — only shown on small screens -->
-        <button id="nav-toggle" type="button" class="inline-flex items-center gap-2 rounded-md border border-linehi px-3 py-2 text-sm font-medium text-txt-1 md:hidden" aria-expanded="false" aria-controls="nav-menu">
+        <button id="nav-toggle" type="button" class="inline-flex items-center gap-2 rounded-md border border-linehi px-3 py-2 text-sm font-medium text-txt-1 lg:hidden" aria-expanded="false" aria-controls="nav-menu">
           <svg aria-hidden="true" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round" /></svg>
           <span data-label class="sr-only sm:not-sr-only">Open menu</span>
         </button>
 
-        <ul id="nav-menu" class="absolute left-0 right-0 top-full hidden flex-col gap-1 border-b border-line bg-deep px-4 pb-4 md:static md:flex md:flex-row md:items-center md:gap-1 md:border-0 md:bg-transparent md:p-0">
-          <li><a href="index.html" class="relative block rounded-md px-3 py-2 text-txt-2 transition-colors hover:text-txt-1 md:after:absolute md:after:bottom-1 md:after:left-3 md:after:h-0.5 md:after:w-0 md:after:rounded md:after:bg-aqua md:after:transition-all md:hover:after:w-[calc(100%-1.5rem)]">Home</a></li>
-          <li><a href="about.html" class="relative block rounded-md px-3 py-2 text-txt-2 transition-colors hover:text-txt-1 md:after:absolute md:after:bottom-1 md:after:left-3 md:after:h-0.5 md:after:w-0 md:after:rounded md:after:bg-aqua md:after:transition-all md:hover:after:w-[calc(100%-1.5rem)]">About</a></li>
-          <li><a href="app.html" class="relative block rounded-md px-3 py-2 text-txt-2 transition-colors hover:text-txt-1 md:after:absolute md:after:bottom-1 md:after:left-3 md:after:h-0.5 md:after:w-0 md:after:rounded md:after:bg-aqua md:after:transition-all md:hover:after:w-[calc(100%-1.5rem)]">Lake Explorer App</a></li>
-          <li><a href="me.html" class="relative block rounded-md px-3 py-2 text-txt-2 transition-colors hover:text-txt-1 md:after:absolute md:after:bottom-1 md:after:left-3 md:after:h-0.5 md:after:w-0 md:after:rounded md:after:bg-aqua md:after:transition-all md:hover:after:w-[calc(100%-1.5rem)]">About me</a></li>
-          <li><a href="get-involved.html" class="mt-2 block rounded-md bg-aqua px-4 py-2 font-semibold text-onaccent transition hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(56,228,240,.3)] md:ml-3 md:mt-0">Get involved</a></li>
+        <ul id="nav-menu" class="absolute left-0 right-0 top-full hidden flex-col gap-1 border-b border-line bg-deep px-4 pb-4 lg:static lg:flex lg:flex-row lg:items-center lg:gap-1 lg:border-0 lg:bg-transparent lg:p-0">
+          <li class="whitespace-nowrap"><a href="index.html" class="relative block rounded-md px-3 py-2 text-txt-2 transition-colors hover:text-txt-1 lg:after:absolute lg:after:bottom-1 lg:after:left-3 lg:after:h-0.5 lg:after:w-0 lg:after:rounded lg:after:bg-aqua lg:after:transition-all lg:hover:after:w-[calc(100%-1.5rem)]">Home</a></li>
+          <li class="whitespace-nowrap"><a href="about.html" class="relative block rounded-md px-3 py-2 text-txt-2 transition-colors hover:text-txt-1 lg:after:absolute lg:after:bottom-1 lg:after:left-3 lg:after:h-0.5 lg:after:w-0 lg:after:rounded lg:after:bg-aqua lg:after:transition-all lg:hover:after:w-[calc(100%-1.5rem)]">About</a></li>
+          <li class="whitespace-nowrap"><a href="app.html" class="relative block rounded-md px-3 py-2 text-txt-2 transition-colors hover:text-txt-1 lg:after:absolute lg:after:bottom-1 lg:after:left-3 lg:after:h-0.5 lg:after:w-0 lg:after:rounded lg:after:bg-aqua lg:after:transition-all lg:hover:after:w-[calc(100%-1.5rem)]">Lake Explorer</a></li>
+          <li class="whitespace-nowrap"><a href="me.html" class="relative block rounded-md px-3 py-2 text-txt-2 transition-colors hover:text-txt-1 lg:after:absolute lg:after:bottom-1 lg:after:left-3 lg:after:h-0.5 lg:after:w-0 lg:after:rounded lg:after:bg-aqua lg:after:transition-all lg:hover:after:w-[calc(100%-1.5rem)]">About me</a></li>
+          <li class="whitespace-nowrap"><a href="dive.html" class="relative block rounded-md px-3 py-2 text-txt-2 transition-colors hover:text-txt-1 lg:after:absolute lg:after:bottom-1 lg:after:left-3 lg:after:h-0.5 lg:after:w-0 lg:after:rounded lg:after:bg-aqua lg:after:transition-all lg:hover:after:w-[calc(100%-1.5rem)]">Lake Dive</a></li>
+          <li class="whitespace-nowrap"><a href="get-involved.html" class="mt-2 block rounded-md bg-aqua px-4 py-2 font-semibold text-onaccent transition hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(56,228,240,.3)] lg:ml-3 lg:mt-0">Get involved</a></li>
         </ul>
       </div>
     </nav>
@@ -257,6 +258,7 @@
           <li><a href="about.html#v1" class="hover:text-aqua">Prototype V1</a></li>
           <li><a href="app.html" class="hover:text-aqua">Lake Explorer App</a></li>
           <li><a href="me.html" class="hover:text-aqua">About me</a></li>
+          <li><a href="dive.html" class="hover:text-aqua">Lake Dive (3D)</a></li>
         </ul>
       </nav>
       <div>
