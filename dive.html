@@ -4,11 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Lake Dive — Lake Sentry</title>
-  <meta name="description" content="A prototype 3D explorer of a simulated polluted city lake: scroll through water hyacinth, sewage inflows, low oxygen and sunken waste, with sourced facts." />
+  <meta name="description" content="Scroll down through a simulated polluted lake: from a calm surface at dusk to a trash-choked bed, with your cursor as an underwater light. A prototype awareness experience." />
   <!-- How the page looks when the link is shared (WhatsApp, LinkedIn, etc.) -->
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Lake Dive — Lake Sentry" />
-  <meta property="og:description" content="A prototype 3D explorer of a simulated polluted city lake: scroll through water hyacinth, sewage inflows, low oxygen and sunken waste, with sourced facts." />
+  <meta property="og:description" content="Scroll down through a simulated polluted lake: from a calm surface at dusk to a trash-choked bed, with your cursor as an underwater light. A prototype awareness experience." />
   <meta property="og:image" content="og-image.png" />
   <meta property="og:image:alt" content="The Lake Sentry logo: a splash rising from rippling water above the name LakeSentry." />
   <meta name="twitter:card" content="summary_large_image" />
@@ -27,9 +27,50 @@
   <script src="tailwind-config.js"></script>
   <link rel="stylesheet" href="site.css" />
   <script src="features.js"></script>
-  <link rel="stylesheet" href="dive.css" />
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    html, body { background: #02040a; }
+    a { color: inherit; }
+    :focus-visible { outline: 3px solid #FFD36B; outline-offset: 3px; }
+    .skip { position: absolute; left: -999px; top: 8px; background: #fff; color: #000; padding: 8px 14px; border-radius: 6px; z-index: 100; }
+    .skip:focus { left: 8px; }
+    #gl { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+    #hint { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); z-index: 20; font: 500 .8rem 'Space Grotesk', sans-serif; letter-spacing: .2em; text-transform: uppercase; color: #C9D6EE; background: rgba(2,4,10,.55); padding: 8px 16px; border-radius: 999px; transition: opacity .5s; }
+    #meter { position: fixed; right: 14px; top: 50%; transform: translateY(-50%); z-index: 20; width: 3px; height: 40vh; background: rgba(255,255,255,.18); border-radius: 3px; }
+    #meter i { position: absolute; left: 0; right: 0; top: 0; height: 0; background: #7FB2FF; border-radius: 3px; }
+    #spacer { height: 700vh; position: relative; }
+    .scene { position: fixed; inset: 0; z-index: 10; display: flex; flex-direction: column; justify-content: center; padding: 0 6vw; opacity: 0; pointer-events: none; transition: none; }
+    .scene.on { pointer-events: auto; }
+    .scene h2 { font: 700 clamp(2.6rem, 11vw, 9rem)/.95 'Space Grotesk', sans-serif; margin: 0; letter-spacing: -.03em; text-shadow: 0 6px 40px rgba(0,0,0,.6); }
+    .scene p { font-size: clamp(1.05rem, 2.2vw, 1.6rem); max-width: 34ch; margin: 1.2rem 0 0; color: #DDE7F8; text-shadow: 0 2px 20px rgba(0,0,0,.8); }
+    .scene .cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 2rem; }
+    .scene .cta a { text-decoration: none; font-weight: 600; padding: 14px 26px; border-radius: 10px; border: 1px solid rgba(255,255,255,.4); background: rgba(2,4,10,.55); backdrop-filter: blur(8px); }
+    .scene .cta a.primary { background: #7FB2FF; color: #02040a; border-color: #7FB2FF; }
+    .scene.right { align-items: flex-end; text-align: right; }
+    .red { color: #FF7A66; }
+    .gate { position: fixed; inset: var(--header-h, 64px) 0 0 0; z-index: 40; display: none; place-items: center; background: #02040a; padding: 24px; text-align: center; }
+    .gate.show { display: grid; }
+    .gate div { max-width: 28rem; }
+    .gate h1 { font: 700 2rem 'Space Grotesk', sans-serif; margin: 0 0 .5rem; }
+    .gate a { display: inline-block; margin-top: 1.2rem; background: #7FB2FF; color: #02040a; padding: 12px 24px; border-radius: 8px; font-weight: 600; text-decoration: none; }
+    .scene h2::after, .gate h2::after, .disc h2::after { display: none !important; }
+    .gate h2 { font: 700 2rem 'Space Grotesk', sans-serif; margin: 0 0 .5rem; color: #fff; }
+    .gate p { color: #dfe7f5; }
+    .proto { position: fixed; left: 16px; top: calc(var(--header-h, 64px) + 12px); z-index: 30; padding: 6px 12px; border-radius: 999px; border: 1px solid rgba(255,200,120,.65); background: rgba(40,24,6,.6); color: #ffd9a6; font: 600 .66rem 'IBM Plex Mono', monospace; letter-spacing: .16em; text-transform: uppercase; cursor: pointer; backdrop-filter: blur(6px); }
+    .proto:hover { background: rgba(255,200,120,.2); }
+    .disc { width: min(92vw, 40rem); max-height: 86vh; padding: 1.4rem 1.5rem; border-radius: 16px; border: 1px solid rgba(255,255,255,.2); background: #0a1024; color: #d7e0f0; }
+    .disc::backdrop { background: rgba(2,4,10,.75); }
+    .disc-head { display: flex; justify-content: space-between; gap: 1rem; align-items: flex-start; }
+    .disc-head h2 { margin: 0; font: 700 1.5rem 'Space Grotesk', sans-serif; color: #fff; }
+    .disc-head button { padding: .45rem .9rem; border-radius: 8px; border: 1px solid rgba(255,255,255,.4); background: transparent; color: #fff; cursor: pointer; }
+    .disc ul { padding-left: 1.1rem; display: grid; gap: .6rem; line-height: 1.6; }
+    .disc li { color: #d7e0f0; } .disc strong { color: #fff; } .disc a { color: #9fc2ff; text-decoration: underline; }
+    @media (max-width: 640px) { .scene { padding: 0 20px; } .scene p { font-size: 1.05rem; } #meter { right: 6px; } }
+    @media (prefers-reduced-motion: reduce) { #hint { display: none; } }
+  </style>
 </head>
-<body class="dive-page bg-ink font-sans text-[1.0625rem] leading-relaxed text-txt-2">
+<body class="dive-scroll-page bg-ink font-sans text-[1.0625rem] leading-relaxed text-txt-2">
 
   <!-- Keyboard users can jump straight past the navigation -->
   <a href="#main" class="skip-link">Skip to main content</a>
@@ -78,263 +119,62 @@
   </header>
 
   <main id="main">
-    <h1 class="sr-only">Lake Dive: explore a polluted city lake (prototype)</h1>
-
-    <!-- Shown instead of the 3D lake when an admin has switched the feature off -->
-    <div id="dive-off" class="dive-off" hidden>
+    <h1 class="sr-only">Lake Dive: scroll down through a polluted lake (prototype)</h1>
+    <!-- Shown instead when an admin has switched Lake Dive off (features.js) -->
+    <div id="gate" class="gate" role="alert">
       <div>
-        <p class="dive-kicker">Lake Dive</p>
         <h2>Not available right now</h2>
-        <p>The 3D lake explorer is a prototype and is currently switched off. Please check back later, or explore real lakes in the <a href="app.html#map">Lake Explorer</a>.</p>
+        <p>Lake Dive is a prototype and is currently switched off. Please check back later, or explore real lakes in the Lake Explorer.</p>
+        <a href="app.html#map">Open the Lake Explorer</a>
       </div>
     </div>
-    <p id="dive-admin-note" class="dive-admin-note" hidden>Admin view: Lake Dive is switched <strong>off</strong> for the public. Only logged-in admins can see this page.</p>
+    <button type="button" class="proto" data-open-disclaimer>Prototype &middot; simulated lake <span aria-hidden="true">&#9432;</span></button>
+  <canvas id="gl" aria-hidden="true"></canvas>
+  <div id="meter" aria-hidden="true"><i></i></div>
+  <div id="hint" aria-hidden="true">Scroll to dive · move your cursor to shine a light</div>
 
-    <!-- ============ The 3D stage (fixed behind the chapters) ============ -->
-    <div id="dive-stage" class="dive-stage">
-      <div id="dive-loader" class="dive-loader" aria-hidden="true"><p>Building the lake</p><div class="dive-load"><i id="dive-progress"></i></div></div>
-      <div id="dive-fallback" class="dive-fallback" hidden><p>Your browser can't show the 3D lake (it needs WebGL 2). Everything on this page is still available as text below.</p></div>
-
-      <!-- Hotspots: buttons pinned to things in the scene. data-in = chapters where they appear -->
-      <div class="dive-hots">
-        <div class="dive-hot" data-hot="buildings" data-in="squeeze"><button type="button" aria-expanded="false"><span class="sr-only">About this: </span>Built into the lake</button><div class="dive-pop" hidden>Walls and homes inside a lake's full tank level (FTL) or buffer zone shrink the area that can hold water and block the channels that feed it.</div></div>
-        <div class="dive-hot" data-hot="hyacinth" data-in="carpet health"><button type="button" aria-expanded="false"><span class="sr-only">About this: </span>Water hyacinth</button><div class="dive-pop" hidden>An invasive floating plant with glossy leaves and lilac flowers. It doubles quickly when water is rich in nutrients.</div></div>
-        <div class="dive-hot" data-hot="inlet" data-in="cause"><button type="button" aria-expanded="false"><span class="sr-only">About this: </span>Sewage inlet (nala)</button><div class="dive-pop" hidden>Stormwater channels were built for rain. Many now also carry sewage straight into the lake.</div></div>
-        <div class="dive-hot" data-hot="froth" data-in="cause oxygen"><button type="button" aria-expanded="false"><span class="sr-only">About this: </span>Froth</button><div class="dive-pop" hidden>Froth often gathers where waste water enters a lake. (Illustration only.)</div></div>
-        <div class="dive-hot" data-hot="fish" data-in="oxygen"><button type="button" aria-expanded="false"><span class="sr-only">About this: </span>Dead fish</button><div class="dive-pop" hidden>Fish suffocate when dissolved oxygen falls too low. Fish deaths at Durgam Cheruvu in 2026 were linked to oxygen depletion.</div></div>
-        <div class="dive-hot" data-hot="under" data-in="dark"><button type="button" aria-expanded="false"><span class="sr-only">About this: </span>Under the mat</button><div class="dive-pop" hidden>Little light gets through. Plants below can't photosynthesise, so they die and stop making oxygen.</div></div>
-        <div class="dive-hot" data-hot="bed" data-in="bed"><button type="button" aria-expanded="false"><span class="sr-only">About this: </span>Sludge</button><div class="dive-pop" hidden>Rotting waste and silt settle as dark sludge, along with heavy rubbish that sinks out of sight.</div></div>
-        <div class="dive-hot" data-hot="dump" data-in="banks"><button type="button" aria-expanded="false"><span class="sr-only">About this: </span>Dumped debris</button><div class="dive-pop" hidden>Rubble and household waste on the bank fill the lake's edge in, and rain washes the lighter rubbish into the water.</div></div>
-        <div class="dive-hot" data-hot="mosquito" data-in="health"><button type="button" aria-expanded="false"><span class="sr-only">About this: </span>Mosquitoes</button><div class="dive-pop" hidden>Still water sheltered by weeds is ideal for mosquito larvae.</div></div>
-        <div class="dive-hot" data-hot="robot" data-in="change"><button type="button" aria-expanded="false"><span class="sr-only">About this: </span>Lake Sentry V1</button><div class="dive-pop" hidden>Artist's impression of our floating prototype: the front conveyor lifts floating waste into the basket.</div></div>
-      </div>
-
-      <!-- Heads-up display -->
-      <div class="dive-hud">
-        <button type="button" class="dive-badge" data-open-disclaimer>Prototype<span class="long"> · simulated lake</span> <span aria-hidden="true">ⓘ</span><span class="sr-only">: read the disclaimer</span></button>
-        <p class="dive-chap"><span id="hud-chapter">01 / 10</span> &middot; <span id="hud-depth">+0.0 m</span></p>
-        <div class="dive-gauges" role="group" aria-label="Conditions here (illustrative)">
-          <p class="dive-glabel">Conditions here <em>(illustrative)</em></p>
-          <div class="dive-gauge"><span>Sunlight</span><b><i id="g-light"></i></b><em id="g-light-t">Good</em></div>
-          <div class="dive-gauge"><span>Oxygen</span><b><i id="g-oxy" class="oxy"></i></b><em id="g-oxy-t">Fair</em></div>
-        </div>
-        <p id="dive-hint" class="dive-hint" aria-hidden="true">Drag to look around &middot; scroll to move on</p>
-      </div>
-    </div>
-
-    <!-- Chapter rail -->
-    <nav class="dive-rail" aria-label="Chapters">
-      <ol>
-        <li><button type="button" data-goto="intro">Start</button></li>
-        <li><button type="button" data-goto="squeeze">Squeezed by the city</button></li>
-        <li><button type="button" data-goto="carpet">A green carpet</button></li>
-        <li><button type="button" data-goto="cause">The root cause</button></li>
-        <li><button type="button" data-goto="oxygen">Oxygen runs out</button></li>
-        <li><button type="button" data-goto="dark">Sunlight blocked</button></li>
-        <li><button type="button" data-goto="bed">On the bed</button></li>
-        <li><button type="button" data-goto="banks">Dumped on the banks</button></li>
-        <li><button type="button" data-goto="health">A health risk</button></li>
-        <li><button type="button" data-goto="change">What can change</button></li>
-      </ol>
-    </nav>
-
-    <!-- ============ Chapters (scroll through these) ============ -->
-    <div class="dive-chapters">
-      <section class="dive-chapter" data-chapter="intro" aria-labelledby="ch-intro">
-        <div class="dive-card dive-card--intro">
-          <p class="dive-kicker">Lake Dive &middot; Prototype</p>
-          <h2 id="ch-intro" class="dive-title">Explore a polluted city lake</h2>
-          <p>Scroll to travel through the lake, from the shore to the bed. Drag at any point to look around, and tap the markers to learn what you're seeing.</p>
-          <div class="dive-disclaimer-short">
-            <p><strong>Prototype. This is not a real lake.</strong> The scene is computer-generated. It does not show any specific lake or its current state. It imitates conditions reported at urban lakes in and around Hyderabad, and amounts and positions are illustrative.</p>
-            <button type="button" data-open-disclaimer>Read the full disclaimer</button>
-          </div>
-          <p class="dive-scroll" aria-hidden="true">Scroll to begin <span>↓</span></p>
-        </div>
-      </section>
-
-      <section class="dive-chapter" data-chapter="squeeze" aria-labelledby="ch-squeeze">
-        <div class="dive-card">
-          <p class="dive-kicker">01 &middot; Squeezed by the city</p>
-          <h2 id="ch-squeeze">Lakes shrink as the city builds into them</h2>
-          <p>Homes, roads and walls built inside a lake's full tank level (FTL) or its buffer zone reduce the area that can hold water, and cut off the channels that feed it.</p>
-          <div class="dive-stat"><b>14,061</b><span>encroachments found around 134 lakes within GHMC limits</span></div>
-          <p class="dive-src">Irrigation Department report to the National Green Tribunal (Nov 2022), as reported by <a href="https://www.thenewsminute.com/telangana/134-lakes-14061-encroachments-state-hyderabad-lakes-170335" target="_blank" rel="noopener">The News Minute</a>. A state study (TGRAC) reported 491 of 920 lakes and tanks encroached over 20 years (<a href="https://thesouthfirst.com/telangana/491-out-of-920-hyderabad-lakes-tanks-encroached-in-20-years-telangana-government-wants-to-reclaim-it" target="_blank" rel="noopener">The South First</a>).</p>
-        </div>
-      </section>
-
-      <section class="dive-chapter" data-chapter="carpet" aria-labelledby="ch-carpet">
-        <div class="dive-card">
-          <p class="dive-kicker">02 &middot; A green carpet</p>
-          <h2 id="ch-carpet">Water hyacinth covers the surface</h2>
-          <p>Water hyacinth is an invasive floating plant. Fed by nutrients in sewage, it spreads into thick mats. They look green and healthy, but they shade the water below, trap floating rubbish and choke the life underneath.</p>
-          <p class="dive-src">How hyacinth mats affect a lake: <a href="https://agriculture.vermont.gov/sites/agriculture/files/documents/AAFM_WaterHyacinth.pdf" target="_blank" rel="noopener">Vermont Agency of Agriculture fact sheet</a>; <a href="https://www.laseagrant.org/wp-content/uploads/NIS-Species-Info-Water-Hyacinth.pdf" target="_blank" rel="noopener">Louisiana Sea Grant fact sheet</a>.</p>
-        </div>
-      </section>
-
-      <section class="dive-chapter" data-chapter="cause" aria-labelledby="ch-cause">
-        <div class="dive-card">
-          <p class="dive-kicker">03 &middot; The root cause</p>
-          <h2 id="ch-cause">Sewage pours in through the nalas</h2>
-          <p>Untreated sewage and industrial effluent reach lakes through stormwater channels called nalas. The nitrates and phosphates they carry feed algae and water hyacinth, so the weeds grow back faster than they can be cleared.</p>
-          <div class="dive-stat dive-stat--text"><b>Root cause</b><span>waste and sewage entering upstream, not just what floats on top</span></div>
-          <p class="dive-src">Causes of Hussain Sagar's pollution: <a href="https://hmda.gov.in/hlpic1" target="_blank" rel="noopener">HMDA</a>. A February 2026 review found untreated and partly treated sewage still flowing into several lakes: <a href="https://sandrp.in/2026/02/17/hyderabad-lakes-2025-degradation-continues-amid-hydraa-efforts/" target="_blank" rel="noopener">SANDRP</a>.</p>
-        </div>
-      </section>
-
-      <section class="dive-chapter" data-chapter="oxygen" aria-labelledby="ch-oxygen">
-        <div class="dive-card">
-          <p class="dive-kicker">04 &middot; Ecosystem breakdown</p>
-          <h2 id="ch-oxygen">Oxygen runs out, and fish die</h2>
-          <p>As weeds and waste rot, bacteria use up the oxygen dissolved in the water. Fish need at least 4 mg/l (the Central Pollution Control Board's minimum for fisheries).</p>
-          <div class="dive-stat"><b>0.3 mg/l</b><span>dissolved oxygen at Durgam Cheruvu in pollution board figures released in May 2026, when hundreds of fish died</span></div>
-          <p class="dive-src">Telangana Pollution Control Board figures, as reported by <a href="https://www.deccanchronicle.com/southern-states/telangana/fish-deaths-at-durgam-cheruvu-linked-to-oxygen-depletion-1983825" target="_blank" rel="noopener">Deccan Chronicle</a>. In March 2025, 24 of 185 lakes in Greater Hyderabad were described as &ldquo;dead lakes&rdquo; because of very low oxygen (<a href="https://deccanchronicle.com/in-focus/250321/lakes-in-hyderabad-are-not-in-the-pink-of-health.html" target="_blank" rel="noopener">Deccan Chronicle</a>).</p>
-        </div>
-      </section>
-
-      <section class="dive-chapter" data-chapter="dark" aria-labelledby="ch-dark">
-        <div class="dive-card">
-          <p class="dive-kicker">05 &middot; Sunlight blocked</p>
-          <h2 id="ch-dark">Underneath, it goes dark</h2>
-          <p>Below a thick mat, little sunlight gets through. Rooted plants can't photosynthesise and die, so they stop making oxygen, and their decay uses up even more. Fish and other life leave, or die.</p>
-          <div class="dive-chain" aria-label="Chain of effects"><span>Mat blocks light</span><span>Plants below die</span><span>Decay uses oxygen</span><span>Life collapses</span></div>
-          <p class="dive-src"><a href="https://agriculture.vermont.gov/sites/agriculture/files/documents/AAFM_WaterHyacinth.pdf" target="_blank" rel="noopener">Vermont Agency of Agriculture</a>; <a href="https://www.laseagrant.org/wp-content/uploads/NIS-Species-Info-Water-Hyacinth.pdf" target="_blank" rel="noopener">Louisiana Sea Grant</a>.</p>
-        </div>
-      </section>
-
-      <section class="dive-chapter" data-chapter="bed" aria-labelledby="ch-bed">
-        <div class="dive-card">
-          <p class="dive-kicker">06 &middot; Out of sight</p>
-          <h2 id="ch-bed">Sludge and sunken waste on the bed</h2>
-          <p>Heavier waste sinks: bottles, cans, sandals, tyres. Rotting organic waste settles as dark sludge, where pollutants can build up for years.</p>
-          <div class="dive-stat"><b>3 m</b><span>how deep heavy metals had seeped into Hussain Sagar's lake bed, according to NIT Warangal research</span></div>
-          <p class="dive-src">As reported by <a href="https://www.thenewsminute.com/amp/story/telangana/pollution-hyderabads-hussain-sagar-gets-worse-lake-loses-ability-self-purify-56945" target="_blank" rel="noopener">The News Minute</a> (study date not confirmed).</p>
-        </div>
-      </section>
-
-      <section class="dive-chapter" data-chapter="banks" aria-labelledby="ch-banks">
-        <div class="dive-card">
-          <p class="dive-kicker">07 &middot; Dumped on the banks</p>
-          <h2 id="ch-banks">Debris and rubbish pile up on the shore</h2>
-          <p>Construction debris and household waste dumped at a lake's edge slowly fill it in. Every rain washes more plastic into the water.</p>
-          <p class="dive-src">From our own visits: the Lake Sentry team has seen floating waste at lakes such as Rangadhamuni, Malkam Cheruvu and Film Nagar.</p>
-        </div>
-      </section>
-
-      <section class="dive-chapter" data-chapter="health" aria-labelledby="ch-health">
-        <div class="dive-card">
-          <p class="dive-kicker">08 &middot; A health risk</p>
-          <h2 id="ch-health">Weed-choked water breeds mosquitoes</h2>
-          <p>Doctors with the Integrated Disease Surveillance Programme have described Hyderabad's most polluted, hyacinth-choked lakes as high-density breeding grounds for mosquitoes that carry dengue, chikungunya and malaria.</p>
-          <p class="dive-src">As reported by <a href="https://telanganatoday.com/hyderabads-grade-e-lakes-emerge-as-breeding-grounds-for-vector-borne-diseases" target="_blank" rel="noopener">Telangana Today</a> (July 2026).</p>
-        </div>
-      </section>
-
-      <section class="dive-chapter" data-chapter="change" aria-labelledby="ch-change">
-        <div class="dive-card">
-          <p class="dive-kicker">09 &middot; What can change</p>
-          <h2 id="ch-change">Clear it, and stop it arriving</h2>
-          <p>Lake Sentry is a low-cost floating robot that scoops waste off the surface (shown here as an artist's impression of V1). The lasting fix starts upstream: less rubbish and less untreated sewage reaching the water.</p>
-          <ol class="dive-steps">
-            <li>Never throw waste near a lake or into a nala.</li>
-            <li>Report dumping and encroachment to GHMC or HYDRAA.</li>
-            <li>Join a clean-up, or share what you see at your lake.</li>
-          </ol>
-          <p class="dive-live">Pieces the robot has collected while you watched: <strong id="dive-got">0</strong></p>
-          <div class="dive-cta"><a href="get-involved.html">Get involved</a><a href="app.html#map" class="ghost">See real lake reports</a></div>
-        </div>
-      </section>
-    </div>
-
-    <!-- ============ Full disclaimer + sources (always readable as text) ============ -->
-    <section id="disclaimer" class="dive-notes" aria-labelledby="disclaimer-title">
-      <div class="dive-notes-inner">
-        <h2 id="disclaimer-title">About this prototype</h2>
-        <div id="disclaimer-text">
-          <ul>
-            <li><strong>Prototype.</strong> Lake Dive is an early, experimental part of the Lake Sentry website. It may change, contain mistakes, or be switched off at any time.</li>
-            <li><strong>Not a real lake.</strong> The lake, its shape, the buildings, plants, animals and waste are all generated by computer code. It does not depict any specific lake, place, building or property, and it does not show the current condition of any lake.</li>
-            <li><strong>Imitating real conditions.</strong> The scene loosely imitates conditions that have been reported at urban lakes in and around Hyderabad: water hyacinth, sewage inflows, floating and sunken waste, dumping and encroachment. Amounts, positions, colours, depths and distances are illustrative and not to scale.</li>
-            <li><strong>The gauges are illustrations.</strong> The Sunlight and Oxygen bars show the idea of each chapter. They are not measurements.</li>
-            <li><strong>Facts and figures.</strong> Every figure is credited to the report or news outlet that published it, with the date where we know it. Figures may have changed since. For some, we could only read news coverage, not the original report, and we have not independently verified every number. Please check the original source before quoting it.</li>
-            <li><strong>No claims about anyone.</strong> Buildings, channels and dumping in the scene are generic illustrations, not claims about any real building, owner, organisation or authority.</li>
-            <li><strong>The robot.</strong> The Lake Sentry robot shown is an artist's impression of our V1 prototype. The real robot looks and performs differently.</li>
-            <li><strong>Not advice.</strong> This is an awareness tool, not scientific, legal, health or safety advice. For official information, contact the Telangana Pollution Control Board, GHMC, HYDRAA or HMDA.</li>
-            <li><strong>Photos.</strong> Real photographs, when we add them, will be clearly labelled with the lake's name and the date.</li>
-            <li><strong>Corrections.</strong> Spotted something wrong? Tell us through the <a href="me.html#contact">contact form</a>.</li>
-          </ul>
-        </div>
-        <h3>Sources</h3>
-        <ol class="dive-sources">
-          <li>Irrigation Department report to the National Green Tribunal (Nov 2022): <a href="https://www.thenewsminute.com/telangana/134-lakes-14061-encroachments-state-hyderabad-lakes-170335" target="_blank" rel="noopener">The News Minute</a></li>
-          <li>TGRAC study on encroached lakes: <a href="https://thesouthfirst.com/telangana/491-out-of-920-hyderabad-lakes-tanks-encroached-in-20-years-telangana-government-wants-to-reclaim-it" target="_blank" rel="noopener">The South First</a></li>
-          <li>Hussain Sagar pollution causes: <a href="https://hmda.gov.in/hlpic1" target="_blank" rel="noopener">HMDA</a></li>
-          <li>Hyderabad lakes in 2025 (sewage inflows): <a href="https://sandrp.in/2026/02/17/hyderabad-lakes-2025-degradation-continues-amid-hydraa-efforts/" target="_blank" rel="noopener">SANDRP, Feb 2026</a></li>
-          <li>Durgam Cheruvu fish deaths and oxygen (TGPCB figures, May 2026): <a href="https://www.deccanchronicle.com/southern-states/telangana/fish-deaths-at-durgam-cheruvu-linked-to-oxygen-depletion-1983825" target="_blank" rel="noopener">Deccan Chronicle</a></li>
-          <li>&ldquo;Dead lakes&rdquo; in Greater Hyderabad (Mar 2025): <a href="https://deccanchronicle.com/in-focus/250321/lakes-in-hyderabad-are-not-in-the-pink-of-health.html" target="_blank" rel="noopener">Deccan Chronicle</a></li>
-          <li>Heavy metals in Hussain Sagar's bed (NIT Warangal research): <a href="https://www.thenewsminute.com/amp/story/telangana/pollution-hyderabads-hussain-sagar-gets-worse-lake-loses-ability-self-purify-56945" target="_blank" rel="noopener">The News Minute</a></li>
-          <li>Mosquito breeding at polluted lakes (Jul 2026): <a href="https://telanganatoday.com/hyderabads-grade-e-lakes-emerge-as-breeding-grounds-for-vector-borne-diseases" target="_blank" rel="noopener">Telangana Today</a></li>
-          <li>Water hyacinth effects: <a href="https://agriculture.vermont.gov/sites/agriculture/files/documents/AAFM_WaterHyacinth.pdf" target="_blank" rel="noopener">Vermont Agency of Agriculture</a>, <a href="https://www.laseagrant.org/wp-content/uploads/NIS-Species-Info-Water-Hyacinth.pdf" target="_blank" rel="noopener">Louisiana Sea Grant</a></li>
-        </ol>
-      </div>
+  <div id="scenes">
+    <section class="scene" data-from="0" data-to="0.17" aria-label="Scene 1">
+      <h2>Look<br />closely.</h2>
+      <p>A city lake at dusk. It looks calm.</p>
     </section>
+    <section class="scene right" data-from="0.17" data-to="0.36" aria-label="Scene 2">
+      <h2>It <span class="red">isn't.</span></h2>
+      <p>Bottles. Bags. Wrappers. Everything we throw away ends up on the water.</p>
+    </section>
+    <section class="scene" data-from="0.36" data-to="0.55" aria-label="Scene 3">
+      <h2>Go<br />under.</h2>
+      <p>Below the surface, it doesn't disappear. It sinks, breaks apart, and stays.</p>
+    </section>
+    <section class="scene right" data-from="0.55" data-to="0.76" aria-label="Scene 4">
+      <h2>Find<br />the light.</h2>
+      <p>Move your cursor. Every beam shows more of what is hiding down here.</p>
+    </section>
+    <section class="scene" data-from="0.78" data-to="1.02" aria-label="Scene 5">
+      <h2>Lake<br />Sentry.</h2>
+      <p>A robot to clear it. A campaign to stop it arriving.</p>
+      <div class="cta"><a class="primary" href="get-involved.html">Get involved</a><a href="index.html">Back to the lake</a></div>
+    </section>
+  </div>
 
-    <!-- Disclaimer pop-up (same text) -->
-    <dialog id="disclaimer-dialog" class="dive-dialog" aria-labelledby="dd-title">
-      <div class="dive-dialog-inner">
-        <div class="dive-dialog-head"><h2 id="dd-title">About this prototype</h2><button type="button" data-close-disclaimer>Close<span aria-hidden="true"> ✕</span></button></div>
-        <div data-disclaimer-copy></div>
-      </div>
+  <div id="spacer" aria-hidden="true"></div>
+
+
+    <dialog id="disclaimer-dialog" class="disc" aria-labelledby="disc-title">
+      <div class="disc-head"><h2 id="disc-title">About this prototype</h2><button type="button" data-close-disclaimer>Close<span aria-hidden="true"> &#10005;</span></button></div>
+      <ul>
+        <li><strong>Prototype.</strong> Lake Dive is an early, experimental part of the Lake Sentry website. It may change, contain mistakes, or be switched off at any time.</li>
+        <li><strong>Not a real lake.</strong> The lake, the waste, the fish and the robot are drawn by computer code. It does not show any specific lake or the current condition of any lake.</li>
+        <li><strong>Imitating real conditions.</strong> It loosely imitates conditions reported at urban lakes in and around Hyderabad, such as floating and sunken plastic. Amounts, colours and depths are illustrative and not to scale.</li>
+        <li><strong>The robot.</strong> The Lake Sentry robot shown is an artist's impression of our V1 prototype.</li>
+        <li><strong>Not advice.</strong> This is an awareness piece, not scientific, legal, health or safety advice.</li>
+        <li><strong>Corrections.</strong> Spotted something wrong? Tell us through the <a href="me.html#contact">contact form</a>.</li>
+      </ul>
     </dialog>
   </main>
 
-
-  <!-- ============================ SITE FOOTER ============================ -->
-  <footer class="relative border-t border-line bg-deep2 text-txt-2">
-    <div class="mx-auto grid max-w-6xl gap-10 px-4 py-16 sm:px-6 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
-      <div>
-        <a href="index.html" class="inline-block rounded">
-          <img src="logo-blue.png" width="533" height="180" alt="Lake Sentry home" class="logo-for-light h-16 w-auto" />
-          <img src="logo-light.png" width="533" height="180" alt="Lake Sentry home" class="logo-for-dark h-16 w-auto" />
-        </a>
-        <p class="mt-3 text-sm leading-relaxed">A student-led environmental project combining research, engineering and awareness to reduce floating waste in Hyderabad's urban lakes.</p>
-      </div>
-      <nav aria-label="Footer">
-        <h2 class="font-mono text-xs uppercase tracking-wider text-txt-3">Explore</h2>
-        <ul class="mt-4 space-y-2 text-sm">
-          <li><a href="index.html" class="hover:text-aqua">Home</a></li>
-          <li><a href="about.html" class="hover:text-aqua">About the project</a></li>
-          <li><a href="about.html#v1" class="hover:text-aqua">Prototype V1</a></li>
-          <li><a href="app.html" class="hover:text-aqua">Lake Explorer App</a></li>
-          <li><a href="me.html" class="hover:text-aqua">About me</a></li>
-          <li data-feature="lakeDive"><a href="dive.html" class="hover:text-aqua">Lake Dive (3D)</a></li>
-        </ul>
-      </nav>
-      <div>
-        <h2 class="font-mono text-xs uppercase tracking-wider text-txt-3">Participate</h2>
-        <ul class="mt-4 space-y-2 text-sm">
-          <li><a href="https://docs.google.com/forms/d/e/1FAIpQLScOvBmpAHLoiJ6ZfsDkbI8g9bO4nfaFDodWxb_4oyn3Qfj4OQ/viewform?usp=header" target="_blank" rel="noopener noreferrer" class="hover:text-aqua">Take the survey ↗<span class="sr-only"> (opens in a new tab)</span></a></li>
-          <li><a href="app.html#stories" class="hover:text-aqua">Share a lake story</a></li>
-          <li><a href="app.html#initiatives" class="hover:text-aqua">Submit an initiative</a></li>
-          <li><a href="about.html#sdgs" class="hover:text-aqua">UN SDGs</a></li>
-          <li><a href="get-involved.html#partners" class="hover:text-aqua">Partner with us</a></li>
-        </ul>
-      </div>
-      <div>
-        <h2 class="font-mono text-xs uppercase tracking-wider text-txt-3">Connect</h2>
-        <!-- TODO: replace these with your real Instagram / LinkedIn links when ready -->
-        <ul class="mt-4 space-y-2 text-sm">
-          <li>Instagram (link coming soon)</li>
-          <li>LinkedIn (link coming soon)</li>
-          <li>LakeSentry.in</li>
-        </ul>
-      </div>
-    </div>
-    <div class="border-t border-line px-4 py-6 text-center text-sm text-txt-3">© <span data-year>2026</span> Lake Sentry · Hyderabad, India · Keystone International School</div>
-  </footer>
-
   <script src="site.js"></script>
   <script src="admin-auth.js"></script>
-  <script src="dive-page.js"></script>
+  <script src="experience.js"></script>
 </body>
 </html>

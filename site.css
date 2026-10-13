@@ -481,3 +481,6 @@ main li a, main p a { overflow-wrap: anywhere; }
 
 /* Features an admin has switched off (see features.js) */
 html[data-lakedive="off"] [data-feature="lakeDive"] { display: none !important; }
+
+/* Phones: keep the home-page panel short so the lake (and the mini robot) stay visible */
+@media (max-width: 639px) { #hero .eyebrow { display: none; } }

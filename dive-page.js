@@ -21,14 +21,15 @@
 
   /* ---------- On / off ---------- */
   const features = window.LakeSentryFeatures;
-  const on = !features || features.isOn('lakeDive');
+  const adminOnly = document.body.hasAttribute('data-admin-only');
+  const on = adminOnly ? false : (!features || features.isOn('lakeDive'));
   const isAdmin = window.LakeSentryAdmin && window.LakeSentryAdmin.isLoggedIn();
   if (!on && !isAdmin) {
     document.body.classList.add('dive-is-off');
     $('dive-off').hidden = false;
     return; // nothing else loads
   }
-  if (!on) $('dive-admin-note').hidden = false;
+  if (!on && !adminOnly) $('dive-admin-note').hidden = false;
 
   /* ---------- Load the 3D scene ---------- */
   document.body.classList.add('dive-js');

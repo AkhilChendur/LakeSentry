@@ -55,7 +55,8 @@
     naturalEveryMs: reduceMotion ? [2500, 5000] : [350, 900],
     trashCount: isSmallScreen ? 14 : 26,
     // Trash gathers in an oval in the middle of the lake (fractions of the width/height).
-    trashZone: { x: window.innerWidth >= 1024 ? 0.62 : 0.5, y: 0.55, rx: 0.24, ry: 0.3 },
+    // On phones the text panel covers the top, so the trash (and the robot) stay low.
+    trashZone: window.innerWidth < 640 ? { x: 0.5, y: 0.78, rx: 0.36, ry: 0.13 } : { x: window.innerWidth >= 1024 ? 0.62 : 0.5, y: 0.55, rx: 0.24, ry: 0.3 },
     botSpeed: reduceMotion ? 0.5 : 0.85, // pixels per frame
     fishCount: isSmallScreen ? 3 : 5,
   };
@@ -435,7 +436,7 @@
      ============================================================= */
   function makeBot() {
     return {
-      x: W * 0.62, y: H * 0.72, angle: Math.PI, turn: 0, speed: 0.3, paddle: 0,
+      x: W * 0.62, y: H * (isSmallScreen ? 0.8 : 0.72), angle: Math.PI, turn: 0, speed: 0.3, paddle: 0,
       target: null, targetSince: 0, mode: 'seek', wakeTimer: 0,
       cargo: [], unload: 0, skip: [],
     };

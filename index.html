@@ -83,28 +83,28 @@
          The <canvas> is drawn by lake-hero.js: ripples follow the
          cursor, trash floats, fish swim, a mini robot collects trash.
          ============================================================ -->
-    <section id="hero" class="relative isolate flex min-h-[calc(100vh-4rem)] items-center overflow-hidden bg-gradient-to-b from-[#1E5C94] via-[#164A7C] to-deep" aria-labelledby="hero-title">
+    <section id="hero" class="relative isolate flex min-h-[calc(100svh-4rem)] items-start overflow-hidden sm:items-center bg-gradient-to-b from-[#1E5C94] via-[#164A7C] to-deep" aria-labelledby="hero-title">
       <!-- Decorative animation: hidden from screen readers -->
       <canvas id="lake-canvas" class="absolute inset-0 -z-10 h-full w-full" aria-hidden="true"></canvas>
 
-      <div class="mx-auto w-full max-w-6xl px-4 pb-40 pt-12 sm:px-6 sm:pb-32 sm:pt-20">
+      <div class="mx-auto w-full max-w-6xl px-4 pb-48 pt-5 sm:px-6 sm:pb-32 sm:pt-20">
         <!-- Semi-transparent dark panel keeps the text readable over the moving water -->
-        <div class="reveal max-w-2xl rounded-2xl border border-linehi bg-ink/75 p-7 shadow-2xl backdrop-blur-md sm:p-10">
-          <p class="eyebrow">Hyderabad, India · Field research &amp; engineering</p>
-          <h1 id="hero-title" class="gradient-text mt-4 font-display text-6xl font-bold leading-[0.95] tracking-tight sm:text-7xl lg:text-[5.25rem]">Lake Sentry</h1>
+        <div class="reveal max-w-2xl rounded-2xl border border-linehi bg-ink/75 p-4 shadow-2xl backdrop-blur-md sm:p-10">
+          <p class="eyebrow max-sm:hidden">Hyderabad, India · Field research &amp; engineering</p>
+          <h1 id="hero-title" class="gradient-text mt-0 font-display text-4xl font-bold leading-[0.95] tracking-tight sm:mt-4 sm:text-6xl md:text-7xl lg:text-[5.25rem]">Lake Sentry</h1>
           <!-- The one-line description of the project -->
-          <p class="mt-6 text-xl leading-snug text-txt-1 sm:text-2xl">
+          <p class="mt-2 text-[0.95rem] leading-snug text-txt-1 sm:mt-6 sm:text-2xl">
             Technology, awareness and action for cleaner urban lakes: a low-cost floating robot that removes trash, and a campaign that stops it arriving.
           </p>
-          <div class="mt-8 flex flex-wrap gap-3">
-            <a href="app.html" class="group inline-flex items-center gap-2 rounded-md bg-aqua px-6 py-3.5 font-semibold text-onaccent transition hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(56,228,240,.35)]">
+          <div class="mt-4 flex flex-wrap gap-2 sm:mt-8 sm:gap-3">
+            <a href="app.html" class="group inline-flex items-center gap-2 rounded-md bg-aqua px-4 py-2.5 text-sm font-semibold sm:px-6 sm:py-3.5 sm:text-base text-onaccent transition hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(56,228,240,.35)]">
               Try the Lake Explorer
               <svg aria-hidden="true" class="h-5 w-5 transition-transform group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor"><path d="M11.3 4.3a1 1 0 0 1 1.4 0l5 5a1 1 0 0 1 0 1.4l-5 5a1 1 0 0 1-1.4-1.4L14.6 11H3a1 1 0 1 1 0-2h11.6l-3.3-3.3a1 1 0 0 1 0-1.4Z" /></svg>
             </a>
-            <a href="app.html#stories" class="inline-flex items-center gap-2 rounded-md border border-mint/70 bg-mint/10 px-6 py-3.5 font-semibold text-mint transition hover:-translate-y-0.5 hover:bg-mint/20"><span aria-hidden="true">📸</span>Share a lake photo</a>
-            <a href="about.html#v1" class="inline-flex items-center rounded-md border border-linehi bg-white/5 px-6 py-3.5 font-semibold text-txt-1 transition hover:-translate-y-0.5 hover:border-aqua hover:text-aqua">Discover Lake Sentry V1</a>
+            <a href="app.html#stories" class="inline-flex items-center gap-2 rounded-md border border-mint/70 bg-mint/10 px-4 py-2.5 text-sm font-semibold sm:px-6 sm:py-3.5 sm:text-base text-mint transition hover:-translate-y-0.5 hover:bg-mint/20"><span aria-hidden="true">📸</span>Share a lake photo</a>
+            <a href="about.html#v1" class="max-sm:hidden inline-flex items-center rounded-md border border-linehi bg-white/5 px-4 py-2.5 text-sm font-semibold sm:px-6 sm:py-3.5 sm:text-base text-txt-1 transition hover:-translate-y-0.5 hover:border-aqua hover:text-aqua">Discover Lake Sentry V1</a>
           </div>
-          <p class="mt-7 flex items-center gap-2 text-sm text-txt-2">
+          <p class="mt-7 hidden items-center gap-2 text-sm text-txt-2 sm:flex">
             <svg aria-hidden="true" class="h-4 w-4 flex-none text-aqua" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16Zm0 3a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 3a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z" /></svg>
             Move your cursor across the water to make ripples and scare the fish. Click or tap for a splash.
           </p>
@@ -112,11 +112,11 @@
       </div>
 
       <!-- Bottom bar: counter + pause button (moving content must be pausable, WCAG 2.2.2) -->
-      <div class="absolute inset-x-0 bottom-0 flex flex-wrap items-center justify-between gap-3 px-4 pb-5 sm:px-6">
-        <p class="rounded-full border border-linehi bg-ink/80 px-4 py-2 font-mono text-sm text-txt-2 backdrop-blur">
-          Trash collected by the mini Lake Sentry: <strong id="lake-counter" class="font-semibold text-mint">0</strong> pieces · <strong id="lake-kg" class="font-semibold text-mint">0.00</strong> kg
+      <div class="absolute inset-x-0 bottom-0 flex flex-wrap items-center justify-between gap-2 px-4 pb-4 sm:gap-3 sm:px-6 sm:pb-5">
+        <p class="rounded-full border border-linehi bg-ink/80 px-3 py-1.5 font-mono text-xs text-txt-2 backdrop-blur sm:px-4 sm:py-2 sm:text-sm">
+          <span class="sm:hidden">Collected:</span><span class="max-sm:hidden">Trash collected by the mini Lake Sentry:</span> <strong id="lake-counter" class="font-semibold text-mint">0</strong> pieces · <strong id="lake-kg" class="font-semibold text-mint">0.00</strong> kg
         </p>
-        <button id="lake-pause" type="button" class="inline-flex items-center gap-2 rounded-full border border-linehi bg-ink/80 px-4 py-2 text-sm font-medium text-txt-1 backdrop-blur transition hover:border-aqua hover:text-aqua">
+        <button id="lake-pause" type="button" class="inline-flex items-center gap-2 rounded-full border border-linehi bg-ink/80 px-3 py-1.5 text-xs sm:px-4 sm:py-2 sm:text-sm font-medium text-txt-1 backdrop-blur transition hover:border-aqua hover:text-aqua">
           <svg data-icon-pause aria-hidden="true" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M6 4h3v12H6zM11 4h3v12h-3z" /></svg>
           <svg data-icon-play aria-hidden="true" class="hidden h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M6 4l10 6-10 6z" /></svg>
           <span data-label>Pause animation</span>
@@ -256,8 +256,8 @@
         <div data-feature="lakeDive" class="reveal">
           <p class="eyebrow">New &middot; prototype</p>
           <h2 id="dive-teaser-title" class="mt-4 font-display text-3xl font-bold leading-tight text-txt-1 sm:text-5xl">See what's under the surface.</h2>
-          <p class="mt-4 max-w-prose">Lake Dive is a 3D, scroll-through look at a simulated polluted city lake: water hyacinth, sewage inflows, oxygen loss and the waste that sinks out of sight, with sources for every fact.</p>
-          <a href="dive.html" class="mt-6 inline-flex items-center gap-2 rounded-md bg-aqua px-6 py-3.5 font-semibold text-onaccent transition hover:-translate-y-0.5">Take the Lake Dive <span aria-hidden="true">&rarr;</span></a>
+          <p class="mt-4 max-w-prose">Lake Dive takes you down through a simulated polluted lake as you scroll: from a calm surface at dusk to a bed choked with waste, with your cursor as an underwater light.</p>
+          <a href="dive.html" class="mt-6 inline-flex items-center gap-2 rounded-md bg-aqua px-4 py-2.5 text-sm font-semibold sm:px-6 sm:py-3.5 sm:text-base text-onaccent transition hover:-translate-y-0.5">Take the Lake Dive <span aria-hidden="true">&rarr;</span></a>
         </div>
         <div class="reveal rounded-2xl border border-linehi bg-panel p-6 sm:p-8">
           <h3 class="font-display text-2xl font-bold text-txt-1">Three things you can do this week</h3>
@@ -284,9 +284,9 @@
               <p class="mt-3 text-txt-2">Take the survey, explore the lake map, or tell us about a clean-up initiative near you.</p>
             </div>
             <div class="flex flex-wrap gap-3 md:justify-end">
-              <a href="https://docs.google.com/forms/d/e/1FAIpQLScOvBmpAHLoiJ6ZfsDkbI8g9bO4nfaFDodWxb_4oyn3Qfj4OQ/viewform?usp=header" target="_blank" rel="noopener noreferrer" class="rounded-md bg-aqua px-6 py-3.5 font-semibold text-onaccent transition hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(56,228,240,.35)]">Take the survey ↗<span class="sr-only"> (opens in a new tab)</span></a>
-              <a href="app.html#initiatives" class="rounded-md border border-linehi px-6 py-3.5 font-semibold text-txt-1 transition hover:-translate-y-0.5 hover:border-mint hover:text-mint">Submit an initiative</a>
-              <a href="app.html#stories" class="rounded-md border border-linehi px-6 py-3.5 font-semibold text-txt-1 transition hover:-translate-y-0.5 hover:border-mint hover:text-mint">Share a lake photo</a>
+              <a href="https://docs.google.com/forms/d/e/1FAIpQLScOvBmpAHLoiJ6ZfsDkbI8g9bO4nfaFDodWxb_4oyn3Qfj4OQ/viewform?usp=header" target="_blank" rel="noopener noreferrer" class="rounded-md bg-aqua px-4 py-2.5 text-sm font-semibold sm:px-6 sm:py-3.5 sm:text-base text-onaccent transition hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(56,228,240,.35)]">Take the survey ↗<span class="sr-only"> (opens in a new tab)</span></a>
+              <a href="app.html#initiatives" class="rounded-md border border-linehi px-4 py-2.5 text-sm font-semibold sm:px-6 sm:py-3.5 sm:text-base text-txt-1 transition hover:-translate-y-0.5 hover:border-mint hover:text-mint">Submit an initiative</a>
+              <a href="app.html#stories" class="rounded-md border border-linehi px-4 py-2.5 text-sm font-semibold sm:px-6 sm:py-3.5 sm:text-base text-txt-1 transition hover:-translate-y-0.5 hover:border-mint hover:text-mint">Share a lake photo</a>
             </div>
           </div>
         </div>
@@ -312,7 +312,7 @@
           <li><a href="about.html#v1" class="hover:text-aqua">Prototype V1</a></li>
           <li><a href="app.html" class="hover:text-aqua">Lake Explorer App</a></li>
           <li><a href="me.html" class="hover:text-aqua">About me</a></li>
-          <li data-feature="lakeDive"><a href="dive.html" class="hover:text-aqua">Lake Dive (3D)</a></li>
+          <li data-feature="lakeDive"><a href="dive.html" class="hover:text-aqua">Lake Dive</a></li>
         </ul>
       </nav>
       <div>
@@ -340,6 +340,6 @@
 
   <script src="site.js"></script>
   <script src="admin-auth.js"></script>
-  <script src="lake-hero.js?v=5"></script>
+  <script src="lake-hero.js?v=6"></script>
 </body>
 </html>

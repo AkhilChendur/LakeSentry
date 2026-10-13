@@ -1,5 +1,5 @@
 /* =====================================================================
-   Immersive lake (experience.html) — admin-only preview
+   Lake Dive (dive.html) — scroll-driven immersive lake (prototype)
    ---------------------------------------------------------------------
    One fixed canvas; scrolling drives the story:
      surface (calm) → surface choked with trash → dive → torch-lit
@@ -8,8 +8,18 @@
    ===================================================================== */
 (function () {
   'use strict';
-  const admin = window.LakeSentryAdmin;
-  if (!admin || !admin.isLoggedIn()) { document.getElementById('gate').classList.add('show'); return; }
+  // Disclaimer pop-up
+  const dlg = document.getElementById('disclaimer-dialog');
+  if (dlg) {
+    let opener = null;
+    document.querySelectorAll('[data-open-disclaimer]').forEach(function (b) { b.addEventListener('click', function () { opener = b; dlg.showModal(); }); });
+    dlg.querySelector('[data-close-disclaimer]').addEventListener('click', function () { dlg.close(); });
+    dlg.addEventListener('click', function (e) { if (e.target === dlg) dlg.close(); });
+    dlg.addEventListener('close', function () { if (opener) opener.focus(); });
+  }
+  // Switched off by an admin (features.js)? Only logged-in admins can still see it.
+  const admin = window.LakeSentryAdmin, features = window.LakeSentryFeatures;
+  if (features && !features.isOn('lakeDive') && !(admin && admin.isLoggedIn())) { document.getElementById('gate').classList.add('show'); return; }
 
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const canvas = document.getElementById('gl');
@@ -146,7 +156,9 @@
         const sx = s.x * W * 1.1 - px * 70 * s.z + Math.sin(t * 0.0006 + s.ph) * 16;
         const sy = surfaceY + 40 + s.y * H * 2.2 * (0.5 + s.z * 0.5) + Math.cos(t * 0.0005 + s.ph) * 10;
         if (sy < -60 || sy > H + 60) return;
-        const fog = clamp(1 - (sy - surfaceY) / (H * 1.6), 0.18, 1);
+        // pieces caught in the torch beam light up fully
+        const beam = dive > 0.3 ? clamp(1 - Math.hypot(sx - mouse.sx * W, sy - mouse.sy * H) / (Math.max(W, H) * 0.25), 0, 1) : 0;
+        const fog = Math.max(clamp(1 - (sy - surfaceY) / (H * 1.6), 0.18, 1), beam);
         ctx.save(); ctx.translate(sx, sy); ctx.rotate(s.a + t * 0.0001 * s.spin * 10); ctx.globalAlpha = fog * 0.9;
         drawPiece(s.kind, s.c, 40 * s.s * (0.5 + s.z * 0.7)); ctx.restore();
       });
@@ -191,6 +203,15 @@
       const g = ctx.createRadialGradient(mx, my, r * 0.05, mx, my, r);
       g.addColorStop(0, 'rgba(2,4,10,' + dark * 0.05 + ')'); g.addColorStop(0.55, 'rgba(2,4,10,' + dark * 0.6 + ')'); g.addColorStop(1, 'rgba(2,4,10,' + dark + ')');
       ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+      // the beam itself: a soft cone of greenish light in the murky water
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      const beam = ctx.createRadialGradient(mx, my, 0, mx, my, r * 0.9);
+      beam.addColorStop(0, 'rgba(150,215,190,' + 0.32 * dark + ')');
+      beam.addColorStop(0.35, 'rgba(90,160,140,' + 0.16 * dark + ')');
+      beam.addColorStop(1, 'rgba(40,90,80,0)');
+      ctx.fillStyle = beam; ctx.fillRect(0, 0, W, H);
+      ctx.restore();
     }
 
     // soft vignette
