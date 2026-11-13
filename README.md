@@ -134,3 +134,16 @@ Open `features.js` and change `lakeDive: true` to `lakeDive: false` (or back), t
 ## Adding real lake photos
 
 Put each photo in this folder (e.g. `durgam-cheruvu-2026-10.jpg`), then in `lakes-data.js` set that lake's `photo` and `photoAlt`, or add it to `gallery` with a caption that names the lake and the date it was taken. Real photos must always be labelled; the Lake Dive scene itself stays a labelled simulation.
+
+## Lake map (water bodies)
+
+The Lake Explorer → Lake map tab draws every water body from the Hyderabad water-bodies KML (`Hyd_tanks.kml`: 849 outlines in four classes: Reservoir/Tanks, Lakes/Ponds, River/Stream/Drain, Canal).
+
+- `water-bodies.js` is generated from the KML (outlines simplified to about 2.5 m and stored compactly, ~160 KB). Don't edit it by hand: to update it, convert a new KML the same way (ask Claude).
+- `lake-map.js` draws the map (drag, scroll or pinch to zoom, +/− buttons, keyboard arrows), shows the size of any water body you tap, and matches each lake in `lakes-data.js` to the outline that contains its `lat`/`lon`. Matched lakes get a "mapped water area" figure in their report; unmatched ones show as "approx." pins.
+- Areas are worked out from the outlines and are approximate. Osman Sagar and Himayat Sagar are not in this dataset.
+- To match more lakes, correct their `lat`/`lon` in `lakes-data.js` so the point sits inside the lake.
+
+## Lake stories and initiatives layout
+
+The feed is the main column; the "Share a lake story" / "Submit an initiative" form is a side panel on big screens and a fold-out at the top on phones (`app-page.js`).

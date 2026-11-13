@@ -484,3 +484,60 @@ html[data-lakedive="off"] [data-feature="lakeDive"] { display: none !important; 
 
 /* Phones: keep the home-page panel short so the lake (and the mini robot) stay visible */
 @media (max-width: 639px) { #hero .eyebrow { display: none; } }
+
+/* =====================================================================
+   Lake Explorer: water-body map (lake-map.js) + side panels (app-page.js)
+   ===================================================================== */
+.wb-stage { position: relative; height: clamp(22rem, 64vh, 40rem); overflow: hidden; touch-action: none; cursor: grab; background: rgb(var(--deep2)); border-radius: .75rem; }
+.wb-stage.is-dragging { cursor: grabbing; }
+.wb-svg { display: block; width: 100%; height: 100%; }
+.wb-land { fill: rgb(var(--deep2)); }
+.wb-grid line { stroke: var(--line); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.wb { stroke-width: .7; vector-effect: non-scaling-stroke; stroke-linejoin: round; transition: fill .15s; }
+.wb-tank { fill: rgb(var(--aqua) / .42); stroke: rgb(var(--aqua) / .85); }
+.wb-river { fill: rgb(46 120 210 / .55); stroke: rgb(46 120 210); }
+.wb-canal { fill: rgb(var(--reef) / .55); stroke: rgb(var(--reef)); }
+.wb:hover { fill: rgb(var(--aqua) / .78); }
+.wb-named { fill: rgb(var(--mint) / .62); stroke: rgb(var(--mint)); stroke-width: 1.4; }
+.wb.is-picked, .wb.is-selected { fill: rgb(var(--mint) / .5); stroke: rgb(var(--sun)); stroke-width: 2.4; }
+.hide-tank .wb-tank:not(.wb-named), .hide-river .wb-river, .hide-canal .wb-canal { display: none; }
+.wb-overlay { position: absolute; inset: 0; pointer-events: none; }
+.wb-overlay > * { position: absolute; left: 0; top: 0; will-change: transform; }
+.wb-overlay .is-off { visibility: hidden; }
+.wb-place { margin: -.55em 0 0 -2.5em; font: 600 .62rem 'IBM Plex Mono', monospace; letter-spacing: .12em; text-transform: uppercase; color: rgb(var(--txt3)); white-space: nowrap; transition: opacity .3s; }
+.is-zoomed .wb-place { opacity: .5; }
+.wb-pin { pointer-events: auto; display: flex; align-items: center; gap: 6px; margin: -8px 0 0 -8px; padding: 0; border: 0; background: none; color: rgb(var(--txt1)); font: 600 .74rem Inter, system-ui, sans-serif; white-space: nowrap; cursor: pointer; }
+.wb-pin i { flex: none; width: 16px; height: 16px; border-radius: 50%; background: rgb(var(--mint)); border: 3px solid rgb(var(--ink)); box-shadow: 0 0 0 2px rgb(var(--mint) / .55); }
+.wb-pin.is-approx i { background: rgb(var(--ink)); border: 2px dashed rgb(var(--sun)); box-shadow: none; }
+.wb-pin span { padding: 1px 7px; border-radius: 6px; background: rgb(var(--ink) / .82); border: 1px solid var(--line); }
+.wb-pin:hover span, .wb-pin:focus-visible span { border-color: rgb(var(--aqua)); }
+.wb-pin[aria-pressed="true"] i { background: rgb(var(--sun)); box-shadow: 0 0 0 4px rgb(var(--sun) / .45); }
+.wb-pin[aria-pressed="true"] span { border-color: rgb(var(--sun)); }
+.wb-controls { position: absolute; right: 10px; top: 10px; z-index: 10; display: grid; gap: 6px; }
+.wb-controls button { width: 38px; height: 38px; border-radius: 9px; border: 1px solid var(--linehi); background: rgb(var(--ink) / .88); color: rgb(var(--txt1)); font-size: 1.15rem; line-height: 1; }
+.wb-controls button:hover { border-color: rgb(var(--aqua)); color: rgb(var(--aqua)); }
+.wb-scale { position: absolute; left: 12px; bottom: 12px; z-index: 10; height: 7px; border: 2px solid rgb(var(--txt2)); border-top: 0; pointer-events: none; }
+.wb-scale span { position: absolute; left: 0; bottom: 9px; font: 600 .68rem 'IBM Plex Mono', monospace; color: rgb(var(--txt2)); white-space: nowrap; }
+.wb-north { position: absolute; left: 12px; top: 10px; z-index: 10; width: 30px; height: 30px; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--linehi); background: rgb(var(--ink) / .8); color: rgb(var(--txt1)); font: 700 .7rem Inter, sans-serif; pointer-events: none; }
+.wb-swatch { display: inline-block; width: 18px; height: 11px; border-radius: 4px; }
+.wb-swatch-tank { background: rgb(var(--aqua) / .5); border: 1px solid rgb(var(--aqua)); }
+.wb-swatch-river { background: rgb(46 120 210 / .6); border: 1px solid rgb(46 120 210); }
+.wb-swatch-canal { background: rgb(var(--reef) / .6); border: 1px solid rgb(var(--reef)); }
+.wb-swatch-named { background: rgb(var(--mint) / .7); border: 1px solid rgb(var(--mint)); }
+.composer[open] .composer-chev { transform: rotate(180deg); }
+.composer-chev { transition: transform .2s; }
+@media (min-width: 1024px) {
+  .composer { position: sticky; top: calc(var(--header-h, 64px) + 4.5rem); max-height: calc(100vh - var(--header-h, 64px) - 6rem); overflow-y: auto; }
+  .composer summary { cursor: default; }
+  .composer-chev { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .composer-chev, .wb { transition: none; } }
+
+.wb-pin.no-label span { display: none; }
+.wb-pin.no-label:hover span, .wb-pin.no-label:focus-visible span { display: inline; position: relative; z-index: 2; }
+/* Story cards without photos get a calm water-coloured header */
+.story-band { position: relative; display: flex; align-items: flex-end; height: 5.5rem; padding: .85rem 1.1rem; overflow: hidden;
+  background: linear-gradient(135deg, #1E5C94, #0B1330); color: #fff; }
+.story-band::after { content: ""; position: absolute; inset: auto -10% -40% -10%; height: 70%;
+  background: radial-gradient(60% 60% at 30% 40%, rgba(255,255,255,.14), transparent 70%), radial-gradient(50% 50% at 75% 60%, rgba(127,178,255,.18), transparent 70%); }
+.story-band span { position: relative; z-index: 1; font: 600 .78rem 'IBM Plex Mono', monospace; letter-spacing: .12em; text-transform: uppercase; }

@@ -35,20 +35,9 @@
   if (!mapBox || !listBox || !detailBox || !lakes.length) return;
 
   const SVG_NS = 'http://www.w3.org/2000/svg';
-  const VIEW_W = 800, VIEW_H = 600;
-  // The map's edges in degrees of longitude (x) and latitude (y).
-  const BOUNDS = { west: 78.26, east: 78.52, south: 17.28, north: 17.52 };
+  const WATER = window.LAKE_SENTRY_WATER;
 
   let selectedId = null;
-
-  /* ---------- Helpers ---------- */
-  // Convert latitude/longitude to x/y inside the SVG.
-  function project(lat, lon) {
-    return {
-      x: ((lon - BOUNDS.west) / (BOUNDS.east - BOUNDS.west)) * VIEW_W,
-      y: ((BOUNDS.north - lat) / (BOUNDS.north - BOUNDS.south)) * VIEW_H,
-    };
-  }
 
   function el(tag, attrs, text) {
     const node = document.createElementNS(SVG_NS, tag);
@@ -57,134 +46,317 @@
     return node;
   }
 
-  // Tiny "random" number generator that always gives the same numbers
-  // for the same lake id — so each lake keeps the same shape.
-  function seededRandom(seedText) {
-    let h = 2166136261;
-    for (let i = 0; i < seedText.length; i++) h = Math.imul(h ^ seedText.charCodeAt(i), 16777619);
-    return function () {
-      h = Math.imul(h ^ (h >>> 15), 2246822507);
-      h = Math.imul(h ^ (h >>> 13), 3266489909);
-      return ((h ^= h >>> 16) >>> 0) / 4294967296;
-    };
-  }
+  /* ---------- 1. The water-body map ----------
+     Outlines come from water-bodies.js (converted from the Hyderabad
+     water-bodies KML). Map units are kilometres; north is up. */
+  const LAT0 = 17.4;
+  const KX = 111.32 * Math.cos(LAT0 * Math.PI / 180), KY = 110.574; // km per degree
+  const TYPES = {
+    T: { label: 'Tank / reservoir', plural: 'Tanks & reservoirs', cls: 'wb-tank' },
+    L: { label: 'Lake / pond', plural: 'Lakes & ponds', cls: 'wb-tank' },
+    R: { label: 'River, stream or drain', plural: 'Rivers, streams & drains', cls: 'wb-river' },
+    C: { label: 'Canal', plural: 'Canals', cls: 'wb-canal' },
+  };
+  // A few well-known areas, only to help people find their way around.
+  const PLACES = [['Secunderabad', 17.4399, 78.4983], ['Gachibowli', 17.4401, 78.3489], ['Kukatpally', 17.4849, 78.4138],
+    ['Charminar', 17.3616, 78.4747], ['Uppal', 17.4058, 78.5591], ['LB Nagar', 17.3457, 78.5522], ['Miyapur', 17.4968, 78.3614],
+    ['Mehdipatnam', 17.3950, 78.4410], ['Begumpet', 17.4447, 78.4664]];
 
-  // Build an organic, blobby lake outline around (cx, cy).
-  function lakePath(cx, cy, radius, seed) {
-    const rnd = seededRandom(seed);
-    const n = 9;
-    const pts = [];
-    for (let i = 0; i < n; i++) {
-      const a = (i / n) * Math.PI * 2;
-      const r = radius * (0.72 + rnd() * 0.5);
-      pts.push([cx + Math.cos(a) * r * 1.25, cy + Math.sin(a) * r]);
-    }
-    // Smooth the points into curves (Catmull-Rom -> Bezier).
-    let d = 'M' + pts[0][0].toFixed(1) + ' ' + pts[0][1].toFixed(1);
-    for (let i = 0; i < n; i++) {
-      const p0 = pts[(i - 1 + n) % n], p1 = pts[i], p2 = pts[(i + 1) % n], p3 = pts[(i + 2) % n];
-      const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6];
-      const c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
-      d += ' C' + c1.map(function (v) { return v.toFixed(1); }).join(' ') + ' ' +
-        c2.map(function (v) { return v.toFixed(1); }).join(' ') + ' ' + p2[0].toFixed(1) + ' ' + p2[1].toFixed(1);
-    }
-    return d + 'Z';
-  }
+  function proj(lat, lon) { return [(lon - WATER.west) * KX, (WATER.north - lat) * KY]; }
+  const polys = [];
+  let FULL = null, view = null, svg = null, stage = null, overlay = null, infoBox = null, scaleBar = null, waterLayer = null;
 
-  /* ---------- 1. Draw the map ---------- */
-  function buildMap() {
-    const svg = el('svg', {
-      viewBox: '0 0 ' + VIEW_W + ' ' + VIEW_H,
-      class: 'h-auto w-full',
-      role: 'group',
-      'aria-labelledby': 'lake-map-title',
-    });
-
-    // Background, rivers and area names are decoration only.
-    const bg = el('g', { 'aria-hidden': 'true' });
-    bg.appendChild(el('rect', { width: VIEW_W, height: VIEW_H, style: 'fill: rgb(var(--deep2))' }));
-    // faint grid
-    for (let x = 50; x < VIEW_W; x += 50) bg.appendChild(el('line', { x1: x, y1: 0, x2: x, y2: VIEW_H, style: 'stroke: var(--line)', 'stroke-width': 1 }));
-    for (let y = 50; y < VIEW_H; y += 50) bg.appendChild(el('line', { x1: 0, y1: y, x2: VIEW_W, y2: y, style: 'stroke: var(--line)', 'stroke-width': 1 }));
-    // Musi river (runs west -> east through the city) and the Esi river
-    bg.appendChild(el('path', { d: 'M150 372 C230 360 260 330 330 335 S470 350 540 340 S650 330 700 345 S770 360 800 352', fill: 'none', stroke: '#1E5C94', 'stroke-width': 7, 'stroke-linecap': 'round' }));
-    bg.appendChild(el('path', { d: 'M340 490 C380 440 430 400 470 350', fill: 'none', stroke: '#1E5C94', 'stroke-width': 5, 'stroke-linecap': 'round' }));
-    bg.appendChild(el('text', { x: 560, y: 368, style: 'fill: rgb(var(--txt3))', 'font-size': 14, 'font-style': 'italic' }, 'Musi river'));
-    // Area names
-    [['Gachibowli', 230, 190], ['Kukatpally', 520, 118], ['Secunderabad', 690, 170], ['Old City', 640, 430]].forEach(function (a) {
-      bg.appendChild(el('text', { x: a[1], y: a[2], style: 'fill: rgb(var(--txt3))', 'font-size': 13, 'font-family': 'IBM Plex Mono, monospace', 'letter-spacing': '0.08em' }, a[0].toUpperCase()));
-    });
-    // Compass
-    const compass = el('g', { transform: 'translate(752 56)' });
-    compass.appendChild(el('circle', { r: 24, style: 'fill: rgb(var(--panel)); stroke: rgb(var(--aqua))', 'stroke-width': 1.5 }));
-    compass.appendChild(el('path', { d: 'M0 -16 L7 6 L0 2 L-7 6 Z', style: 'fill: rgb(var(--aqua))' }));
-    compass.appendChild(el('text', { y: 18, 'text-anchor': 'middle', 'font-size': 11, 'font-weight': 700, style: 'fill: rgb(var(--txt2))' }, 'N'));
-    bg.appendChild(compass);
-    svg.appendChild(bg);
-
-    // Lakes — biggest first so small lakes are drawn on top.
-    lakes.filter(function (l) { return l.lat != null && l.lon != null; })
-      .sort(function (a, b) { return b.size - a.size; }).forEach(function (lake) {
-      const p = project(lake.lat, lake.lon);
-      const g = el('g', {
-        class: 'map-lake',
-        role: 'button',
-        tabindex: '0',
-        'aria-pressed': 'false',
-        'data-id': lake.id,
-        'aria-label': lake.name + ' — ' + lake.area,
-      });
-      g.appendChild(el('path', {
-        class: 'lake-shape' + (lake.positionUnknown ? ' is-guess' : ''),
-        d: lakePath(p.x, p.y, 10 + lake.size * 12, lake.id),
-        'stroke-width': 1.5,
-      }));
-      // Lakes we hold data on get a gently pulsing ring.
-      if (lake.status === 'documented') {
-        g.appendChild(el('circle', { class: 'pulse-ring', cx: p.x, cy: p.y, r: 10 + lake.size * 10, fill: 'none', style: 'stroke: rgb(var(--mint))', 'stroke-width': 2, 'aria-hidden': 'true' }));
+  function decode() {
+    WATER.items.forEach(function (it, idx) {
+      const f = it[2], ring = [];
+      let x = 0, y = 0;
+      for (let i = 0; i < f.length; i += 2) {
+        x += f[i]; y += f[i + 1];
+        ring.push(proj(WATER.south + y / WATER.scale, WATER.west + x / WATER.scale));
       }
-      // Label with a dark "halo" so it stays readable over anything.
-      g.appendChild(el('text', {
-        class: 'lake-label',
-        x: p.x + (lake.labelDx || 0),
-        y: p.y + (lake.labelDy || 0),
-        'text-anchor': 'middle',
-        'font-size': 15,
-        'font-weight': 600,
-        style: 'fill: rgb(var(--txt1)); stroke: rgb(var(--ink))',
-        'stroke-width': 4,
-        'paint-order': 'stroke',
-      }, lake.name.replace(/ \(.*\)/, '')));
-
-      g.addEventListener('click', function () { selectLake(lake.id, { scroll: true }); });
-      g.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectLake(lake.id, { scroll: true }); }
-      });
-      g.addEventListener('mouseenter', function () { showTooltip(lake, g); });
-      g.addEventListener('focus', function () { showTooltip(lake, g); });
-      g.addEventListener('mouseleave', hideTooltip);
-      g.addEventListener('blur', hideTooltip);
-      svg.appendChild(g);
+      let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+      ring.forEach(function (p) { minX = Math.min(minX, p[0]); maxX = Math.max(maxX, p[0]); minY = Math.min(minY, p[1]); maxY = Math.max(maxY, p[1]); });
+      polys.push({ idx: idx, type: it[0], area: it[1], ring: ring, box: [minX, minY, maxX, maxY] });
     });
-
-    mapBox.appendChild(svg);
+    FULL = { x: 0, y: 0, w: (WATER.east - WATER.west) * KX, h: (WATER.north - WATER.south) * KY };
   }
 
-  /* ---------- 2. Tooltip on hover / focus ---------- */
-  function showTooltip(lake, g) {
-    if (!tooltip) return;
-    const box = mapBox.getBoundingClientRect();
-    const r = g.querySelector('.lake-shape').getBoundingClientRect();
-    tooltip.querySelector('[data-name]').textContent = lake.name;
-    tooltip.querySelector('[data-area]').textContent = lake.area;
-    tooltip.hidden = false;
-    // Centre the tooltip above the lake, but keep it inside the map.
-    const left = Math.min(Math.max(8, r.left - box.left + r.width / 2 - tooltip.offsetWidth / 2), box.width - tooltip.offsetWidth - 8);
-    const top = Math.max(8, r.top - box.top - tooltip.offsetHeight - 10);
-    tooltip.style.left = left + 'px';
-    tooltip.style.top = top + 'px';
+  function pointIn(pt, poly) {
+    const b = poly.box;
+    if (pt[0] < b[0] || pt[0] > b[2] || pt[1] < b[1] || pt[1] > b[3]) return false;
+    const r = poly.ring; let c = false;
+    for (let i = 0, j = r.length - 1; i < r.length; j = i++) {
+      if ((r[i][1] > pt[1]) !== (r[j][1] > pt[1]) && pt[0] < (r[j][0] - r[i][0]) * (pt[1] - r[i][1]) / (r[j][1] - r[i][1]) + r[i][0]) c = !c;
+    }
+    return c;
   }
-  function hideTooltip() { if (tooltip) tooltip.hidden = true; }
+
+  function areaText(m2) {
+    if (m2 >= 1e6) return (m2 / 1e6).toFixed(2) + ' km²';
+    return (m2 / 1e4).toFixed(m2 >= 1e5 ? 1 : 2) + ' hectares';
+  }
+
+  // Lakes with a position: find the outline that contains their point.
+  function matchLakes() {
+    lakes.forEach(function (lake) {
+      if (lake.lat == null || lake.lon == null) return;
+      const pt = proj(lake.lat, lake.lon);
+      lake._pt = pt;
+      if (lake.positionUnknown) return;
+      const p = polys.find(function (q) { return (q.type === 'T' || q.type === 'L') && pointIn(pt, q); });
+      if (p) { lake._poly = p; p.lake = lake; lake._mapArea = p.area; }
+    });
+  }
+
+  function fitView(box, pad) {
+    const cw = stage.clientWidth || 800, ch = stage.clientHeight || 600, ar = cw / ch;
+    let w = box.w * (1 + pad), h = box.h * (1 + pad);
+    if (w / h > ar) h = w / ar; else w = h * ar;
+    return { x: box.x + box.w / 2 - w / 2, y: box.y + box.h / 2 - h / 2, w: w, h: h };
+  }
+
+  function clampView(v) {
+    const maxW = FULL.w * 1.6, minW = 0.25; // from the whole area down to ~250 m across
+    if (v.w > maxW) { const k = maxW / v.w; v.x += v.w * (1 - k) / 2; v.y += v.h * (1 - k) / 2; v.w *= k; v.h *= k; }
+    if (v.w < minW) { const k = minW / v.w; v.x -= v.w * (k - 1) / 2; v.y -= v.h * (k - 1) / 2; v.w *= k; v.h *= k; }
+    const cx = Math.min(Math.max(v.x + v.w / 2, FULL.x), FULL.x + FULL.w), cy = Math.min(Math.max(v.y + v.h / 2, FULL.y), FULL.y + FULL.h);
+    v.x = cx - v.w / 2; v.y = cy - v.h / 2;
+    return v;
+  }
+
+  function apply() {
+    svg.setAttribute('viewBox', view.x + ' ' + view.y + ' ' + view.w + ' ' + view.h);
+    const cw = stage.clientWidth, ch = stage.clientHeight;
+    overlay.querySelectorAll('[data-x]').forEach(function (n) {
+      const sx = (+n.dataset.x - view.x) / view.w * cw, sy = (+n.dataset.y - view.y) / view.h * ch;
+      const inside = sx > -40 && sx < cw + 40 && sy > -20 && sy < ch + 20;
+      n.style.transform = 'translate(' + sx.toFixed(1) + 'px,' + sy.toFixed(1) + 'px)';
+      n.classList.toggle('is-off', !inside);
+    });
+    // Hide lake labels that would overlap a more important one (the dot stays;
+    // zoom in and the name comes back). Lakes with data on file win.
+    const placed = [];
+    Array.prototype.slice.call(overlay.querySelectorAll('.wb-pin')).sort(function (m, n) {
+      return (n.classList.contains('has-data') - m.classList.contains('has-data')) || (m.classList.contains('is-approx') - n.classList.contains('is-approx'));
+    }).forEach(function (n) {
+      const sx = (+n.dataset.x - view.x) / view.w * cw, sy = (+n.dataset.y - view.y) / view.h * ch;
+      const lw = n.querySelector('span').offsetWidth || 120, box = [sx - 9, sy - 11, sx + 14 + lw, sy + 11];
+      const hit = placed.some(function (q) { return box[0] < q[2] && box[2] > q[0] && box[1] < q[3] && box[3] > q[1]; });
+      n.classList.toggle('no-label', hit && n.getAttribute('aria-pressed') !== 'true');
+      placed.push(hit ? [sx - 9, sy - 9, sx + 9, sy + 9] : box);
+    });
+    // place names fade out when zoomed far in, lake labels when zoomed far out
+    stage.classList.toggle('is-zoomed', view.w < FULL.w / 2.2);
+    // scale bar: a round number of km close to a quarter of the map width
+    const kmPerPx = view.w / cw, target = kmPerPx * 110;
+    const nice = [0.1, 0.2, 0.5, 1, 2, 5, 10, 20].reduce(function (a, b) { return Math.abs(b - target) < Math.abs(a - target) ? b : a; });
+    scaleBar.style.width = (nice / kmPerPx).toFixed(0) + 'px';
+    scaleBar.querySelector('span').textContent = nice < 1 ? (nice * 1000) + ' m' : nice + ' km';
+  }
+
+  let anim = null;
+  function animateTo(target) {
+    if (anim) cancelAnimationFrame(anim);
+    const from = Object.assign({}, view), t0 = performance.now(), dur = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 650;
+    (function step(now) {
+      const k = dur ? Math.min(1, (now - t0) / dur) : 1, e = 1 - Math.pow(1 - k, 3);
+      view = { x: from.x + (target.x - from.x) * e, y: from.y + (target.y - from.y) * e, w: from.w + (target.w - from.w) * e, h: from.h + (target.h - from.h) * e };
+      apply();
+      if (k < 1) anim = requestAnimationFrame(step);
+    })(t0);
+  }
+
+  function zoomAt(sx, sy, factor) {
+    const cw = stage.clientWidth, ch = stage.clientHeight;
+    const mx = view.x + sx / cw * view.w, my = view.y + sy / ch * view.h;
+    const v = { w: view.w / factor, h: view.h / factor };
+    v.x = mx - (sx / cw) * v.w; v.y = my - (sy / ch) * v.h;
+    view = clampView(v); apply();
+  }
+
+  function showInfo(p) {
+    infoBox.textContent = '';
+    const t = TYPES[p.type] || TYPES.T;
+    const h = document.createElement('p'); h.className = 'font-semibold text-txt-1';
+    h.textContent = p.lake ? p.lake.name : t.label;
+    const s = document.createElement('p'); s.className = 'text-sm text-txt-3';
+    s.textContent = (p.lake ? t.label + ' · ' : '') + 'mapped water area about ' + areaText(p.area);
+    infoBox.append(h, s);
+    if (p.lake) {
+      const b = document.createElement('button'); b.type = 'button';
+      b.className = 'mt-2 rounded-md bg-aqua px-3 py-1.5 text-sm font-semibold text-onaccent';
+      b.textContent = 'Open the ' + p.lake.name + ' report';
+      b.addEventListener('click', function () { selectLake(p.lake.id, { scroll: true }); });
+      infoBox.appendChild(b);
+    } else {
+      const n = document.createElement('p'); n.className = 'mt-1 text-sm';
+      n.textContent = 'Not documented by Lake Sentry yet. Know its name or condition? Share a lake story about it.';
+      infoBox.appendChild(n);
+    }
+    infoBox.hidden = false;
+    svg.querySelectorAll('.is-picked').forEach(function (n) { n.classList.remove('is-picked'); });
+    const path = svg.querySelector('[data-i="' + p.idx + '"]');
+    if (path) path.classList.add('is-picked');
+  }
+
+  function buildMap() {
+    if (!WATER) { mapBox.textContent = 'The map data could not be loaded.'; return; }
+    decode(); matchLakes();
+    stage = document.createElement('div');
+    stage.className = 'wb-stage';
+    stage.tabIndex = 0;
+    stage.setAttribute('role', 'region');
+    stage.setAttribute('aria-label', 'Map of water bodies in and around Hyderabad. Drag to move, use the plus and minus buttons or the + and - keys to zoom, arrow keys to move.');
+    svg = el('svg', { class: 'wb-svg', preserveAspectRatio: 'xMidYMid meet', 'aria-hidden': 'true' });
+    // background + a light grid every 0.05° to help reading distances
+    svg.appendChild(el('rect', { x: -50, y: -50, width: FULL.w + 100, height: FULL.h + 100, class: 'wb-land' }));
+    const grid = el('g', { class: 'wb-grid' });
+    for (let lon = Math.ceil(WATER.west * 20) / 20; lon < WATER.east; lon += 0.05) { const x = (lon - WATER.west) * KX; grid.appendChild(el('line', { x1: x, y1: -50, x2: x, y2: FULL.h + 50 })); }
+    for (let lat = Math.ceil(WATER.south * 20) / 20; lat < WATER.north; lat += 0.05) { const y = (WATER.north - lat) * KY; grid.appendChild(el('line', { x1: -50, y1: y, x2: FULL.w + 50, y2: y })); }
+    svg.appendChild(grid);
+    waterLayer = el('g');
+    polys.slice().sort(function (a, b) { return b.area - a.area; }).forEach(function (p) {
+      const d = 'M' + p.ring.map(function (q) { return q[0].toFixed(3) + ' ' + q[1].toFixed(3); }).join('L') + 'Z';
+      const path = el('path', { d: d, class: 'wb ' + (TYPES[p.type] || TYPES.T).cls + (p.lake ? ' wb-named' : ''), 'data-i': p.idx, 'data-t': p.type });
+      if (p.lake) path.setAttribute('data-id', p.lake.id);
+      waterLayer.appendChild(path);
+    });
+    svg.appendChild(waterLayer);
+    stage.appendChild(svg);
+
+    // HTML overlay: place names, lake pins and labels (stay sharp at any zoom)
+    overlay = document.createElement('div');
+    overlay.className = 'wb-overlay';
+    PLACES.forEach(function (pl) {
+      const p = proj(pl[1], pl[2]);
+      const n = document.createElement('span'); n.className = 'wb-place'; n.dataset.x = p[0]; n.dataset.y = p[1]; n.textContent = pl[0];
+      n.setAttribute('aria-hidden', 'true');
+      overlay.appendChild(n);
+    });
+    lakes.filter(function (l) { return l._pt; }).forEach(function (lake) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'map-lake wb-pin' + (lake._poly ? '' : ' is-approx') + (lake.status === 'documented' ? ' has-data' : '');
+      b.dataset.id = lake.id; b.dataset.x = lake._pt[0]; b.dataset.y = lake._pt[1];
+      b.setAttribute('aria-pressed', 'false');
+      const label = lake.name.replace(/ \(.*\)/, '');
+      b.innerHTML = '<i aria-hidden="true"></i><span></span>';
+      b.querySelector('span').textContent = label + (lake._poly ? '' : ' (approx.)');
+      b.setAttribute('aria-label', lake.name + (lake._poly ? '' : ', approximate position') + '. Open the lake report.');
+      b.addEventListener('click', function (e) { e.stopPropagation(); selectLake(lake.id, { scroll: true }); });
+      overlay.appendChild(b);
+    });
+    stage.appendChild(overlay);
+
+    // zoom controls + scale bar
+    const ctr = document.createElement('div'); ctr.className = 'wb-controls';
+    [['+', 'Zoom in', function () { zoomAt(stage.clientWidth / 2, stage.clientHeight / 2, 1.6); }],
+     ['−', 'Zoom out', function () { zoomAt(stage.clientWidth / 2, stage.clientHeight / 2, 1 / 1.6); }],
+     ['⤢', 'Show the whole map', function () { animateTo(fitView(FULL, 0.02)); }]].forEach(function (c) {
+      const b = document.createElement('button'); b.type = 'button'; b.textContent = c[0]; b.setAttribute('aria-label', c[1]); b.title = c[1];
+      b.addEventListener('click', c[2]); ctr.appendChild(b);
+    });
+    stage.appendChild(ctr);
+    scaleBar = document.createElement('div'); scaleBar.className = 'wb-scale'; scaleBar.setAttribute('aria-hidden', 'true'); scaleBar.innerHTML = '<span></span>';
+    stage.appendChild(scaleBar);
+    const north = document.createElement('div'); north.className = 'wb-north'; north.setAttribute('aria-hidden', 'true'); north.textContent = 'N';
+    stage.appendChild(north);
+    mapBox.appendChild(stage);
+
+    infoBox = document.getElementById('map-info');
+
+    // --- interaction: drag, wheel, pinch, keyboard, hover, click ---
+    const pts = new Map();
+    let moved = 0, pinch = null;
+    stage.addEventListener('pointerdown', function (e) {
+      if (e.target.closest('button')) return;
+      stage.setPointerCapture(e.pointerId);
+      pts.set(e.pointerId, { x: e.clientX, y: e.clientY }); moved = 0;
+      if (pts.size === 2) { const a = Array.from(pts.values()); pinch = Math.hypot(a[0].x - a[1].x, a[0].y - a[1].y); }
+      stage.classList.add('is-dragging');
+    });
+    stage.addEventListener('pointermove', function (e) {
+      if (!pts.has(e.pointerId)) { hover(e); return; }
+      const prev = pts.get(e.pointerId), r = stage.getBoundingClientRect();
+      pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (pts.size === 2 && pinch) {
+        const a = Array.from(pts.values()), d = Math.hypot(a[0].x - a[1].x, a[0].y - a[1].y);
+        zoomAt((a[0].x + a[1].x) / 2 - r.left, (a[0].y + a[1].y) / 2 - r.top, d / pinch); pinch = d; moved += 10; return;
+      }
+      const dx = e.clientX - prev.x, dy = e.clientY - prev.y; moved += Math.abs(dx) + Math.abs(dy);
+      view.x -= dx / stage.clientWidth * view.w; view.y -= dy / stage.clientHeight * view.h; view = clampView(view); apply();
+    });
+    function end(e) {
+      const was = pts.has(e.pointerId); pts.delete(e.pointerId); if (pts.size < 2) pinch = null;
+      if (!pts.size) stage.classList.remove('is-dragging');
+      if (was && moved < 6 && e.type === 'pointerup') {
+        const t = document.elementFromPoint(e.clientX, e.clientY);
+        const i = t && t.getAttribute && t.getAttribute('data-i');
+        if (i != null) showInfo(polys[+i]);
+      }
+    }
+    stage.addEventListener('pointerup', end); stage.addEventListener('pointercancel', end);
+    stage.addEventListener('pointerleave', function () { if (tooltip) tooltip.hidden = true; });
+    stage.addEventListener('wheel', function (e) {
+      e.preventDefault();
+      const r = stage.getBoundingClientRect();
+      zoomAt(e.clientX - r.left, e.clientY - r.top, Math.exp(-e.deltaY * 0.0015));
+    }, { passive: false });
+    stage.addEventListener('dblclick', function (e) { const r = stage.getBoundingClientRect(); zoomAt(e.clientX - r.left, e.clientY - r.top, 2); });
+    stage.addEventListener('keydown', function (e) {
+      const step = 0.12, cw = stage.clientWidth, ch = stage.clientHeight;
+      if (e.key === '+' || e.key === '=') zoomAt(cw / 2, ch / 2, 1.5);
+      else if (e.key === '-') zoomAt(cw / 2, ch / 2, 1 / 1.5);
+      else if (e.key === 'ArrowLeft') { view.x -= view.w * step; view = clampView(view); apply(); }
+      else if (e.key === 'ArrowRight') { view.x += view.w * step; view = clampView(view); apply(); }
+      else if (e.key === 'ArrowUp') { view.y -= view.h * step; view = clampView(view); apply(); }
+      else if (e.key === 'ArrowDown') { view.y += view.h * step; view = clampView(view); apply(); }
+      else return;
+      e.preventDefault();
+    });
+    function hover(e) {
+      if (!tooltip) return;
+      const i = e.target.getAttribute && e.target.getAttribute('data-i');
+      if (i == null) { tooltip.hidden = true; return; }
+      const p = polys[+i], r = mapBox.getBoundingClientRect();
+      tooltip.querySelector('[data-name]').textContent = p.lake ? p.lake.name : (TYPES[p.type] || TYPES.T).label;
+      tooltip.querySelector('[data-area]').textContent = 'About ' + areaText(p.area) + ' · click for details';
+      tooltip.hidden = false;
+      tooltip.style.left = Math.min(e.clientX - r.left + 14, r.width - tooltip.offsetWidth - 8) + 'px';
+      tooltip.style.top = Math.max(8, e.clientY - r.top - tooltip.offsetHeight - 12) + 'px';
+    }
+
+    // type filters
+    document.querySelectorAll('[data-wb-type]').forEach(function (cb) {
+      cb.addEventListener('change', function () { stage.classList.toggle('hide-' + cb.dataset.wbType, !cb.checked); });
+    });
+    // counts for the legend and the intro
+    const c = WATER.counts || {};
+    document.querySelectorAll('[data-wb-count]').forEach(function (n) {
+      const k = n.dataset.wbCount;
+      n.textContent = k === 'all' ? String(polys.length) : k === 'standing' ? String((c.T || 0) + (c.L || 0)) : String(c[k] || 0);
+    });
+    const standing = polys.filter(function (p) { return p.type === 'T' || p.type === 'L'; }).reduce(function (s, p) { return s + p.area; }, 0);
+    document.querySelectorAll('[data-wb-area]').forEach(function (n) { n.textContent = (standing / 1e6).toFixed(1); });
+
+    view = fitView(FULL, 0.02);
+    apply();
+    window.addEventListener('resize', function () { apply(); });
+    // the map tab may be hidden at first: fit again once it's shown
+    if (window.ResizeObserver) new ResizeObserver(function () { if (stage.clientWidth) apply(); }).observe(stage);
+  }
+
+  // Zoom the map onto a lake (used when a lake is selected)
+  function focusLake(lake) {
+    if (!stage || !lake._pt) return;
+    const b = lake._poly ? lake._poly.box : [lake._pt[0] - 0.6, lake._pt[1] - 0.6, lake._pt[0] + 0.6, lake._pt[1] + 0.6];
+    const w = Math.max(b[2] - b[0], 1.2), h = Math.max(b[3] - b[1], 1.2);
+    animateTo(clampView(fitView({ x: (b[0] + b[2]) / 2 - w / 2, y: (b[1] + b[3]) / 2 - h / 2, w: w, h: h }, 1.2)));
+    svg.querySelectorAll('.is-selected').forEach(function (n) { n.classList.remove('is-selected'); });
+    if (lake._poly) { const path = svg.querySelector('[data-i="' + lake._poly.idx + '"]'); if (path) path.classList.add('is-selected'); }
+  }
+
+  /* ---------- 2. (tooltip is handled by the map's hover above) ---------- */
 
   /* ---------- 3. The list of lakes (also the keyboard-friendly way in) ---------- */
   // What each lake's "status" badge says.
@@ -194,6 +366,13 @@
   };
 
   function buildList() {
+    const search = document.getElementById('lake-search');
+    if (search) search.addEventListener('input', function () {
+      const q = search.value.trim().toLowerCase();
+      let shown = 0;
+      listBox.querySelectorAll('li').forEach(function (li) { const on = !q || li.dataset.search.indexOf(q) !== -1; li.hidden = !on; if (on) shown++; });
+      const none = document.getElementById('lake-search-none'); if (none) none.hidden = shown > 0;
+    });
     lakes.forEach(function (lake) {
       const li = document.createElement('li');
       const btn = document.createElement('button');
@@ -203,10 +382,11 @@
       btn.className = 'flex w-full items-center justify-between gap-3 rounded-lg border border-line bg-panel px-4 py-3 text-left text-txt-1 transition hover:translate-x-1 hover:border-aqua aria-pressed:border-aqua aria-pressed:bg-aqua/15';
       const text = el2('span', 'min-w-0');
       text.append(el2('span', 'block font-semibold', lake.name));
-      text.append(el2('span', 'block truncate text-xs text-txt-3', lake.lat == null ? lake.area + ' · not shown on the map' : lake.area));
+      text.append(el2('span', 'block truncate text-xs text-txt-3', lake.lat == null ? lake.area + ' · not on the map yet' : lake.area + (lake._mapArea ? ' · ' + areaText(lake._mapArea) : (lake._pt ? ' · approx. position' : ''))));
       const st = STATUS[lake.status] || STATUS.listed;
       btn.append(text, el2('span', 'shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold ' + st.cls, st.label));
       btn.addEventListener('click', function () { selectLake(lake.id, { scroll: true }); });
+      li.dataset.search = (lake.name + ' ' + lake.area).toLowerCase();
       li.appendChild(btn);
       listBox.appendChild(li);
     });
@@ -417,7 +597,8 @@
       [String(by('upcoming').length), 'upcoming initiatives', 'text-sun'],
       [String(posts.length), posts.length === 1 ? 'visitor story' : 'visitor stories', 'text-aqua'],
     ];
-    const dl = el2('dl', 'mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4');
+    if (lake._mapArea) tiles.unshift([lake._mapArea >= 1e6 ? (lake._mapArea / 1e6).toFixed(2) : (lake._mapArea / 1e4).toFixed(1), lake._mapArea >= 1e6 ? 'km² of water (mapped outline)' : 'hectares of water (mapped outline)', 'text-txt-1']);
+    const dl = el2('dl', 'mt-5 grid grid-cols-2 gap-3 ' + (tiles.length > 4 ? 'sm:grid-cols-3 xl:grid-cols-5' : 'sm:grid-cols-4'));
     tiles.forEach(function (t) {
       const d = el2('div', 'flex flex-col rounded-xl border border-line bg-deep p-4');
       d.append(el2('dt', 'mt-1 text-xs text-txt-3', t[1]), el2('dd', 'order-first font-mono text-3xl font-semibold ' + t[2], t[0]));
@@ -430,7 +611,10 @@
       const fl = el2('dl', 'mt-5 grid gap-3 sm:grid-cols-3');
       lake.facts.forEach(function (f) {
         const d = el2('div', 'rounded-lg border border-line px-4 py-3');
-        d.append(el2('dt', 'font-mono text-xs uppercase tracking-wider text-txt-3', f.label), el2('dd', 'font-semibold text-txt-1', f.value), sourceLine(f.source, 'mt-1 text-xs text-txt-3'));
+        const dd = el2('dd', 'font-semibold text-txt-1', f.value);
+        const src = sourceLine(f.source, 'mt-1 text-xs font-normal text-txt-3');
+        if (src) dd.appendChild(src);
+        d.append(el2('dt', 'font-mono text-xs uppercase tracking-wider text-txt-3', f.label), dd);
         fl.appendChild(d);
       });
       now.appendChild(fl);
@@ -438,7 +622,7 @@
     // Pointer to the official maps (exact boundaries and water-spread area)
     const maps = el2('div', 'mt-5 rounded-xl border border-aqua/40 bg-aqua/10 p-4 text-sm');
     maps.append(el2('p', 'font-semibold text-txt-1', '📍 Exact location and water-spread area'),
-      el2('p', 'mt-1', 'Lake Sentry’s map is a simplified drawing. For exact boundaries, check the government’s official water-body maps:'));
+      el2('p', 'mt-1', lake._mapArea ? 'The outline on our map comes from a water-body map of Hyderabad. For official boundaries and seasonal water spread, check the government’s water-body maps:' : 'This lake isn’t matched to an outline on our map yet (its pin is approximate). For exact boundaries, check the government’s official water-body maps:'));
     const ml = el2('p', 'mt-2 flex flex-wrap gap-x-5 gap-y-1 font-semibold');
     [['bhuvan', 'Bhuvan (ISRO) ↗'], ['india-wris', 'India WRIS ↗']].forEach(function (m) {
       const src = SOURCES[m[0]]; if (!src) return;
@@ -651,6 +835,7 @@
       node.setAttribute('aria-pressed', String(node.getAttribute('data-id') === id));
     });
     renderReport(lake);
+    focusLake(lake);
     try { history.replaceState(null, '', '?lake=' + encodeURIComponent(id) + '#map'); } catch (e) { /* ignore */ }
     if (statusEl) statusEl.textContent = 'Showing the full report for ' + lake.name + ' below the map.';
     if (opts.scroll) {

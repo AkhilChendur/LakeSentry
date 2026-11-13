@@ -49,7 +49,7 @@
   /* ---------- Initiative card ---------- */
   function initiativeCard(it, opts) {
     opts = opts || {};
-    const li = el('li', 'glow-card rounded-2xl border border-line bg-panel p-5');
+    const li = el('li', 'glow-card flex flex-col rounded-2xl border border-line border-l-4 border-l-aqua bg-panel p-5');
     li.dataset.id = it.id;
 
     const tags = el('p', 'flex flex-wrap items-center gap-2 text-xs');
@@ -96,6 +96,11 @@
         gallery.appendChild(img);
       });
       li.appendChild(gallery);
+    } else {
+      const band = el('div', 'story-band');
+      band.setAttribute('aria-hidden', 'true');
+      band.appendChild(el('span', null, '📍 ' + store.lakeName(p.lake)));
+      li.appendChild(band);
     }
 
     const body = el('div', 'p-5');

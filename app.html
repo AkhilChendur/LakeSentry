@@ -86,6 +86,12 @@
         <p class="eyebrow hidden sm:flex">Interactive demo</p>
         <h1 id="page-title" class="font-display text-3xl font-bold text-txt-1 sm:mt-3 sm:text-6xl"><span class="gradient-text">Lake Explorer</span></h1>
         <p class="mt-2 max-w-2xl text-sm sm:mt-3 sm:text-lg">Share lake photos and stories, submit a clean-up initiative, explore the lake map, or drive a simulated Lake Sentry V1.</p>
+        <dl class="mt-7 hidden max-w-3xl grid-cols-4 gap-3 sm:grid">
+          <div class="flex flex-col rounded-xl border border-line bg-ink/50 px-4 py-3"><dt class="text-xs text-txt-3">water bodies mapped</dt><dd class="order-first font-mono text-2xl font-semibold text-aqua" data-stat="water">849</dd></div>
+          <div class="flex flex-col rounded-xl border border-line bg-ink/50 px-4 py-3"><dt class="text-xs text-txt-3">lake reports</dt><dd class="order-first font-mono text-2xl font-semibold text-mint" data-stat="lakes">0</dd></div>
+          <div class="flex flex-col rounded-xl border border-line bg-ink/50 px-4 py-3"><dt class="text-xs text-txt-3">published stories</dt><dd class="order-first font-mono text-2xl font-semibold text-sun" data-stat="stories">0</dd></div>
+          <div class="flex flex-col rounded-xl border border-line bg-ink/50 px-4 py-3"><dt class="text-xs text-txt-3">published initiatives</dt><dd class="order-first font-mono text-2xl font-semibold text-coral" data-stat="initiatives">0</dd></div>
+        </dl>
       </div>
     </section>
 
@@ -106,14 +112,20 @@
          ===================================================================== -->
     <section id="stories" role="tabpanel" aria-labelledby="tab-stories" class="relative bg-ink pb-24 pt-6 sm:pt-10">
       <div class="mx-auto max-w-6xl px-4 sm:px-6">
-        <h2 class="font-display text-2xl font-bold text-txt-1 sm:text-4xl">Share a lake story</h2>
-        <p class="mt-2 max-w-prose text-sm sm:text-base">Share what you saw at a lake: floating waste, wildlife, or a clean-up you joined. Add up to 3 photos. Every post is reviewed before it's published.</p>
+        <div class="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <h2 class="font-display text-2xl font-bold text-txt-1 sm:text-4xl">Lake stories</h2>
+            <p class="mt-2 max-w-prose text-sm sm:text-base">Photos and notes from people who visit Hyderabad's lakes: floating waste, wildlife, clean-ups. Every post is reviewed before it's published.</p>
+          </div>
+          <button type="button" data-open-composer="post-composer" class="max-lg:hidden inline-flex items-center gap-2 rounded-md bg-aqua px-5 py-3 font-semibold text-onaccent transition hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(56,228,240,.35)]"><span aria-hidden="true">✍️</span> Share a story</button>
+        </div>
 
-        <div class="mt-5 grid items-start gap-8 sm:mt-8 lg:grid-cols-[1fr_1.1fr]">
-          <!-- ---------- Post form ---------- -->
-          <div class="rounded-3xl border border-line bg-panel p-5 sm:p-8">
-            <h3 class="font-display text-2xl font-bold text-txt-1">Write a post</h3>
-            <p class="mt-1 text-sm text-txt-3">Fields marked “required” must be filled in.</p>
+        <div class="mt-6 grid items-start gap-6 sm:mt-8 lg:grid-cols-[minmax(0,1fr)_25rem] lg:gap-8">
+          <!-- ---------- Post form (folds out on phones; a side panel on big screens) ---------- -->
+          <details id="post-composer" class="composer rounded-3xl border border-linehi bg-panel lg:col-start-2 lg:row-start-1">
+            <summary class="flex cursor-pointer list-none items-center justify-between gap-3 rounded-2xl px-5 py-4 font-display text-lg font-bold text-txt-1 [&::-webkit-details-marker]:hidden"><span>✍️ Share a lake story</span><span class="composer-chev" aria-hidden="true">▾</span></summary>
+            <div class="px-5 pb-6 sm:px-6">
+            <p class="text-sm text-txt-3">Add up to 3 photos. Fields marked “required” must be filled in.</p>
             <div id="post-errors" hidden tabindex="-1" aria-labelledby="post-errors-title" class="mt-5 rounded-xl border-2 border-coral bg-coral/10 p-4 text-txt-1">
               <h4 id="post-errors-title" class="font-semibold text-coral">Please fix the following:</h4>
               <ul class="mt-2 list-disc space-y-1 pl-5 text-sm"></ul>
@@ -124,7 +136,7 @@
             </div>
 
             <form id="post-form" class="mt-5 space-y-5" novalidate>
-              <div class="grid gap-5 sm:grid-cols-2">
+              <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-1">
                 <div>
                   <label for="post-author" class="block font-semibold text-txt-1">Your first name or nickname</label>
                   <p id="post-author-hint" class="text-sm text-txt-3">Optional. Please don't use your full name.</p>
@@ -133,7 +145,6 @@
                 </div>
                 <div>
                   <label for="post-lake" class="block font-semibold text-txt-1">Lake <span class="font-normal text-txt-3">(required)</span></label>
-                  <p class="text-sm text-txt-3" aria-hidden="true">&nbsp;</p>
                   <select id="post-lake" required aria-describedby="post-lake-error"
                           class="mt-1 w-full rounded-md border border-txt-3/80 bg-deep px-3 py-2.5 text-txt-1 aria-[invalid=true]:border-2 aria-[invalid=true]:border-coral"></select>
                   <p id="post-lake-error" hidden class="mt-1 text-sm font-medium text-coral"></p>
@@ -179,20 +190,21 @@
                 <p id="post-consent-error" hidden class="mt-1 text-sm font-medium text-coral"></p>
               </div>
 
-              <button type="submit" class="rounded-md bg-aqua px-6 py-3 font-semibold text-onaccent transition hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(56,228,240,.35)]">Submit post for review</button>
+              <button type="submit" class="w-full rounded-md bg-aqua px-6 py-3 font-semibold text-onaccent transition hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(56,228,240,.35)]">Submit post for review</button>
             </form>
-          </div>
+            </div>
+          </details>
 
           <!-- ---------- Published posts ---------- -->
-          <div>
-            <div class="flex flex-wrap items-end justify-between gap-4">
-              <h3 id="post-feed-title" tabindex="-1" class="font-display text-2xl font-bold text-txt-1">Published stories</h3>
-              <div>
-                <label for="post-filter" class="block text-sm font-semibold text-txt-1">Show stories from</label>
-                <select id="post-filter" class="mt-1 rounded-md border border-txt-3/80 bg-deep px-3 py-2 text-txt-1"></select>
+          <div class="min-w-0 lg:col-start-1 lg:row-start-1">
+            <div class="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-line bg-panel/60 px-4 py-3">
+              <h3 id="post-feed-title" tabindex="-1" class="font-display text-lg font-bold text-txt-1">Published stories <span class="ml-1 rounded-full border border-line px-2 py-0.5 font-mono text-sm font-normal text-txt-3" data-count-of="post-feed">0</span></h3>
+              <div class="flex items-center gap-2">
+                <label for="post-filter" class="text-sm font-semibold text-txt-2">Lake</label>
+                <select id="post-filter" class="rounded-md border border-txt-3/80 bg-deep px-3 py-2 text-sm text-txt-1"></select>
               </div>
             </div>
-            <ul id="post-feed" class="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2" aria-label="Published lake stories"></ul>
+            <ul id="post-feed" class="mt-5 grid gap-5 sm:grid-cols-2" aria-label="Published lake stories"></ul>
             <p id="post-feed-empty" hidden class="mt-5 rounded-xl border border-line bg-panel px-4 py-3">No published stories for this lake yet. Be the first to share one!</p>
           </div>
         </div>
@@ -205,8 +217,13 @@
          ===================================================================== -->
     <section id="initiatives" role="tabpanel" aria-labelledby="tab-initiatives" hidden class="relative bg-ink pb-24 pt-6 sm:pt-10">
       <div class="mx-auto max-w-6xl px-4 sm:px-6">
-        <h2 id="init-heading" class="font-display text-2xl font-bold text-txt-1 sm:text-4xl">Lake Initiative Network</h2>
-        <p class="mt-2 max-w-prose">Know about a lake clean-up or conservation effort? Submit it here. Nothing is published automatically: the Lake Sentry team reviews every submission first.</p>
+        <div class="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <h2 id="init-heading" class="font-display text-2xl font-bold text-txt-1 sm:text-4xl">Lake Initiative Network</h2>
+            <p class="mt-2 max-w-prose text-sm sm:text-base">Clean-ups and conservation efforts at Hyderabad's lakes. Know about one? Submit it: the Lake Sentry team reviews every submission before it's published.</p>
+          </div>
+          <button type="button" data-open-composer="init-composer" class="max-lg:hidden inline-flex items-center gap-2 rounded-md bg-aqua px-5 py-3 font-semibold text-onaccent transition hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(56,228,240,.35)]"><span aria-hidden="true">🤝</span> Submit an initiative</button>
+        </div>
         <ol class="mt-5 flex flex-wrap items-center gap-2 font-mono text-xs sm:text-sm" aria-label="Review workflow">
           <li class="rounded-full border border-aqua/50 bg-aqua/10 px-3 py-1.5 text-aqua">01 · Submit</li>
           <li aria-hidden="true" class="text-txt-3">→</li>
@@ -217,11 +234,12 @@
           <li class="rounded-full border border-mint/50 bg-mint/10 px-3 py-1.5 text-mint">04 · Publish</li>
         </ol>
 
-        <div class="mt-8 grid items-start gap-8 lg:grid-cols-[1fr_1.1fr]">
+        <div class="mt-6 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_25rem] lg:gap-8">
           <!-- ---------- Submission form ---------- -->
-          <div class="rounded-3xl border border-line bg-panel p-5 sm:p-8">
-            <h3 class="font-display text-2xl font-bold text-txt-1">Submit an initiative</h3>
-            <p class="mt-1 text-sm text-txt-3">Fields marked “required” must be filled in.</p>
+          <details id="init-composer" class="composer rounded-3xl border border-linehi bg-panel lg:col-start-2 lg:row-start-1">
+            <summary class="flex cursor-pointer list-none items-center justify-between gap-3 rounded-2xl px-5 py-4 font-display text-lg font-bold text-txt-1 [&::-webkit-details-marker]:hidden"><span>🤝 Submit an initiative</span><span class="composer-chev" aria-hidden="true">▾</span></summary>
+            <div class="px-5 pb-6 sm:px-6">
+            <p class="text-sm text-txt-3">Fields marked “required” must be filled in.</p>
             <div id="init-errors" hidden tabindex="-1" aria-labelledby="init-errors-title" class="mt-5 rounded-xl border-2 border-coral bg-coral/10 p-4 text-txt-1">
               <h4 id="init-errors-title" class="font-semibold text-coral">Please fix the following:</h4>
               <ul class="mt-2 list-disc space-y-1 pl-5 text-sm"></ul>
@@ -240,7 +258,7 @@
                 <p id="init-name-error" hidden class="mt-1 text-sm font-medium text-coral"></p>
               </div>
 
-              <div class="grid gap-5 sm:grid-cols-2">
+              <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-1">
                 <div>
                   <label for="init-lake" class="block font-semibold text-txt-1">Lake <span class="font-normal text-txt-3">(required)</span></label>
                   <select id="init-lake" name="lake" required aria-describedby="init-lake-error"
@@ -257,7 +275,7 @@
                 </div>
               </div>
 
-              <div class="grid gap-5 sm:grid-cols-2">
+              <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-1">
                 <div>
                   <label for="init-org" class="block font-semibold text-txt-1">Organisation or group</label>
                   <input id="init-org" name="organization" type="text" autocomplete="organization" class="mt-1 w-full rounded-md border border-txt-3/80 bg-deep px-3 py-2.5 text-txt-1" />
@@ -293,57 +311,75 @@
               <!-- PHOTO UPLOAD PLACEHOLDER: uploads need a real server, so this is a note for now -->
               <p class="rounded-lg border border-sun/40 bg-sun/10 px-4 py-3 text-sm">📷 Photo uploads will be available on the live LakeSentry.in site.</p>
 
-              <button type="submit" class="rounded-md bg-aqua px-6 py-3 font-semibold text-onaccent transition hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(56,228,240,.35)]">Submit for review</button>
+              <button type="submit" class="w-full rounded-md bg-aqua px-6 py-3 font-semibold text-onaccent transition hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(56,228,240,.35)]">Submit for review</button>
             </form>
-          </div>
+            </div>
+          </details>
 
           <!-- ---------- Published initiatives ---------- -->
-          <div>
-            <div class="flex flex-wrap items-end justify-between gap-4">
-              <h3 class="font-display text-2xl font-bold text-txt-1">Published initiatives</h3>
-              <div>
-                <label for="published-filter" class="block text-sm font-semibold text-txt-1">Show initiatives at</label>
-                <select id="published-filter" class="mt-1 rounded-md border border-txt-3/80 bg-deep px-3 py-2 text-txt-1"></select>
+          <div class="min-w-0 lg:col-start-1 lg:row-start-1">
+            <div class="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-line bg-panel/60 px-4 py-3">
+              <h3 class="font-display text-lg font-bold text-txt-1">Published initiatives <span class="ml-1 rounded-full border border-line px-2 py-0.5 font-mono text-sm font-normal text-txt-3" data-count-of="published-list">0</span></h3>
+              <div class="flex items-center gap-2">
+                <label for="published-filter" class="text-sm font-semibold text-txt-2">Lake</label>
+                <select id="published-filter" class="rounded-md border border-txt-3/80 bg-deep px-3 py-2 text-sm text-txt-1"></select>
               </div>
             </div>
-            <ul id="published-list" class="mt-5 space-y-4" aria-label="Published initiatives"></ul>
+            <ul id="published-list" class="mt-5 grid gap-5 sm:grid-cols-2" aria-label="Published initiatives"></ul>
             <p id="published-empty" hidden class="mt-5 rounded-xl border border-line bg-panel px-4 py-3">No published initiatives for this selection yet.</p>
           </div>
         </div>
       </div>
     </section>
 
-    <section id="map" role="tabpanel" aria-labelledby="tab-map" hidden class="relative bg-ink pb-24 pt-12">
+    <section id="map" role="tabpanel" aria-labelledby="tab-map" hidden class="relative bg-ink pb-24 pt-6 sm:pt-10">
       <div class="mx-auto max-w-6xl px-4 sm:px-6">
-                <h2 id="map-heading" class="reveal mt-4 font-display text-3xl font-bold text-txt-1 sm:text-5xl">Explore Hyderabad's lakes</h2>
-        <p class="reveal mt-3 max-w-prose">Select a lake on the map, or in the list, to open its full report: where things stand, recovery figures with sources, ongoing and upcoming initiatives, photos and more.</p>
+        <div class="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <h2 id="map-heading" class="font-display text-2xl font-bold text-txt-1 sm:text-4xl">Explore Hyderabad's lakes</h2>
+            <p class="mt-2 max-w-prose text-sm sm:text-base">Every tank, lake, stream and canal on the city's water-body map. Drag and zoom to explore, tap any water body for its size, and open a pin for Lake Sentry's full lake report.</p>
+          </div>
+        </div>
 
-        <div class="mt-10 grid grid-cols-1 gap-6 lg:grid-cols-[1.7fr_1fr]">
-          <figure class="reveal rounded-2xl border border-line bg-panel p-3">
-            <h3 id="lake-map-title" class="sr-only">Schematic map of lakes in and around Hyderabad</h3>
-            <!-- The SVG map is inserted here by lake-map.js -->
+        <dl class="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
+          <div class="flex flex-col rounded-xl border border-line bg-panel px-4 py-3"><dt class="text-xs text-txt-3">water bodies on the map</dt><dd class="order-first font-mono text-2xl font-semibold text-aqua" data-wb-count="all">849</dd></div>
+          <div class="flex flex-col rounded-xl border border-line bg-panel px-4 py-3"><dt class="text-xs text-txt-3">tanks, lakes &amp; ponds</dt><dd class="order-first font-mono text-2xl font-semibold text-aqua" data-wb-count="standing">795</dd></div>
+          <div class="flex flex-col rounded-xl border border-line bg-panel px-4 py-3"><dt class="text-xs text-txt-3">km² of standing water</dt><dd class="order-first font-mono text-2xl font-semibold text-mint" data-wb-area>55.7</dd></div>
+          <div class="flex flex-col rounded-xl border border-line bg-panel px-4 py-3"><dt class="text-xs text-txt-3">lakes with a Lake Sentry report</dt><dd class="order-first font-mono text-2xl font-semibold text-sun" data-stat="lakes">0</dd></div>
+        </dl>
+
+        <div class="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_20rem]">
+          <figure class="min-w-0 rounded-2xl border border-line bg-panel p-2 sm:p-3">
+            <h3 id="lake-map-title" class="sr-only">Map of water bodies in and around Hyderabad</h3>
+            <!-- The map is drawn here by lake-map.js from water-bodies.js -->
             <div id="lake-map" class="relative overflow-hidden rounded-xl">
-              <div id="lake-tooltip" hidden aria-hidden="true" class="pointer-events-none absolute z-10 max-w-[16rem] rounded-lg border border-linehi bg-ink px-3 py-2 text-sm text-txt-1 shadow-lg">
+              <div id="lake-tooltip" hidden aria-hidden="true" class="pointer-events-none absolute z-20 max-w-[16rem] rounded-lg border border-linehi bg-ink px-3 py-2 text-sm text-txt-1 shadow-lg">
                 <span data-name class="block font-semibold"></span>
                 <span data-area class="block text-txt-3"></span>
               </div>
             </div>
-            <figcaption class="flex flex-wrap items-center gap-x-5 gap-y-2 px-2 pt-3 text-sm">
-              <span class="flex items-center gap-2"><span aria-hidden="true" class="inline-block h-3 w-5 rounded-full bg-aqua/60"></span>Lake</span>
-              <span class="flex items-center gap-2"><span aria-hidden="true" class="inline-block h-3 w-3 rounded-full border-2 border-mint"></span>Pulsing ring: we hold data on this lake</span>
-              <span class="flex items-center gap-2"><span aria-hidden="true" class="inline-block h-3 w-5 rounded-full border border-dashed border-txt-3"></span>Position is a guess</span>
-              <span class="text-txt-3">Schematic map, not to scale. Lakes without a position are in the list.</span>
+            <div id="map-info" hidden role="status" class="mx-1 mt-3 rounded-xl border border-aqua/40 bg-aqua/10 px-4 py-3"></div>
+            <figcaption class="px-2 pt-3">
+              <fieldset class="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
+                <legend class="sr-only">Show on the map</legend>
+                <label class="flex cursor-pointer items-center gap-2"><input type="checkbox" checked data-wb-type="tank" class="h-4 w-4 accent-aqua" /><span aria-hidden="true" class="wb-swatch wb-swatch-tank"></span>Tanks, lakes &amp; ponds</label>
+                <label class="flex cursor-pointer items-center gap-2"><input type="checkbox" checked data-wb-type="river" class="h-4 w-4 accent-aqua" /><span aria-hidden="true" class="wb-swatch wb-swatch-river"></span>Rivers, streams &amp; drains</label>
+                <label class="flex cursor-pointer items-center gap-2"><input type="checkbox" checked data-wb-type="canal" class="h-4 w-4 accent-aqua" /><span aria-hidden="true" class="wb-swatch wb-swatch-canal"></span>Canals</label>
+                <span class="flex items-center gap-2"><span aria-hidden="true" class="wb-swatch wb-swatch-named"></span>Lake Sentry lake</span>
+              </fieldset>
+              <p class="mt-3 border-t border-line pt-3 text-xs leading-relaxed text-txt-3">Outlines: Hyderabad water-bodies map (KML, 849 features in four land-use classes) shared with Lake Sentry. Areas are worked out by Lake Sentry from the outlines and are approximate; water spread changes with the seasons. Pins marked “approx.” aren't matched to an outline yet. Osman Sagar and Himayat Sagar are outside this dataset. Official boundaries:
+                <a href="https://bhuvan.nrsc.gov.in" target="_blank" rel="noopener noreferrer" class="font-semibold text-aqua underline underline-offset-4 hover:text-mint">Bhuvan (ISRO)<span class="sr-only"> (opens in a new tab)</span></a>,
+                <a href="https://indiawris.gov.in" target="_blank" rel="noopener noreferrer" class="font-semibold text-aqua underline underline-offset-4 hover:text-mint">India WRIS<span class="sr-only"> (opens in a new tab)</span></a>.</p>
             </figcaption>
-            <p class="mt-3 border-t border-line px-2 pt-3 text-sm"><strong class="text-txt-1">Official maps:</strong> for exact lake boundaries and satellite-measured water-spread area, use
-              <a href="https://bhuvan.nrsc.gov.in" target="_blank" rel="noopener noreferrer" class="font-semibold text-aqua underline underline-offset-4 hover:text-mint">Bhuvan (ISRO)<span class="sr-only"> (opens in a new tab)</span></a>
-              and
-              <a href="https://indiawris.gov.in" target="_blank" rel="noopener noreferrer" class="font-semibold text-aqua underline underline-offset-4 hover:text-mint">India WRIS<span class="sr-only"> (opens in a new tab)</span></a>.</p>
           </figure>
 
-          <div class="reveal">
-            <h3 class="font-display text-xl font-bold text-txt-1">All lakes</h3>
-            <ul id="lake-list" class="mt-3 space-y-2" aria-label="Lakes"></ul>
-          </div>
+          <aside class="flex min-w-0 flex-col rounded-2xl border border-line bg-panel p-4" aria-labelledby="lake-list-title">
+            <h3 id="lake-list-title" class="font-display text-lg font-bold text-txt-1">Lake reports</h3>
+            <label for="lake-search" class="sr-only">Search lakes</label>
+            <input id="lake-search" type="search" placeholder="Search lakes…" autocomplete="off" class="mt-3 w-full rounded-md border border-txt-3/80 bg-deep px-3 py-2 text-txt-1" />
+            <ul id="lake-list" class="mt-3 space-y-2 lg:max-h-[34rem] lg:overflow-y-auto lg:pr-1" aria-label="Lakes"></ul>
+            <p id="lake-search-none" hidden class="mt-3 text-sm text-txt-3">No lake matches that search.</p>
+          </aside>
         </div>
 
         <!-- Screen-reader announcement when a lake is selected -->
@@ -510,7 +546,9 @@
   <script src="cards.js"></script>
   <script src="initiatives.js"></script>
   <script src="posts.js"></script>
+  <script src="water-bodies.js"></script>
   <script src="lake-map.js"></script>
+  <script src="app-page.js"></script>
   <script src="bot-sim.js"></script>
   <script src="tabs.js"></script>
 </body>
