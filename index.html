@@ -125,44 +125,27 @@
     </section>
 
     <!-- ============================================================
-         PREVENT · REMOVE · CONNECT
-         data-wave adds an animated wave at the bottom (colour = next section)
+         CALL TO ACTION
          ============================================================ -->
-    <section class="relative bg-deep pb-32 pt-24" aria-labelledby="pillars-title" data-wave="ink">
-      <div class="mx-auto max-w-6xl px-4 sm:px-6">
-        <p class="eyebrow reveal">The dual-solution framework</p>
-        <h2 id="pillars-title" class="reveal mt-4 max-w-3xl font-display text-3xl font-bold leading-tight text-txt-1 sm:text-5xl">Cleaning the waste already in our lakes is necessary. Preventing new waste is just as important.</h2>
-
-        <ul class="mt-14 grid gap-5 md:grid-cols-3">
-          <li class="reveal glow-card relative overflow-hidden rounded-xl border border-line bg-panel p-7" style="--delay:.05s">
-            <span aria-hidden="true" class="absolute inset-x-0 top-0 h-0.5 bg-mint"></span>
-            <p class="font-mono text-xs uppercase tracking-wider text-mint">01 · Prevent</p>
-            <h3 class="mt-3 font-display text-2xl font-bold text-txt-1">Awareness campaign</h3>
-            <p class="mt-3">Instagram, LinkedIn and offline installations like “The Rollers” that educate people and encourage responsible waste disposal.</p>
-          </li>
-          <li class="reveal glow-card relative overflow-hidden rounded-xl border border-line bg-panel p-7" style="--delay:.15s">
-            <span aria-hidden="true" class="absolute inset-x-0 top-0 h-0.5 bg-aqua"></span>
-            <p class="font-mono text-xs uppercase tracking-wider text-aqua">02 · Remove</p>
-            <h3 class="mt-3 font-display text-2xl font-bold text-txt-1">Lake Sentry V1 → V2</h3>
-            <p class="mt-3">A remote-controlled floating machine built from CPVC pipe that scoops trash off the surface with a mesh conveyor belt.</p>
-          </li>
-          <li class="reveal glow-card relative overflow-hidden rounded-xl border border-line bg-panel p-7" style="--delay:.25s">
-            <span aria-hidden="true" class="absolute inset-x-0 top-0 h-0.5 bg-sun"></span>
-            <p class="font-mono text-xs uppercase tracking-wider text-sun">03 · Connect</p>
-            <h3 class="mt-3 font-display text-2xl font-bold text-txt-1">LakeSentry.in</h3>
-            <p class="mt-3">A lake map, a research page for each lake, and a reviewed network of community clean-up initiatives.</p>
-          </li>
-        </ul>
-
-        <ul class="reveal mt-10 flex flex-wrap gap-2.5 font-mono text-xs" aria-label="UN Sustainable Development Goals Lake Sentry contributes to">
-          <li class="rounded-full border border-line px-4 py-2 transition hover:-translate-y-0.5 hover:border-mint hover:text-mint">SDG 6 · Clean Water &amp; Sanitation</li>
-          <li class="rounded-full border border-line px-4 py-2 transition hover:-translate-y-0.5 hover:border-mint hover:text-mint">SDG 11 · Sustainable Cities</li>
-          <li class="rounded-full border border-line px-4 py-2 transition hover:-translate-y-0.5 hover:border-mint hover:text-mint">SDG 12 · Responsible Consumption</li>
-          <li class="rounded-full border border-line px-4 py-2 transition hover:-translate-y-0.5 hover:border-mint hover:text-mint">SDG 14 · Life Below Water</li>
-        </ul>
+    <section class="relative overflow-hidden bg-ink py-12 sm:py-16" aria-labelledby="cta-title">
+      <div class="pointer-events-none absolute inset-0" data-bubbles="10" aria-hidden="true"></div>
+      <div class="relative mx-auto max-w-6xl px-4 sm:px-6">
+        <div class="reveal relative overflow-hidden rounded-3xl border border-linehi bg-gradient-to-br from-aqua/25 via-panel to-deep2 p-8 sm:p-12">
+          <div class="caustics" aria-hidden="true"></div>
+          <div class="relative grid gap-8 md:grid-cols-[1.4fr_1fr] md:items-center">
+            <div>
+              <h2 id="cta-title" class="font-display text-3xl font-bold text-txt-1 sm:text-4xl">Help us understand Hyderabad's lakes.</h2>
+              <p class="mt-3 text-txt-2">Take the survey, explore the lake map, or tell us about a clean-up initiative near you.</p>
+            </div>
+            <div class="flex flex-wrap gap-3 md:justify-end">
+              <a href="https://docs.google.com/forms/d/e/1FAIpQLScOvBmpAHLoiJ6ZfsDkbI8g9bO4nfaFDodWxb_4oyn3Qfj4OQ/viewform?usp=header" target="_blank" rel="noopener noreferrer" class="rounded-md bg-aqua px-4 py-2.5 text-sm font-semibold sm:px-6 sm:py-3.5 sm:text-base text-onaccent transition hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(56,228,240,.35)]">Take the survey ↗<span class="sr-only"> (opens in a new tab)</span></a>
+              <a href="app.html#initiatives" class="rounded-md border border-linehi px-4 py-2.5 text-sm font-semibold sm:px-6 sm:py-3.5 sm:text-base text-txt-1 transition hover:-translate-y-0.5 hover:border-mint hover:text-mint">Submit an initiative</a>
+              <a href="app.html#stories" class="rounded-md border border-linehi px-4 py-2.5 text-sm font-semibold sm:px-6 sm:py-3.5 sm:text-base text-txt-1 transition hover:-translate-y-0.5 hover:border-mint hover:text-mint">Share a lake photo</a>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
-
     <!-- ============================================================
          CLOSE TO HOME — numbers that count up + the real prototype
          ============================================================ -->
@@ -213,6 +196,67 @@
     </section>
 
     <!-- ============================================================
+         LAKE DIVE TEASER + 3 ACTIONS (hidden automatically if Lake Dive is switched off)
+         ============================================================ -->
+    <section class="relative overflow-hidden bg-deep2 py-24" aria-labelledby="dive-teaser-title">
+      <div class="mx-auto grid max-w-6xl items-center gap-10 px-4 sm:px-6 lg:grid-cols-2">
+        <div data-feature="lakeDive" class="reveal">
+          <p class="eyebrow">New &middot; prototype</p>
+          <h2 id="dive-teaser-title" class="mt-4 font-display text-3xl font-bold leading-tight text-txt-1 sm:text-5xl">See what's under the surface.</h2>
+          <p class="mt-4 max-w-prose">Lake Dive takes you down through a simulated polluted lake as you scroll: from a calm surface at dusk to a bed choked with waste, with your cursor as an underwater light.</p>
+          <a href="dive.html" class="mt-6 inline-flex items-center gap-2 rounded-md bg-aqua px-4 py-2.5 text-sm font-semibold sm:px-6 sm:py-3.5 sm:text-base text-onaccent transition hover:-translate-y-0.5">Take the Lake Dive <span aria-hidden="true">&rarr;</span></a>
+        </div>
+        <div class="reveal rounded-2xl border border-linehi bg-panel p-6 sm:p-8">
+          <h3 class="font-display text-2xl font-bold text-txt-1">Three things you can do this week</h3>
+          <ol class="mt-5 space-y-4">
+            <li class="flex gap-4"><span class="font-mono text-2xl font-semibold text-aqua">1</span><span><strong>Keep waste out of nalas and lakes.</strong> Most lake rubbish starts on streets and drains.</span></li>
+            <li class="flex gap-4"><span class="font-mono text-2xl font-semibold text-aqua">2</span><span><strong>Report dumping or encroachment</strong> to GHMC or HYDRAA when you see it.</span></li>
+            <li class="flex gap-4"><span class="font-mono text-2xl font-semibold text-aqua">3</span><span><strong>Share your lake.</strong> Post a photo and what you noticed in the <a href="app.html#stories" class="font-semibold text-aqua underline underline-offset-4">Lake Explorer</a>.</span></li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         PREVENT · REMOVE · CONNECT
+         data-wave adds an animated wave at the bottom (colour = next section)
+         ============================================================ -->
+    <section class="relative bg-deep pb-32 pt-24" aria-labelledby="pillars-title" data-wave="ink">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6">
+        <p class="eyebrow reveal">The dual-solution framework</p>
+        <h2 id="pillars-title" class="reveal mt-4 max-w-3xl font-display text-3xl font-bold leading-tight text-txt-1 sm:text-5xl">Cleaning the waste already in our lakes is necessary. Preventing new waste is just as important.</h2>
+
+        <ul class="mt-14 grid gap-5 md:grid-cols-3">
+          <li class="reveal glow-card relative overflow-hidden rounded-xl border border-line bg-panel p-7" style="--delay:.05s">
+            <span aria-hidden="true" class="absolute inset-x-0 top-0 h-0.5 bg-mint"></span>
+            <p class="font-mono text-xs uppercase tracking-wider text-mint">01 · Prevent</p>
+            <h3 class="mt-3 font-display text-2xl font-bold text-txt-1">Awareness campaign</h3>
+            <p class="mt-3">Instagram, LinkedIn and offline installations like “The Rollers” that educate people and encourage responsible waste disposal.</p>
+          </li>
+          <li class="reveal glow-card relative overflow-hidden rounded-xl border border-line bg-panel p-7" style="--delay:.15s">
+            <span aria-hidden="true" class="absolute inset-x-0 top-0 h-0.5 bg-aqua"></span>
+            <p class="font-mono text-xs uppercase tracking-wider text-aqua">02 · Remove</p>
+            <h3 class="mt-3 font-display text-2xl font-bold text-txt-1">Lake Sentry V1 → V2</h3>
+            <p class="mt-3">A remote-controlled floating machine built from CPVC pipe that scoops trash off the surface with a mesh conveyor belt.</p>
+          </li>
+          <li class="reveal glow-card relative overflow-hidden rounded-xl border border-line bg-panel p-7" style="--delay:.25s">
+            <span aria-hidden="true" class="absolute inset-x-0 top-0 h-0.5 bg-sun"></span>
+            <p class="font-mono text-xs uppercase tracking-wider text-sun">03 · Connect</p>
+            <h3 class="mt-3 font-display text-2xl font-bold text-txt-1">LakeSentry.in</h3>
+            <p class="mt-3">A lake map, a research page for each lake, and a reviewed network of community clean-up initiatives.</p>
+          </li>
+        </ul>
+
+        <ul class="reveal mt-10 flex flex-wrap gap-2.5 font-mono text-xs" aria-label="UN Sustainable Development Goals Lake Sentry contributes to">
+          <li class="rounded-full border border-line px-4 py-2 transition hover:-translate-y-0.5 hover:border-mint hover:text-mint">SDG 6 · Clean Water &amp; Sanitation</li>
+          <li class="rounded-full border border-line px-4 py-2 transition hover:-translate-y-0.5 hover:border-mint hover:text-mint">SDG 11 · Sustainable Cities</li>
+          <li class="rounded-full border border-line px-4 py-2 transition hover:-translate-y-0.5 hover:border-mint hover:text-mint">SDG 12 · Responsible Consumption</li>
+          <li class="rounded-full border border-line px-4 py-2 transition hover:-translate-y-0.5 hover:border-mint hover:text-mint">SDG 14 · Life Below Water</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============================================================
          THE OVERALL PROJECT — seven building blocks
          ============================================================ -->
     <section class="relative bg-deep2 pb-32 pt-20" aria-labelledby="project-title" data-wave="deep">
@@ -243,55 +287,11 @@
           <li class="reveal relative rounded-xl border border-line bg-panel p-5 text-center" style="--delay:.1s"><span class="block font-mono text-xs text-txt-3">Step 2</span><span class="mt-1 block font-semibold text-txt-1">An interesting environmental post</span></li>
           <li class="reveal relative rounded-xl border border-aqua/50 bg-panel p-5 text-center" style="--delay:.2s"><span class="block font-mono text-xs text-txt-3">Step 3</span><span class="mt-1 block font-semibold text-aqua">LakeSentry.in</span></li>
           <li class="reveal relative rounded-xl border border-line bg-panel p-5 text-center" style="--delay:.3s"><span class="block font-mono text-xs text-txt-3">Step 4</span><span class="mt-1 block font-semibold text-txt-1">Research, lake info, survey, initiatives</span></li>
-          <li class="reveal relative rounded-xl border border-mint/60 bg-mint/10 p-5 text-center" style="--delay:.4s"><span class="block font-mono text-xs text-txt-3">Step 5</span><span class="mt-1 block font-semibold text-mint">Action</span></li>
+          <li class="reveal relative rounded-xl border border-mint/60 bg-mint/10 p-5 text-center" style="--delay:.4s"><span class="block font-mono text-xs text-txt-2">Step 5</span><span class="mt-1 block font-semibold text-txt-1">Action</span></li>
         </ol>
       </div>
     </section>
 
-    <!-- ============================================================
-         LAKE DIVE TEASER + 3 ACTIONS (hidden automatically if Lake Dive is switched off)
-         ============================================================ -->
-    <section class="relative overflow-hidden bg-deep2 py-24" aria-labelledby="dive-teaser-title">
-      <div class="mx-auto grid max-w-6xl items-center gap-10 px-4 sm:px-6 lg:grid-cols-2">
-        <div data-feature="lakeDive" class="reveal">
-          <p class="eyebrow">New &middot; prototype</p>
-          <h2 id="dive-teaser-title" class="mt-4 font-display text-3xl font-bold leading-tight text-txt-1 sm:text-5xl">See what's under the surface.</h2>
-          <p class="mt-4 max-w-prose">Lake Dive takes you down through a simulated polluted lake as you scroll: from a calm surface at dusk to a bed choked with waste, with your cursor as an underwater light.</p>
-          <a href="dive.html" class="mt-6 inline-flex items-center gap-2 rounded-md bg-aqua px-4 py-2.5 text-sm font-semibold sm:px-6 sm:py-3.5 sm:text-base text-onaccent transition hover:-translate-y-0.5">Take the Lake Dive <span aria-hidden="true">&rarr;</span></a>
-        </div>
-        <div class="reveal rounded-2xl border border-linehi bg-panel p-6 sm:p-8">
-          <h3 class="font-display text-2xl font-bold text-txt-1">Three things you can do this week</h3>
-          <ol class="mt-5 space-y-4">
-            <li class="flex gap-4"><span class="font-mono text-2xl font-semibold text-aqua">1</span><span><strong>Keep waste out of nalas and lakes.</strong> Most lake rubbish starts on streets and drains.</span></li>
-            <li class="flex gap-4"><span class="font-mono text-2xl font-semibold text-aqua">2</span><span><strong>Report dumping or encroachment</strong> to GHMC or HYDRAA when you see it.</span></li>
-            <li class="flex gap-4"><span class="font-mono text-2xl font-semibold text-aqua">3</span><span><strong>Share your lake.</strong> Post a photo and what you noticed in the <a href="app.html#stories" class="font-semibold text-aqua underline underline-offset-4">Lake Explorer</a>.</span></li>
-          </ol>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============================================================
-         CALL TO ACTION
-         ============================================================ -->
-    <section class="relative overflow-hidden bg-ink py-24" aria-labelledby="cta-title">
-      <div class="pointer-events-none absolute inset-0" data-bubbles="10" aria-hidden="true"></div>
-      <div class="relative mx-auto max-w-6xl px-4 sm:px-6">
-        <div class="reveal relative overflow-hidden rounded-3xl border border-linehi bg-gradient-to-br from-aqua/25 via-panel to-deep2 p-8 sm:p-12">
-          <div class="caustics" aria-hidden="true"></div>
-          <div class="relative grid gap-8 md:grid-cols-[1.4fr_1fr] md:items-center">
-            <div>
-              <h2 id="cta-title" class="font-display text-3xl font-bold text-txt-1 sm:text-4xl">Help us understand Hyderabad's lakes.</h2>
-              <p class="mt-3 text-txt-2">Take the survey, explore the lake map, or tell us about a clean-up initiative near you.</p>
-            </div>
-            <div class="flex flex-wrap gap-3 md:justify-end">
-              <a href="https://docs.google.com/forms/d/e/1FAIpQLScOvBmpAHLoiJ6ZfsDkbI8g9bO4nfaFDodWxb_4oyn3Qfj4OQ/viewform?usp=header" target="_blank" rel="noopener noreferrer" class="rounded-md bg-aqua px-4 py-2.5 text-sm font-semibold sm:px-6 sm:py-3.5 sm:text-base text-onaccent transition hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(56,228,240,.35)]">Take the survey ↗<span class="sr-only"> (opens in a new tab)</span></a>
-              <a href="app.html#initiatives" class="rounded-md border border-linehi px-4 py-2.5 text-sm font-semibold sm:px-6 sm:py-3.5 sm:text-base text-txt-1 transition hover:-translate-y-0.5 hover:border-mint hover:text-mint">Submit an initiative</a>
-              <a href="app.html#stories" class="rounded-md border border-linehi px-4 py-2.5 text-sm font-semibold sm:px-6 sm:py-3.5 sm:text-base text-txt-1 transition hover:-translate-y-0.5 hover:border-mint hover:text-mint">Share a lake photo</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
   </main>
 
   <!-- ============================ SITE FOOTER ============================ -->
@@ -310,7 +310,7 @@
           <li><a href="index.html" class="hover:text-aqua">Home</a></li>
           <li><a href="about.html" class="hover:text-aqua">About the project</a></li>
           <li><a href="about.html#v1" class="hover:text-aqua">Prototype V1</a></li>
-          <li><a href="app.html" class="hover:text-aqua">Lake Explorer App</a></li>
+          <li><a href="app.html" class="hover:text-aqua">Lake Explorer</a></li>
           <li><a href="me.html" class="hover:text-aqua">About me</a></li>
           <li data-feature="lakeDive"><a href="dive.html" class="hover:text-aqua">Lake Dive</a></li>
         </ul>
